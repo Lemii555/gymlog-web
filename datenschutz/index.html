@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>gymLog – Datenschutz / Privacy</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{ margin:0; color:#2D3142; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased;
+    background:radial-gradient(120% 85% at 6% 90%, rgba(255,206,150,0.55) 0%, rgba(255,206,150,0) 58%), linear-gradient(180deg,#CADDEE 0%,#BCD3E8 100%);
+    background-attachment:fixed; min-height:100vh; }
+  .wrap{ max-width:720px; margin:0 auto; padding:48px 24px 88px; }
+  .head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:8px; }
+  h1{ margin:0 0 6px; }
+  h2{ font-size:22px; font-weight:700; letter-spacing:-0.01em; margin:40px 0 12px; }
+  .sub{ color:#565A68; font-size:15px; margin-bottom:16px; }
+  .card{ background:rgba(255,255,255,0.88); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(45,49,66,0.08); border-radius:16px; padding:24px; margin-bottom:16px; }
+  p{ margin:8px 0; font-size:17px; } ul{ margin:8px 0; padding-left:20px; }
+  a{ color:#2D3142; text-decoration:underline; text-underline-offset:2px; }
+  a:hover{ opacity:.75; }
+  :focus-visible{ outline:2px solid #E85002; outline-offset:2px; }
+  .foot{ font-size:13px; color:#565A68; margin-top:40px; text-align:center; }
+  .switch{ display:inline-flex; background:rgba(255,255,255,0.7); border-radius:999px; padding:3px; flex:0 0 auto; }
+  .switch button{ appearance:none; border:0; background:transparent; cursor:pointer; font:inherit; font-size:13px; font-weight:600; color:#565A68;
+    padding:7px 14px; border-radius:999px; line-height:1; transition:background .15s ease, color .15s ease; }
+  .switch button[aria-pressed="true"]{ background:#E85002; color:#fff; }
+  @media (prefers-reduced-motion:reduce){ .switch button{ transition:none; } }
+  [data-lang="en"]{ display:none; }
+  body.en [data-lang="de"]{ display:none; }
+  body.en [data-lang="en"]{ display:revert; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1><svg role="img" aria-label="gymLog" width="653" height="174" style="height:34px;width:auto;display:block" viewBox="0 0 653 174" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M233.562 145.125C228.229 145.125 223.562 144.354 219.562 142.812C215.604 141.312 212.396 139.25 209.938 136.625C207.521 134.042 205.958 131.146 205.25 127.938L205.125 127.375H216.062L216.312 127.938C217.354 130.271 219.354 132.104 222.312 133.438C225.312 134.812 229.021 135.5 233.438 135.5C239.146 135.5 243.562 134.021 246.688 131.062C249.812 128.146 251.375 124.167 251.375 119.125V110.812H251.125C249.833 113.229 248.167 115.312 246.125 117.062C244.083 118.812 241.729 120.188 239.062 121.188C236.438 122.146 233.562 122.625 230.438 122.625C224.979 122.625 220.167 121.25 216 118.5C211.875 115.708 208.646 111.812 206.312 106.812C204.021 101.771 202.875 95.875 202.875 89.125V89.0625C202.875 82.3125 204.042 76.4583 206.375 71.5C208.75 66.5 212.021 62.625 216.188 59.875C220.354 57.125 225.188 55.75 230.688 55.75C233.771 55.75 236.604 56.2708 239.188 57.3125C241.771 58.3542 244.062 59.7917 246.062 61.625C248.104 63.4583 249.792 65.5833 251.125 68H251.375V57H262.25V120.188C262.25 125.229 261.083 129.604 258.75 133.312C256.417 137.062 253.104 139.958 248.812 142C244.521 144.083 239.438 145.125 233.562 145.125ZM232.812 113C236.521 113 239.75 112.021 242.5 110.062C245.292 108.062 247.458 105.271 249 101.688C250.583 98.1042 251.375 93.9167 251.375 89.125V89.0625C251.375 84.2708 250.583 80.1042 249 76.5625C247.458 73.0208 245.292 70.2708 242.5 68.3125C239.708 66.3542 236.479 65.375 232.812 65.375C228.979 65.375 225.646 66.3542 222.812 68.3125C219.979 70.2292 217.792 72.9583 216.25 76.5C214.75 80.0417 214 84.2292 214 89.0625V89.125C214 94.0417 214.75 98.2917 216.25 101.875C217.792 105.417 219.979 108.167 222.812 110.125C225.646 112.042 228.979 113 232.812 113ZM282.562 143.875C281.521 143.875 280.458 143.812 279.375 143.688C278.333 143.604 277.458 143.5 276.75 143.375V134.5C277.208 134.583 277.729 134.667 278.312 134.75C278.938 134.833 279.583 134.875 280.25 134.875C283.708 134.875 286.458 134.271 288.5 133.062C290.583 131.854 292.271 129.417 293.562 125.75L294.875 122.062L270.75 57H282.375L301.125 113.625L298.812 111.125H302.062L299.75 113.625L318.562 57H330L304.625 126.062C303.083 130.188 301.354 133.562 299.438 136.188C297.521 138.812 295.208 140.75 292.5 142C289.792 143.25 286.479 143.875 282.562 143.875ZM338.562 122V57H349.438V66.5H349.688C351.146 63.2917 353.438 60.7083 356.562 58.75C359.688 56.75 363.333 55.75 367.5 55.75C370.458 55.75 373.125 56.25 375.5 57.25C377.917 58.2083 380 59.625 381.75 61.5C383.5 63.3333 384.833 65.5833 385.75 68.25H386C387.208 65.625 388.812 63.3958 390.812 61.5625C392.854 59.6875 395.188 58.25 397.812 57.25C400.479 56.25 403.333 55.75 406.375 55.75C410.667 55.75 414.396 56.6458 417.562 58.4375C420.729 60.1875 423.188 62.6667 424.938 65.875C426.688 69.0417 427.562 72.7917 427.562 77.125V122H416.688V79.625C416.688 76.625 416.146 74.0625 415.062 71.9375C414.021 69.8125 412.5 68.1875 410.5 67.0625C408.5 65.9375 406.062 65.375 403.188 65.375C400.312 65.375 397.771 66.0417 395.562 67.375C393.354 68.6667 391.625 70.4792 390.375 72.8125C389.125 75.1042 388.5 77.7292 388.5 80.6875V122H377.625V78.4375C377.625 75.8125 377.062 73.5208 375.938 71.5625C374.854 69.6042 373.312 68.0833 371.312 67C369.354 65.9167 367.021 65.375 364.312 65.375C361.438 65.375 358.875 66.0833 356.625 67.5C354.417 68.875 352.667 70.75 351.375 73.125C350.083 75.5 349.438 78.2083 349.438 81.25V122H338.562ZM441.875 122V31.8125H460.75V106.438H500.188V122H441.875ZM539.688 123.375C532.896 123.375 527.021 121.979 522.062 119.188C517.104 116.396 513.271 112.396 510.562 107.188C507.854 101.979 506.5 95.75 506.5 88.5V88.375C506.5 81.1667 507.875 74.9792 510.625 69.8125C513.375 64.6042 517.229 60.6042 522.188 57.8125C527.146 55.0208 532.958 53.625 539.625 53.625C546.333 53.625 552.167 55.0208 557.125 57.8125C562.125 60.5625 566 64.5417 568.75 69.75C571.5 74.9167 572.875 81.125 572.875 88.375V88.5C572.875 95.7917 571.5 102.042 568.75 107.25C566.042 112.458 562.208 116.458 557.25 119.25C552.292 122 546.438 123.375 539.688 123.375ZM539.75 109.062C542.708 109.062 545.271 108.271 547.438 106.688C549.646 105.062 551.333 102.729 552.5 99.6875C553.708 96.6042 554.312 92.875 554.312 88.5V88.375C554.312 84.0417 553.708 80.3542 552.5 77.3125C551.292 74.2708 549.583 71.9583 547.375 70.375C545.167 68.75 542.583 67.9375 539.625 67.9375C536.708 67.9375 534.146 68.75 531.938 70.375C529.771 71.9583 528.083 74.2708 526.875 77.3125C525.667 80.3542 525.062 84.0417 525.062 88.375V88.5C525.062 92.875 525.646 96.6042 526.812 99.6875C528.021 102.729 529.729 105.062 531.938 106.688C534.146 108.271 536.75 109.062 539.75 109.062ZM613.625 145.25C607.5 145.25 602.146 144.396 597.562 142.688C593.021 141.021 589.396 138.75 586.688 135.875C584.021 133 582.396 129.771 581.812 126.188L581.75 125.625H599.5L599.688 126.062C600.438 127.688 602 129.125 604.375 130.375C606.75 131.625 609.833 132.25 613.625 132.25C618.333 132.25 621.917 131.125 624.375 128.875C626.833 126.625 628.062 123.625 628.062 119.875V109.625H627.688C626.521 111.958 624.938 113.979 622.938 115.688C620.938 117.396 618.583 118.729 615.875 119.688C613.208 120.604 610.25 121.062 607 121.062C601.417 121.062 596.583 119.729 592.5 117.062C588.458 114.396 585.333 110.583 583.125 105.625C580.958 100.625 579.875 94.6667 579.875 87.75V87.6875C579.875 80.5625 580.979 74.4583 583.188 69.375C585.438 64.2917 588.604 60.3958 592.688 57.6875C596.771 54.9792 601.646 53.625 607.312 53.625C610.479 53.625 613.375 54.1458 616 55.1875C618.625 56.2292 620.917 57.7083 622.875 59.625C624.875 61.5417 626.479 63.8125 627.688 66.4375H628.062V55H646.312V120.125C646.312 125.083 644.979 129.438 642.312 133.188C639.688 136.979 635.917 139.938 631 142.062C626.125 144.188 620.333 145.25 613.625 145.25ZM613.312 107.688C616.312 107.688 618.917 106.896 621.125 105.312C623.333 103.729 625.042 101.479 626.25 98.5625C627.5 95.6458 628.125 92.1875 628.125 88.1875V88.125C628.125 84.125 627.5 80.6875 626.25 77.8125C625.042 74.8958 623.312 72.6667 621.062 71.125C618.854 69.5417 616.271 68.75 613.312 68.75C610.312 68.75 607.688 69.5417 605.438 71.125C603.188 72.6667 601.458 74.875 600.25 77.75C599.042 80.625 598.438 84.0833 598.438 88.125V88.1875C598.438 92.1875 599.042 95.6458 600.25 98.5625C601.458 101.479 603.188 103.729 605.438 105.312C607.688 106.896 610.312 107.688 613.312 107.688Z" fill="#2D3142"></path>
+<g transform="translate(0,3) scale(0.16699)"><rect width="1024" height="1024" rx="266" fill="#E85002"></rect><circle cx="171" cy="562" r="50" fill="white"></circle><circle cx="819" cy="327" r="50" fill="white"></circle><path d="M221 618L307.5 726.5L472 475C489.333 452.5 550.5 430 583 491.5C600.333 520.833 658.535 563.5 699 505.5C744 441 783.5 377.5 796 355.5" stroke="white" stroke-width="40" stroke-linecap="round"></path></g>
+</svg></h1>
+      <div class="sub" data-lang="de">Datenschutzerklärung · Stand: 29.06.2026</div>
+      <div class="sub" data-lang="en">Privacy Policy · Last updated: 29 June 2026</div>
+    </div>
+    <div class="switch" role="group" aria-label="Sprache / Language">
+      <button type="button" id="btn-de" aria-pressed="true">DE</button>
+      <button type="button" id="btn-en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+  <div data-lang="de">
+    <div class="card"><p><strong>Kurz gesagt: gymLog sammelt keine Daten.</strong> Alle deine Eingaben (Trainingspläne, Gewichte, Maße) werden ausschließlich lokal auf deinem Gerät gespeichert. Es gibt kein Konto, keine Anmeldung, keine Cloud, kein Tracking und keine Werbung.</p></div>
+    <h2>1. Verantwortlicher</h2>
+    <div class="card"><p>Kevin Schropp<br>
+      Veilchenweg 10<br>
+      84186 Vilsheim<br>
+      E-Mail: <a href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></p></div>
+    <h2>2. Welche Daten verarbeitet die App?</h2>
+    <div class="card"><p>gymLog speichert die von dir eingegebenen Daten (z. B. Trainingsübungen, Gewichte, Wiederholungen, Körpergewicht, Maße, Ziele) nur lokal im Speicher deines Geräts. Diese Daten verlassen dein Gerät nicht und werden nicht an uns oder an Dritte übertragen.</p></div>
+    <h2>3. Keine Datenübertragung an Dritte</h2>
+    <div class="card"><p>Die App stellt keine Verbindung zu Servern her, nutzt keine Analyse- oder Werbedienste und bindet keine Drittanbieter-SDKs zur Datenerhebung ein.</p></div>
+    <h2>4. Export und Backup</h2>
+    <div class="card"><p>Du kannst deine Daten selbst als Datei (CSV oder JSON) exportieren. Wohin du diese Datei speicherst oder teilst, entscheidest ausschließlich du. Über diesen Export findet keine automatische Übermittlung statt.</p></div>
+    <h2>5. Löschung</h2>
+    <div class="card"><p>Du kannst deine Daten jederzeit in der App löschen oder die App deinstallieren. Mit dem Löschen der App werden alle lokal gespeicherten Daten entfernt.</p></div>
+    <h2>6. Deine Rechte</h2>
+    <div class="card"><p>Da keine personenbezogenen Daten an uns übertragen oder von uns gespeichert werden, liegen uns keine Daten über dich vor. Bei Fragen kannst du dich an die oben genannte E-Mail-Adresse wenden.</p></div>
+    <div class="foot"><a href="/impressum/">Impressum</a><br><br>gymLog ist ein Projekt von Kevin Schropp.</div>
+  </div>
+  <div data-lang="en">
+    <div class="card"><p><strong>In short: gymLog collects no data.</strong> Everything you enter (training plans, weights, measurements) is stored only locally on your device. There is no account, no sign-up, no cloud, no tracking and no advertising.</p></div>
+    <h2>1. Controller</h2>
+    <div class="card"><p>Kevin Schropp<br>
+      Veilchenweg 10<br>
+      84186 Vilsheim, Germany<br>
+      Email: <a href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></p></div>
+    <h2>2. What data does the app process?</h2>
+    <div class="card"><p>gymLog stores the data you enter (e.g. exercises, weights, repetitions, body weight, measurements, goals) only locally in your device's storage. This data never leaves your device and is not transmitted to us or to any third party.</p></div>
+    <h2>3. No transfer to third parties</h2>
+    <div class="card"><p>The app does not connect to any server, uses no analytics or advertising services, and includes no third-party SDKs for data collection.</p></div>
+    <h2>4. Export and backup</h2>
+    <div class="card"><p>You can export your data yourself as a file (CSV or JSON). Where you save or share that file is entirely your decision. This export does not trigger any automatic transmission.</p></div>
+    <h2>5. Deletion</h2>
+    <div class="card"><p>You can delete your data in the app at any time, or uninstall the app. Deleting the app removes all locally stored data.</p></div>
+    <h2>6. Your rights</h2>
+    <div class="card"><p>Since no personal data is transmitted to us or stored by us, we hold no data about you. If you have questions, please use the email address above.</p></div>
+    <div class="foot"><a href="/impressum/">Legal Notice</a><br><br>gymLog is a project by Kevin Schropp.</div>
+  </div>
+</div>
+<script>
+(function () {
+  var body = document.body;
+  var btnDe = document.getElementById('btn-de');
+  var btnEn = document.getElementById('btn-en');
+  function apply(lang) {
+    var en = lang === 'en';
+    body.classList.toggle('en', en);
+    document.documentElement.lang = en ? 'en' : 'de';
+    document.title = en ? 'gymLog – Privacy' : 'gymLog – Datenschutz';
+    btnDe.setAttribute('aria-pressed', String(!en));
+    btnEn.setAttribute('aria-pressed', String(en));
+    try { localStorage.setItem('gymlog-lang', lang); } catch (e) {}
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('gymlog-lang'); } catch (e) {}
+  var auto = (navigator.language || 'de').toLowerCase().indexOf('de') === 0 ? 'de' : 'en';
+  apply(saved || auto);
+  btnDe.addEventListener('click', function () { apply('de'); });
+  btnEn.addEventListener('click', function () { apply('en'); });
+})();
+</script>
+</body>
+</html>
