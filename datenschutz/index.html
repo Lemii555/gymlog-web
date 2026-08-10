@@ -22,7 +22,8 @@
   --mono:"SFMono-Regular",ui-monospace,"Menlo",monospace;
   --serif:"Fraunces", ui-serif, Georgia, "Times New Roman", serif;
   --max:1280px;
-  --rand:max(22px, calc((100% - var(--max)) / 2));
+  --rand-fix:22px;                                    /* reiner Innenrand */
+  --rand:max(var(--rand-fix), calc((100% - var(--max)) / 2));
   /* Aus der App uebernommen. Nur der Akzent, nicht die ganze Palette:
      die Website hat eine eigene Buehne, sie soll die App nicht nachbauen. */
   --clay:#E85002;        /* Akzent hell   — Tinte darauf 4,99:1 */
@@ -40,29 +41,90 @@ a{color:inherit}
 
 /* ══ KOPF: Band und Leiste in einem fixierten Block ═════════════════════ */
 .kopf{position:fixed; top:0; left:0; right:0; z-index:50}
+/* 10.8.2026, Kevin: "der Info-Lauf ganz oben startet nicht ganz rechts."
+   Ursache war die Breite: die Spur traegt die Meldungen zweimal und wandert
+   um ihre halbe Laenge, zusammen rund 1660px. Auf einem 2600px breiten Schirm
+   reicht das nicht, rechts blieb ein Loch. Das Band auf dieselbe Breite wie
+   die Navigation zu setzen loest beides: es steht buendig, und die Spur ist
+   wieder laenger als das Fenster. */
+/* Kevin, 10.8.2026: auf Impressum und Datenschutz standen links und rechts
+   zwei weisse Balken. Ursache war max-width am Band selbst: auf hellem Grund
+   sieht man dort den Untergrund, auf der dunklen Startseite fiel es nicht auf.
+   Das Band laeuft wieder ueber die volle Breite. Die Luecke rechts, wegen der
+   die Begrenzung ueberhaupt kam, ist anders geloest: die Spur traegt ihren
+   Inhalt jetzt DREIMAL und wandert um ein Drittel. Damit sind immer zwei
+   Kopien im Bild, zusammen rund 3470px, mehr als jeder Bildschirm breit ist. */
 .band{height:var(--band-h); background:var(--tinte); color:#fff; overflow:hidden;
   display:flex; align-items:center; transition:height .4s var(--ease), opacity .3s var(--ease)}
 .kopf.fest .band{height:0; opacity:0}
-.spur{display:flex; white-space:nowrap; animation:lauf 40s linear infinite}
+.spur{display:flex; white-space:nowrap; animation:lauf 83s linear infinite}
 .band:hover .spur{animation-play-state:paused}
 .spur span{font-family:var(--mono); font-size:11px; padding:0 32px; opacity:.9}
-@keyframes lauf{to{transform:translateX(-50%)}}
+@keyframes lauf{to{transform:translateX(-33.3333%)}}
 
 .nav{position:relative; height:var(--nav-h); display:grid;
   grid-template-columns:1fr auto 1fr; align-items:center; padding:0 var(--rand); color:#fff;
   transition:height .4s var(--ease), color .4s var(--ease), background .4s var(--ease)}
+/* 10.8.2026, nach Kevins Aufnahmen von weberworkshops.com: der Verlauf ist
+   der eigentliche Trick, nicht das Glas. Er reicht 46px UNTER die Leiste hinaus
+   und laeuft dort aus, deshalb bleibt weisse Schrift auch ueber hellem Grund
+   lesbar, ohne dass ein dunkler Balken entsteht. Vorher wurde er beim Scrollen
+   ausgeblendet, und genau da fehlte er. */
+/* Kevin, 10.8.2026, nach drei Fehlversuchen praezisiert:
+   "der verlauf faengt oben an endet aber bei 0% am ende der topbar er geht
+   nicht weiter!!" Also inset:0, keine Ueberlaenge. Und der Braunton, nicht
+   Schwarz. 10.8.2026 eine Stufe heller: #5C5850 statt #46433D.
+
+   Der Verlauf ist LINEAR und schwach: .36 oben, null am unteren Rand. Damit
+   liegt er bei 1,48:1 ueber den hellen Abschnitten und 2,42:1 ueber dem
+   dunklen Kopfbereich, also unter jeder Norm.
+
+   Das ist eine bewusste Entscheidung, kein Versehen. Kevin, 10.8.2026: "die
+   Lesbarkeit ist hier noch gegeben aber nicht wichtig, wir verstossen hier
+   aktiv dagegen denn wer hovert hat vollen Kontrast." Die Leiste soll im
+   Vorbeiscrollen nicht um Aufmerksamkeit bitten. Wer etwas davon braucht,
+   faehrt hinein, und dann sind es 16,3:1 auf solidem Papier.
+
+   Drei staerkere Fassungen wurden verworfen, weil der obere Teil sich als
+   Balken las statt als Verlauf: .72 mit Exponent 2.6, .55 mit 1.8, .45 mit 1.4. Am unteren Rand ist er exakt null, es gibt keine Kante. */
 .nav::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
-  background:linear-gradient(180deg,rgba(10,10,8,.6) 0%,rgba(10,10,8,.32) 46%,rgba(10,10,8,0) 100%);
+  background:linear-gradient(180deg,
+    rgba(92,88,80,0.360) 0%,
+    rgba(92,88,80,0.306) 15%,
+    rgba(92,88,80,0.252) 30%,
+    rgba(92,88,80,0.198) 45%,
+    rgba(92,88,80,0.144) 60%,
+    rgba(92,88,80,0.090) 75%,
+    rgba(92,88,80,0.043) 88%,
+    rgba(92,88,80,0.000) 100%);
   transition:opacity .4s var(--ease)}
 /* Die Linie hat die Farbe des Papiers, nicht weiss: so verschwindet sie auf
    hellem Grund restlos und steht auf Dunklem klar da. */
 .nav::after{content:""; position:absolute; left:var(--rand); right:var(--rand); bottom:0; height:1px;
   background:var(--papier);
   transition:background .4s var(--ease), left .4s var(--ease), right .4s var(--ease)}
-.nav.fest{height:58px; color:var(--tinte); background:rgba(239,239,237,.56);
+/* Gescrollt kommt das Milchglas, Schrift und Marke bleiben WEISS. Der Verlauf
+   bleibt an, er ist das, was sie lesbar haelt. Keine Trennlinie: der Verlauf
+   endet ohnehin am unteren Rand und traegt die Trennung selbst. */
+.nav.fest{height:58px; background:rgba(239,239,237,.56);
   -webkit-backdrop-filter:blur(10px) saturate(150%); backdrop-filter:blur(10px) saturate(150%)}
-.nav.fest::before{opacity:0}
-.nav.fest::after{background:var(--papier); left:0; right:0}
+/* Die Trennlinie hat Papierfarbe: auf den dunklen Abschnitten steht sie klar
+   da, auf hellem Grund verschwindet sie restlos. Genau so soll es sein.
+   Sie war kurzzeitig aus, weil der Verlauf damals unter die Leiste hinausragte
+   und zusammen mit der Linie eine Doppelkante ergab. Der Verlauf endet jetzt
+   am unteren Rand, damit ist der Grund weg. Gescrollt laeuft sie ueber die
+   volle Breite, im Ruhezustand ist sie auf den Textrand eingerueckt. */
+.nav.fest::after{left:0; right:0}
+
+/* Erst beim Hineinfahren zeigt sich die Leiste voll: Glas und Verlauf weg,
+   Flaeche solid in Papierfarbe, Schrift dunkel. Nur wo es einen Zeiger gibt,
+   sonst bliebe der Zustand auf dem Handy nach einer Beruehrung haengen. */
+@media (hover:hover){
+  .nav.fest:hover{color:var(--tinte); background:var(--papier);
+    -webkit-backdrop-filter:none; backdrop-filter:none}
+  .nav.fest:hover::before{opacity:0}
+  .nav.fest:hover::after{background:rgba(18,18,15,.12)}
+}
 .nav.offen{color:var(--tinte); background:var(--papier);
   -webkit-backdrop-filter:none; backdrop-filter:none}
 .nav.offen::before{opacity:0}
@@ -135,7 +197,7 @@ a{color:inherit}
 .lang button.an{opacity:1; color:var(--clay-num)}
 /* Auf Rechtsseiten beginnt die Seite direkt unter der Leiste */
 main{max-width:680px; margin:0 auto;
-  padding:calc(var(--band-h) + var(--nav-h) + 40px) var(--rand) 96px}
+  padding:calc(var(--band-h) + var(--nav-h) + 40px) var(--rand-fix) 96px}
 @media (min-width:900px){ main{padding-top:calc(var(--band-h) + var(--nav-h) + 56px)} }
 
 .num{display:flex; align-items:baseline; gap:16px; font-family:var(--serif);
@@ -175,7 +237,8 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:40px var(--rand)
 .fnav a:hover{color:var(--nacht-ink)}
 .funten{margin-top:24px; padding-top:20px; border-top:1px solid rgba(255,255,255,.16);
   font-size:12px; color:rgba(255,255,255,.5)}
-@media (min-width:900px){ :root{--rand:max(32px, calc((100% - var(--max)) / 2))}
+@media (min-width:900px){ :root{--rand-fix:32px;
+         --rand:max(var(--rand-fix), calc((100% - var(--max)) / 2))}
   .kern{padding:36px 32px} }
 </style>
 </head>
@@ -183,8 +246,9 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:40px var(--rand)
 
 <div class="kopf fest" id="kopf">
   <div class="band"><div class="spur">
-    <span>Version 2.1 — Training auf dem Sperrbildschirm</span><span>Dauerhaft kostenlos, ohne Konto</span><span>Pläne als Text teilen</span>
-    <span>Version 2.1 — Training auf dem Sperrbildschirm</span><span>Dauerhaft kostenlos, ohne Konto</span><span>Pläne als Text teilen</span>
+    <span>Version 2.1 — Training auf dem Sperrbildschirm</span><span>Dauerhaft kostenlos, ohne Konto</span><span>Pläne als Text teilen</span><span>Keine Cloud, alles bleibt auf dem Gerät</span><span>Keine Werbung, kein Tracking</span><span>Backup als Datei, jederzeit exportierbar</span>
+    <span>Version 2.1 — Training auf dem Sperrbildschirm</span><span>Dauerhaft kostenlos, ohne Konto</span><span>Pläne als Text teilen</span><span>Keine Cloud, alles bleibt auf dem Gerät</span><span>Keine Werbung, kein Tracking</span><span>Backup als Datei, jederzeit exportierbar</span>
+    <span>Version 2.1 — Training auf dem Sperrbildschirm</span><span>Dauerhaft kostenlos, ohne Konto</span><span>Pläne als Text teilen</span><span>Keine Cloud, alles bleibt auf dem Gerät</span><span>Keine Werbung, kein Tracking</span><span>Backup als Datei, jederzeit exportierbar</span>
   </div></div>
 
   <nav class="nav fest" id="nav">
@@ -297,7 +361,13 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:40px var(--rand)
   var nav=document.getElementById("nav"), kopf=document.getElementById("kopf"),
       burger=document.getElementById("burger"), mob=document.getElementById("mob"), offen=false, warten=false;
   function pruefen(){
-    if(!offen){ var f=window.scrollY>20; kopf.classList.toggle("fest",f); }
+    if(!offen){
+      var f=window.scrollY>20;
+      // 10.8.2026: hier fehlte die Leiste. Nur .kopf bekam "fest", das CSS
+      // haengt aber an .nav.fest. Milchglas und Farbwechsel gab es auf den
+      // Rechtsseiten deshalb nie, obwohl das CSS identisch ist.
+      nav.classList.toggle("fest",f); kopf.classList.toggle("fest",f);
+    }
     warten=false;
   }
   window.addEventListener("scroll",function(){ if(!warten){warten=true;requestAnimationFrame(pruefen);} },{passive:true});
