@@ -24,7 +24,15 @@
   --ease:cubic-bezier(.22,.61,.36,1);
   --mono:"SFMono-Regular",ui-monospace,"Menlo",monospace;
   --serif:"Fraunces", ui-serif, Georgia, "Times New Roman", serif;
-  --rand:22px;
+  /* Auf einem 32-Zoll-Schirm liefen die Spalten bis an die Glaskante und der
+     Text stand meterweit auseinander (Kevin, 10.8.2026). --rand ist deshalb
+     kein fester Wert mehr, sondern wird ab 1280px Inhaltsbreite von selbst
+     groesser. Die dunklen Flaechen und die Milchglas-Leiste bleiben dabei
+     ueber die volle Breite stehen, nur der Inhalt darin ruecht zusammen:
+     es gibt keine weissen Streifen links und rechts. Und weil alle Abschnitte
+     schon vorher var(--rand) benutzt haben, gilt das ueberall auf einmal. */
+  --max:1280px;
+  --rand:max(22px, calc((100% - var(--max)) / 2));
   /* Aus der App uebernommen. Nur der Akzent, nicht die ganze Palette:
      die Website hat eine eigene Buehne, sie soll die App nicht nachbauen. */
   --clay:#E85002;        /* Akzent hell   — Tinte darauf 4,99:1 */
@@ -122,9 +130,16 @@ img{display:block;max-width:100%}
   letter-spacing:-.02em;border-bottom:1px solid rgba(18,18,15,.12)}
 
 /* ══ 1. KOPFBEREICH ═════════════════════════════════════════════════════ */
+/* 10.8.2026: hier lag ein Verlauf von #1B1A18 nach #46433D, wurde also nach
+   unten heller. Direkt darunter beginnt der Sperrbildschirm bei #0E0E0C, ein
+   Helligkeitssprung um Faktor 13 — eine sichtbare Kante mitten im dunklen
+   Bereich, an einer Stelle ohne Abschnittswechsel. Dazu kam #FF8A50 auf
+   #46433D auf nur 4,23:1 und fiel damit unter die Grenze fuer Fliesstext.
+   Eine Farbe, dieselbe wie Sperrbildschirm und Fusszeile: der obere Teil
+   laeuft als ein Block durch, der Wechsel passiert einmal hin, einmal zurueck. */
 .hero{min-height:100svh; display:grid; align-content:center; gap:32px;
   padding:calc(var(--band-h) + var(--nav-h) + 40px) var(--rand) 56px;
-  background:linear-gradient(168deg,#1B1A18 0%,#302E2A 55%,#46433D 100%); color:#fff}
+  background:var(--nacht); color:var(--nacht-ink)}
 /* Der Text braucht einen eigenen Block. Lagen h1, Absatz und Knopf direkt im
    Raster und bekamen alle dieselbe grid-area, stapelten sie sich uebereinander
    (Kevin, 9.8.2026, Desktop-Ansicht). */
@@ -175,7 +190,8 @@ img{display:block;max-width:100%}
 .dunkel-num b{color:var(--clay-hell)}
 .dunkel-num::after{background:rgba(255,255,255,.2)}
 
-.lock{background:var(--nacht); color:var(--nacht-ink); padding-bottom:88px}
+.lock{background:linear-gradient(180deg,var(--nacht) 0%,#46433D 100%);
+  color:var(--nacht-ink); padding-bottom:88px}
 .lock .inhalt{display:grid; gap:24px; padding:32px var(--rand) 0}
 .lock h2{font-size:clamp(26px,7vw,42px); font-weight:600; letter-spacing:-.03em; line-height:1.12}
 .lock p{font-size:16px; line-height:1.62; color:rgba(255,255,255,.66); max-width:44ch}
@@ -238,7 +254,7 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:56px var(--rand)
 .funten nav{display:flex; gap:16px}
 
 @media (min-width:900px){
-  :root{--rand:32px}
+  :root{--rand:max(32px, calc((100% - var(--max)) / 2))}
   .haupt{display:flex} .burger{display:none} .navcta{display:inline-flex}
   .hero{grid-template-columns:1.05fr .95fr; align-items:center; gap:56px; align-content:center}
   .heroschuss{justify-self:center; width:min(268px,26vw); margin:0}
