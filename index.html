@@ -5,6 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="img/icon.svg">
 <link rel="apple-touch-icon" href="img/icon.svg">
+<link rel="canonical" href="https://gymlogtracker.com/">
+<meta name="theme-color" content="#0E0E0C">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<!-- Open Graph: ohne diese Zeilen sieht jeder geteilte Link in WhatsApp,
+     Slack oder LinkedIn wie eine nackte URL aus. -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gymlogtracker.com/">
+<meta property="og:title" content="gymLog — Trainings-Tracker ohne Konto, ohne Cloud, ohne Abo">
+<meta property="og:description" content="Trainings-Tracker fürs iPhone. Alles bleibt lokal auf deinem Gerät. Keine Anmeldung, keine Werbung, kein Abo. Dauerhaft kostenlos.">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="gymLog">
+<meta property="og:image" content="https://gymlogtracker.com/img/og-bild.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="gymLog Planbildschirm mit Wochenkalender">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="gymLog — Trainings-Tracker ohne Konto, ohne Cloud, ohne Abo">
+<meta name="twitter:description" content="Trainings-Tracker fürs iPhone. Alles bleibt lokal auf deinem Gerät. Keine Anmeldung, keine Werbung, kein Abo. Dauerhaft kostenlos.">
+<meta name="twitter:image" content="https://gymlogtracker.com/img/og-bild.jpg">
 <title>gymLog — Trainings-Tracker ohne Konto, ohne Cloud, ohne Abo</title>
 <meta name="description" content="Trainings-Tracker fürs iPhone. Alles bleibt lokal auf deinem Gerät. Keine Anmeldung, keine Werbung, kein Abo. Dauerhaft kostenlos.">
 <style>
@@ -386,6 +407,117 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:56px var(--rand)
 }
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation:none!important}}
 </style>
+
+<!-- Strukturierte Daten. Zwei Zwecke:
+     SoftwareApplication sagt Suchmaschinen, was gymLog ist, was es kostet
+     und wo man es bekommt.
+     FAQPage macht die sechs Antworten unten maschinenlesbar. Sie stehen
+     ohnehin im Quelltext, das Akkordeon versteckt sie nur ueber max-height.
+     Genau dieses Format zitieren KI-Suchmaschinen. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "gymLog",
+  "alternateName": "gymLog Tracker",
+  "applicationCategory": "HealthApplication",
+  "applicationSubCategory": "Fitness",
+  "operatingSystem": "iOS 15.0 or later",
+  "url": "https://gymlogtracker.com/",
+  "installUrl": "https://apps.apple.com/de/app/gymlog-tracker/id6786720640",
+  "downloadUrl": "https://apps.apple.com/de/app/gymlog-tracker/id6786720640",
+  "inLanguage": [
+    "de",
+    "en"
+  ],
+  "description": "Trainings-Tracker fürs iPhone. Alles bleibt lokal auf deinem Gerät. Keine Anmeldung, keine Werbung, kein Abo. Dauerhaft kostenlos.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR",
+    "availability": "https://schema.org/InStock"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Kevin Schropp",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Veilchenweg 10",
+      "postalCode": "84186",
+      "addressLocality": "Vilsheim",
+      "addressCountry": "DE"
+    },
+    "email": "info@gymlogtracker.com"
+  },
+  "featureList": [
+    "Kein Konto und keine Anmeldung",
+    "Keine Cloud, alle Daten bleiben auf dem Gerät",
+    "Kein Abo und keine Käufe in der App",
+    "Keine Werbung und kein Tracking",
+    "Training läuft auf dem Sperrbildschirm mit",
+    "Trainingspläne als Text teilen",
+    "Backup als Datei, jederzeit exportierbar"
+  ],
+  "isAccessibleForFree": true,
+  "privacyPolicy": "https://gymlogtracker.com/datenschutz/"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Ist die App wirklich dauerhaft kostenlos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja. Kein Abo, keine Käufe in der App, keine Funktion hinter einer Bezahlschranke. Es gibt auch keine kostenpflichtige Version, auf die später umgestellt wird."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Wo liegen meine Daten?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Auf deinem iPhone, sonst nirgends. Es gibt keinen Server, an den etwas gesendet wird, und kein Konto, das etwas speichern könnte. Das ist der Grund, warum es keine Anmeldung gibt: es gäbe nichts anzumelden."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Was passiert bei einem neuen iPhone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Du exportierst deine Daten als Datei und liest sie auf dem neuen Gerät wieder ein. Das geht im Profil, dauert ein paar Sekunden und braucht keine Cloud."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kann ich einen Plan an jemanden weitergeben?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ja, als normalen Text. Du teilst ihn über jede App, die Text verschicken kann, und der andere fügt ihn mit einem Tippen ein. Deine persönlichen Notizen bleiben dabei außen vor."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Gibt es gymLog für Android?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nein. Nicht weil es technisch unmöglich wäre, sondern weil ich die App allein baue, neben einem Vollzeitjob. Zwei Plattformen heißen zweimal testen, zweimal pflegen, zweimal Fehler suchen. Ich mache lieber eine Sache richtig als zwei halb."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Warum gibt es keine fertigen Trainingspläne?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Weil gymLog für Leute gebaut ist, die schon wissen, was sie tun. Ein Plan, der zu dir passt, kommt von dir oder von jemandem, der dich kennt — nicht aus einer Liste in einer App."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <span id="oben"></span>

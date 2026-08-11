@@ -1,0 +1,28 @@
+# gymlogtracker.com
+# Alles darf gelesen werden. Es gibt nichts zu verstecken: drei Seiten,
+# keine Anmeldung, keine Nutzerdaten.
+
+User-agent: *
+Allow: /
+
+# Die grossen KI-Systeme ausdruecklich zulassen. Ohne diese Zeilen gilt
+# zwar auch "Allow: /", aber manche Betreiber lesen nur ihren eigenen Namen.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://gymlogtracker.com/sitemap.xml
