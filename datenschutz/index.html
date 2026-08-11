@@ -22,7 +22,7 @@
 <meta name="twitter:title" content="gymLog — Datenschutz">
 <meta name="twitter:description" content="gymLog sammelt keine Daten. Alles bleibt lokal auf deinem Gerät. Kein Konto, keine Cloud, kein Tracking.">
 <title>gymLog — Datenschutz</title>
-<meta name="description" content="gymLog sammelt keine Daten. Alles bleibt lokal auf deinem Gerät.">
+<meta name="description" content="gymLog sammelt keine Daten. Alles bleibt lokal auf deinem Gerät. Apple Health nur auf Wunsch, standardmäßig aus.">
 <style>@font-face{
   font-family:"Fraunces";
   src:url("../fonts/Fraunces.woff2") format("woff2");
@@ -262,6 +262,7 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:40px var(--rand)
   "@context": "https://schema.org",
   "@type": "PrivacyPolicy",
   "name": "gymLog — Datenschutz",
+  "dateModified": "2026-08-11",
   "url": "https://gymlogtracker.com/datenschutz/",
   "inLanguage": "de",
   "isPartOf": {
@@ -308,7 +309,7 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:40px var(--rand)
   <div lang="de" class="an">
     <div class="num"><b>§</b><span>Rechtliches</span></div>
     <h1>Datenschutz</h1>
-    <div class="stand">STAND 29.06.2026</div>
+    <div class="stand">STAND 11.08.2026</div>
 
     <div class="kern">
       <b>Kurz gesagt: gymLog sammelt keine Daten.</b>
@@ -320,28 +321,36 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:40px var(--rand)
     <p>E-Mail: <a class="mail" href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></p>
 
     <h2><em>02</em>Welche Daten verarbeitet die App?</h2>
-    <p>gymLog speichert die von dir eingegebenen Daten (zum Beispiel Übungen, Gewichte, Wiederholungen, Körpergewicht, Maße, Ziele) nur lokal im Speicher deines Geräts. Diese Daten verlassen dein Gerät nicht und werden nicht an uns oder an Dritte übertragen.</p>
+    <p>gymLog speichert die von dir eingegebenen Daten (zum Beispiel Übungen, Gewichte, Wiederholungen, Körpergewicht, Maße, Ziele) nur lokal im Speicher deines Geräts. Diese Daten verlassen dein Gerät nicht und werden nicht an uns oder an Dritte übertragen. Die einzige Ausnahme ist die freiwillige Übergabe an Apple Health, siehe <a class="mail" href="#health">Abschnitt 05</a>.</p>
 
     <h2><em>03</em>Keine Übertragung an Dritte</h2>
-    <p>Die App stellt keine Verbindung zu Servern her, nutzt keine Analyse- oder Werbedienste und bindet keine Bausteine von Drittanbietern zur Datenerhebung ein.</p>
+    <p>Die App stellt keine Verbindung zu Servern her, nutzt keine Analyse- oder Werbedienste und bindet keine Bausteine von Drittanbietern zur Datenerhebung ein. Die einzige Schnittstelle nach außen ist Apple Health, und sie ist freiwillig und standardmäßig aus (siehe <a class="mail" href="#health">Abschnitt 05</a>).</p>
 
     <h2><em>04</em>Export und Sicherung</h2>
     <p>Du kannst deine Daten selbst als Datei exportieren. Wohin du diese Datei speicherst oder mit wem du sie teilst, entscheidest ausschließlich du. Über den Export findet keine automatische Übermittlung statt.</p>
 
-    <h2><em>05</em>Löschung</h2>
-    <p>Du kannst deine Daten jederzeit in der App löschen oder die App deinstallieren. Mit dem Löschen der App werden alle lokal gespeicherten Daten entfernt.</p>
+    <h2 id="health"><em>05</em>Apple Health</h2>
+    <p>gymLog kann auf deinen Wunsch Daten in Apple Health eintragen. <b>Diese Funktion ist standardmäßig ausgeschaltet</b> und muss von dir im Profil eingeschaltet werden. Beim Einschalten fragt dich iOS um Erlaubnis, und du entscheidest dort für jede Datenart einzeln.</p>
+    <p><b>Eingetragen werden:</b> Dauer und Art eines beendeten Trainings, dein Körpergewicht und dein Körperfettanteil, sofern du diese Werte in gymLog erfasst hast. Einzelne Sätze, Wiederholungen und Gewichte je Übung werden nicht übertragen, dafür hat Apple Health kein Feld.</p>
+    <p><b>gymLog liest keine Daten aus Apple Health.</b> Die App fragt ausschließlich Schreibrechte an.</p>
+    <p>Die Übertragung findet auf deinem Gerät statt. Es werden keine Gesundheitsdaten an mich, an einen Server oder an Dritte übermittelt, nicht für Werbung verwendet, nicht ausgewertet und nicht an Datenhändler weitergegeben.</p>
+    <p>Wenn du in den iPhone-Einstellungen die Synchronisierung von Health mit iCloud aktiviert hast, überträgt Apple deine Gesundheitsdaten in dein iCloud-Konto. Das geschieht auf Grundlage deines Vertrags mit Apple, nicht durch gymLog, und gymLog hat darauf keinen Einfluss.</p>
+    <p>Du kannst die Freigabe jederzeit widerrufen: <em>Einstellungen → Datenschutz &amp; Sicherheit → Health → gymLog</em>. Bereits eingetragene Daten bleiben dann in Apple Health und können dort gelöscht werden.</p>
 
-    <h2><em>06</em>Deine Rechte</h2>
+    <h2><em>06</em>Löschung</h2>
+    <p>Du kannst deine Daten jederzeit in der App löschen oder die App deinstallieren. Mit dem Löschen der App werden alle lokal gespeicherten Daten entfernt. Daten, die du zuvor nach Apple Health geschrieben hast, bleiben dort und werden dort gelöscht.</p>
+
+    <h2><em>07</em>Deine Rechte</h2>
     <p>Da keine personenbezogenen Daten an uns übertragen oder von uns gespeichert werden, liegen uns keine Daten über dich vor. Bei Fragen kannst du dich an die oben genannte Adresse wenden.</p>
 
-    <h2><em>07</em>Impressum</h2>
+    <h2><em>08</em>Impressum</h2>
     <p>Die Anbieterkennzeichnung steht im <a class="mail" href="../impressum/">Impressum</a>.</p>
   </div>
 
   <div lang="en">
     <div class="num"><b>§</b><span>Legal</span></div>
     <h1>Privacy</h1>
-    <div class="stand">LAST UPDATED 29 JUNE 2026</div>
+    <div class="stand">LAST UPDATED 11 AUGUST 2026</div>
 
     <div class="kern">
       <b>In short: gymLog collects no data.</b>
@@ -353,21 +362,29 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:40px var(--rand)
     <p>Email: <a class="mail" href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></p>
 
     <h2><em>02</em>What data does the app process?</h2>
-    <p>gymLog stores the data you enter (for example exercises, weights, repetitions, body weight, measurements, goals) only locally in your device's storage. This data never leaves your device and is not transmitted to us or to any third party.</p>
+    <p>gymLog stores the data you enter (for example exercises, weights, repetitions, body weight, measurements, goals) only locally in your device's storage. This data never leaves your device and is not transmitted to us or to any third party. The only exception is the optional handover to Apple Health, see <a class="mail" href="#health-en">section 05</a>.</p>
 
     <h2><em>03</em>No transfer to third parties</h2>
-    <p>The app does not connect to any server, uses no analytics or advertising services, and includes no third-party components for data collection.</p>
+    <p>The app does not connect to any server, uses no analytics or advertising services, and includes no third-party components for data collection. The only outside interface is Apple Health, and it is optional and off by default (see <a class="mail" href="#health-en">section 05</a>).</p>
 
     <h2><em>04</em>Export and backup</h2>
     <p>You can export your data yourself as a file. Where you save it or who you share it with is entirely your decision. The export does not transmit anything automatically.</p>
 
-    <h2><em>05</em>Deletion</h2>
-    <p>You can delete your data in the app at any time, or uninstall the app. Removing the app deletes all locally stored data.</p>
+    <h2 id="health-en"><em>05</em>Apple Health</h2>
+    <p>If you want, gymLog can write data to Apple Health. <b>This feature is off by default</b> and has to be switched on by you in the profile. When you switch it on, iOS asks for permission and you decide there for each type of data separately.</p>
+    <p><b>What is written:</b> duration and type of a finished workout, your body weight and your body fat percentage, provided you have entered those values in gymLog. Individual sets, repetitions and per-exercise weights are not transferred; Apple Health has no field for them.</p>
+    <p><b>gymLog does not read any data from Apple Health.</b> The app requests write permission only.</p>
+    <p>The transfer happens on your device. No health data is sent to me, to any server or to third parties, it is not used for advertising, not analysed and not passed on to data brokers.</p>
+    <p>If you have enabled Health syncing with iCloud in your iPhone settings, Apple transfers your health data to your iCloud account. This happens under your agreement with Apple, not through gymLog, and gymLog has no influence on it.</p>
+    <p>You can revoke the permission at any time: <em>Settings → Privacy &amp; Security → Health → gymLog</em>. Data already written stays in Apple Health and can be deleted there.</p>
 
-    <h2><em>06</em>Your rights</h2>
+    <h2><em>06</em>Deletion</h2>
+    <p>You can delete your data in the app at any time, or uninstall the app. Removing the app deletes all locally stored data. Data you previously wrote to Apple Health stays there and is deleted there.</p>
+
+    <h2><em>07</em>Your rights</h2>
     <p>Since no personal data is transmitted to us or stored by us, we hold no data about you. If you have questions, please use the address above.</p>
 
-    <h2><em>07</em>Legal notice</h2>
+    <h2><em>08</em>Legal notice</h2>
     <p>The provider identification is in the <a class="mail" href="../impressum/">legal notice</a>.</p>
   </div>
 </main>
