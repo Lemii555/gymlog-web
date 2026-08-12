@@ -40,8 +40,14 @@
   --papier:#EFEFED;
   --tinte:#12120F;
   --leise:#57544E;      /* 5,94:1 auf Papier */
-  --nav-h:72px;
-  --band-h:30px;
+  /* ergibt sich: 40 Knopf + 2 x 16 Polster. Wer den Knopf aendert, aendert
+     die Leiste mit, und die Abstaende bleiben von allein richtig. */
+  --nav-h:calc(var(--nav-el) + 2 * var(--nav-pad));
+  /* Kevin, 11.8.2026: "loesche das infoband oben." Es sagte "Version 2.1",
+     stand ueber der Datenschutzerklaerung und war auf einer Rechtsseite
+     schlicht Werbung. Die Variable bleibt auf 0, damit die Abstandsrechnungen
+     in .hero und .mob nicht angefasst werden muessen. */
+  --band-h:0px;
   --ease:cubic-bezier(.22,.61,.36,1);
   --mono:"SFMono-Regular",ui-monospace,"Menlo",monospace;
   --serif:"Fraunces", ui-serif, Georgia, "Times New Roman", serif;
@@ -60,7 +66,57 @@
   --clay:#E85002;        /* Akzent hell   — Tinte darauf 4,99:1 */
   --clay-tief:#CE4400;   /* Akzent gefuellt — Weiss darauf 4,72:1 */
   --clay-hell:#FF8A50;   /* Akzent auf Dunkel — 8,28:1 */
-  --nacht:#0E0E0C;      /* dunkle Abschnitte, wie --bg der App im Dunkelmodus */
+  --nacht:#0E0E0C;
+  /* 11.8.2026: Die Navigation ist eine eigene Flaeche, keine Ueberlagerung.
+     Sie muss sich vom Hero abheben, der seit heute flach --nacht ist. Bei
+     Delta L* 10 ist sie dezent erkennbar, ohne als zweiter Balken zu lesen.
+     Coachway macht es umgekehrt: dort ist die Leiste DUNKLER als der Hero.
+     Bei #0E0E0C geht dunkler nicht mehr, also nach oben. */
+  /* 11.8.2026, zweiter Anlauf nach Kevins Bildanalyse: die Coachway-Leiste HAT
+     eine Unschaerfe, sie ist nur dunkel statt milchig. Man sieht die Ueberschrift
+     verschwommen durch sie hindurch. Der erste Anlauf mit solidem #262320 war
+     eine Fehldeutung des Bildes. */
+  --nav-flaeche:rgba(14,14,12,.72);
+  --nav-kante:rgba(250,248,245,.13);
+  /* Alles in Achtelschritten. Kevin: "achte auch hier wieder auf 8 rasters."
+
+     ABER: das Achterraster allein reicht bei einer Pille nicht. Erster Anlauf
+     hatte 8 seitliches Polster, weil 8 im Raster liegt. Der Knopf sass damit
+     oben und unten 16 von der Kante entfernt, seitlich nur 8, und in der
+     Rundung lief beides zusammen: dort war der Abstand noch kleiner. Kevin:
+     "was sollen das fuer abstaende sein?"
+
+     Bei zwei ineinanderliegenden Pillen ist der Abstand nur dann RUNDUM
+     gleich, wenn seitlich derselbe Wert steht wie oben und unten:
+
+         (Leiste 72 - Knopf 40) / 2 = 16
+
+     16 liegt ebenfalls im Raster, und 40 + 2 x 16 ergibt genau die 72.
+     Die Leistenhoehe ist damit kein gesetzter Wert mehr, sondern das
+     Ergebnis von Knopfhoehe plus Polster. */
+  /* Zwei getrennte Werte, seit dem 11.8.2026:
+
+       --nav-luft   Rand der Karten zum Fensterrand, 8
+       --nav-oben   Abstand der Leiste von oben,     16
+
+     Kevin nach dem Coachway-Bild: "setz die navigation jetzt noch mal das
+     doppelte runter." Vorher war beides derselbe Wert, und die Leiste haette
+     den Kartenrand mitgezogen. Bei Coachway klebt die Karte oben und die
+     Pille schwebt DARIN, mit mehr Abstand nach oben als zur Seite. Genau
+     dieser Unterschied macht es natuerlicher. */
+  --nav-luft:8px;
+  --nav-oben:16px;
+  /* 11.8.2026, Kevin: "mach den burger 8px oben unten rechts 8px abstand,
+     72px - 16px, nav kleiner dafuer proportionen besser."
+
+     Das ist NICHT der Fehler vom Nachmittag zurueck. Damals stand seitlich 8
+     und oben/unten 16, die Leiste war 72 hoch bei 40er Knopf. Ungleich.
+     Jetzt sind alle drei Werte 8, und (56 - 40) / 2 = 8 geht auf. Die Regel
+     bleibt erfuellt, die Leiste wird nur kompakter. */
+  --nav-pad:8px;
+  --nav-el:40px;
+  --r-karte:24px;
+  --schatten-karte:0 1px 2px rgba(18,18,15,.05), 0 24px 60px -30px rgba(14,14,12,.45);      /* dunkle Abschnitte, wie --bg der App im Dunkelmodus */
   --nacht-ink:#FAF8F5;  /* Text darauf — 18,23:1 */
   --clay-num:#B93F00;    /* Akzent als KLEINER Text auf Papier — 4,83:1.
                             #E85002 waere dort nur 3,27:1 (Kevin, 9.8.2026). */
@@ -69,10 +125,22 @@
 body{font-family:-apple-system,BlinkMacSystemFont,"Inter","Helvetica Neue",Arial,sans-serif;
   background:var(--papier); color:var(--tinte); -webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
+/* Ohne eigene Regel zeichnet der Browser seinen blauen Standardring. Der sass
+   am 11.8. sichtbar um den X-Knopf im offenen Menue und passte zu nichts auf
+   der Seite. :focus-visible statt :focus, damit er nur bei Tastaturbedienung
+   erscheint und nicht nach jedem Mausklick. */
+:focus-visible{outline:2px solid var(--clay); outline-offset:3px; border-radius:4px}
+.navcta:focus-visible, .burger:focus-visible{outline-offset:4px; border-radius:999px}
 img{display:block;max-width:100%}
 
 /* ══ KOPF: Band und Leiste in einem fixierten Block ═════════════════════ */
-.kopf{position:fixed; top:0; left:0; right:0; z-index:50}
+/* Luft unter der Leiste, damit die Pille schwebt statt am Rand zu kleben. */
+/* Der Kopf steht nicht mehr am Rand, sondern hat Luft nach oben. Kevin:
+   "die Nav liegt komplett oben an wenn man scrolled." Ursache war top:0.
+
+   Seitlich bleibt er auf 0: die Breite regelt .nav selbst, sonst kaeme der
+   Seitenabstand zweimal und die Leiste waere schmaler als der Inhalt. */
+.kopf{position:fixed; top:var(--nav-oben); left:0; right:0; z-index:50}
 /* 10.8.2026, Kevin: "der Info-Lauf ganz oben startet nicht ganz rechts."
    Ursache war die Breite: die Spur traegt die Meldungen zweimal und wandert
    um ihre halbe Laenge, zusammen rund 1660px. Auf einem 2600px breiten Schirm
@@ -83,90 +151,51 @@ img{display:block;max-width:100%}
    zwei weisse Balken. Ursache war max-width am Band selbst: auf hellem Grund
    sieht man dort den Untergrund, auf der dunklen Startseite fiel es nicht auf.
    Das Band laeuft wieder ueber die volle Breite. Die Luecke rechts, wegen der
-   die Begrenzung ueberhaupt kam, ist anders geloest: die Spur traegt ihren
-   Inhalt jetzt DREIMAL und wandert um ein Drittel. Damit sind immer zwei
-   Kopien im Bild, zusammen rund 3470px, mehr als jeder Bildschirm breit ist. */
-.band{height:var(--band-h); background:var(--tinte); color:#fff; overflow:hidden;
-  display:flex; align-items:center; transition:height .4s var(--ease), opacity .3s var(--ease)}
-.kopf.fest .band{height:0; opacity:0}
-.spur{display:flex; white-space:nowrap; animation:lauf 83s linear infinite}
-.band:hover .spur{animation-play-state:paused}
-.spur span{font-family:var(--mono); font-size:11px; padding:0 32px; opacity:.9}
-@keyframes lauf{to{transform:translateX(-33.3333%)}}
+/* NAVIGATION, 11.8.2026 nach Kevins Vorbild coachway.com.
 
+   Vorher: Leiste ueber die volle Breite, Milchglas mit Unschaerfe, ein
+   Braunton-Verlauf darunter, beim Scrollen von 72 auf 58 geschrumpft. Das war
+   nach weberworkshops.com gebaut und hat vier Anlaeufe gekostet.
+
+   Kevin am 11.8.: "orientiere dich am coachway design das wirkt erwachsener
+   fuer ne app als weber workshops."
+
+   Jetzt: eine solide Pille, die auf der Seite liegt statt darueber zu
+   schweben. Kein Glas, keine Unschaerfe, kein Verlauf, kein Schrumpfen.
+   Ein Zustand statt vier. Das ist auch der Grund, warum es funktioniert:
+   die Weber-Leiste brauchte den Verlauf, weil weisse Schrift ueber wechselndem
+   Untergrund lag. Auf einer eigenen Flaeche stellt sich die Frage nicht. */
 .nav{position:relative; height:var(--nav-h); display:grid;
-  grid-template-columns:1fr auto 1fr; align-items:center; padding:0 var(--rand); color:#fff;
-  transition:height .4s var(--ease), color .4s var(--ease), background .4s var(--ease)}
-/* 10.8.2026, nach Kevins Aufnahmen von weberworkshops.com: der Verlauf ist
-   der eigentliche Trick, nicht das Glas. Er reicht 46px UNTER die Leiste hinaus
-   und laeuft dort aus, deshalb bleibt weisse Schrift auch ueber hellem Grund
-   lesbar, ohne dass ein dunkler Balken entsteht. Vorher wurde er beim Scrollen
-   ausgeblendet, und genau da fehlte er. */
-/* Kevin, 10.8.2026, nach drei Fehlversuchen praezisiert:
-   "der verlauf faengt oben an endet aber bei 0% am ende der topbar er geht
-   nicht weiter!!" Also inset:0, keine Ueberlaenge. Und der Braunton, nicht
-   Schwarz. 10.8.2026 eine Stufe heller: #5C5850 statt #46433D.
+  grid-template-columns:auto 1fr auto; align-items:center; gap:16px;
+  /* Kevin, 11.8.2026: "die Navigation muss exakt max die breite vom inhalt
+     selbst haben sonst ist es wie jetzt inhalt xx und nav xxxxxxx."
 
-   Der Verlauf ist LINEAR und schwach: .36 oben, null am unteren Rand. Damit
-   liegt er bei 1,48:1 ueber den hellen Abschnitten und 2,42:1 ueber dem
-   dunklen Kopfbereich, also unter jeder Norm.
+     Vorher stand hier --max plus zweimal --rand. --rand waechst aber mit dem
+     Fenster (es ist der Aussenabstand, der den Inhalt auf 1280 haelt), also
+     wurde die Leiste auf einem 1920er Bildschirm 1904 breit, der Inhalt 1280.
+     624px Unterschied.
 
-   Das ist eine bewusste Entscheidung, kein Versehen. Kevin, 10.8.2026: "die
-   Lesbarkeit ist hier noch gegeben aber nicht wichtig, wir verstossen hier
-   aktiv dagegen denn wer hovert hat vollen Kontrast." Die Leiste soll im
-   Vorbeiscrollen nicht um Aufmerksamkeit bitten. Wer etwas davon braucht,
-   faehrt hinein, und dann sind es 16,3:1 auf solidem Papier.
+     Jetzt dieselbe Rechnung wie der Inhalt: hoechstens --max, und auf schmalen
+     Fenstern derselbe feste Rand. */
+  width:min(100% - 2 * var(--rand-fix), var(--max)); margin:0 auto;
+  /* Links 16 statt 8: die Marke ist Symbol plus Schrift, keine Flaeche.
+     Buchstaben tragen eigene Seitenlagen, deshalb braucht Text optisch mehr
+     Luft als ein gefuellter Knopf, um gleich weit weg zu WIRKEN. Vorher waren
+     es 24 bei 16er Polster, das Verhaeltnis bleibt. */
+  padding:var(--nav-pad) var(--nav-pad) var(--nav-pad) 16px;
+  background:var(--nav-flaeche); border-radius:999px;
+  box-shadow:inset 0 0 0 1px var(--nav-kante);
+  -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%);
+  color:var(--nacht-ink)}
 
-   Drei staerkere Fassungen wurden verworfen, weil der obere Teil sich als
-   Balken las statt als Verlauf: .72 mit Exponent 2.6, .55 mit 1.8, .45 mit 1.4. Am unteren Rand ist er exakt null, es gibt keine Kante. */
-/* Kevin, 10.8.2026: "weg mit dem Verlauf, der soll erst kommen wenn man
-   scrollt." Geht hier, weil im Ruhezustand der dunkle Kopfbereich darunter
-   liegt: weisse Schrift auf #0E0E0C sind 19,32:1, da braucht es nichts.
-   Auf den Rechtsseiten bleibt er an, dort ist oben Papier. */
-.nav::before{content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
-  opacity:0;
-  background:linear-gradient(180deg,
-    rgba(92,88,80,0.360) 0%,
-    rgba(92,88,80,0.306) 15%,
-    rgba(92,88,80,0.252) 30%,
-    rgba(92,88,80,0.198) 45%,
-    rgba(92,88,80,0.144) 60%,
-    rgba(92,88,80,0.090) 75%,
-    rgba(92,88,80,0.043) 88%,
-    rgba(92,88,80,0.000) 100%);
-  transition:opacity .4s var(--ease)}
-/* Die Linie hat die Farbe des Papiers, nicht weiss: so verschwindet sie auf
-   hellem Grund restlos und steht auf Dunklem klar da. */
-.nav::after{content:""; position:absolute; left:var(--rand); right:var(--rand); bottom:0; height:1px;
-  background:var(--papier);
-  transition:background .4s var(--ease), left .4s var(--ease), right .4s var(--ease)}
-/* Gescrollt kommt das Milchglas, Schrift und Marke bleiben WEISS. Der Verlauf
-   bleibt an, er ist das, was sie lesbar haelt. Keine Trennlinie: der Verlauf
-   endet ohnehin am unteren Rand und traegt die Trennung selbst. */
-.nav.fest::before{opacity:1}
-.nav.fest{height:58px; background:rgba(239,239,237,.56);
-  -webkit-backdrop-filter:blur(10px) saturate(150%); backdrop-filter:blur(10px) saturate(150%)}
-/* Die Trennlinie hat Papierfarbe: auf den dunklen Abschnitten steht sie klar
-   da, auf hellem Grund verschwindet sie restlos. Genau so soll es sein.
-   Sie war kurzzeitig aus, weil der Verlauf damals unter die Leiste hinausragte
-   und zusammen mit der Linie eine Doppelkante ergab. Der Verlauf endet jetzt
-   am unteren Rand, damit ist der Grund weg. Gescrollt laeuft sie ueber die
-   volle Breite, im Ruhezustand ist sie auf den Textrand eingerueckt. */
-.nav.fest::after{left:0; right:0}
+/* Gescrollt aendert sich nichts. Kevin: "sobald ich scrolle soll sie nicht
+   schrumpfen tut sie bei coachway auch nicht." Die Klasse bleibt im HTML,
+   damit das Skript nichts wissen muss, sie traegt nur keine Regel mehr. */
 
-/* Erst beim Hineinfahren zeigt sich die Leiste voll: Glas und Verlauf weg,
-   Flaeche solid in Papierfarbe, Schrift dunkel. Nur wo es einen Zeiger gibt,
-   sonst bliebe der Zustand auf dem Handy nach einer Beruehrung haengen. */
-@media (hover:hover){
-  .nav.fest:hover{color:var(--tinte); background:var(--papier);
-    -webkit-backdrop-filter:none; backdrop-filter:none}
-  .nav.fest:hover::before{opacity:0}
-  .nav.fest:hover::after{background:rgba(18,18,15,.12)}
-}
-.nav.offen{color:var(--tinte); background:var(--papier);
-  -webkit-backdrop-filter:none; backdrop-filter:none}
-.nav.offen::before{opacity:0}
-.nav.offen::after{background:rgba(18,18,15,.9)}
+/* Menue offen: die Leiste bleibt, wie sie ist. Sie schwebt ueber dem dunklen
+   Blatt genau wie ueber dem Hero, weil beide --nacht sind. Ein eigener
+   Zustand waere hier nur eine weitere Stelle, an der etwas auseinanderlaufen
+   kann. Von vier Zustaenden heute Mittag ist damit einer uebrig. */
 
 /* Die Wortmarke als MASKE: so nimmt sie currentColor an und ist ueber dem
    dunklen Kopfbereich hell, gescrollt dunkel. Ein <img> koennte das nicht.
@@ -178,40 +207,66 @@ img{display:block;max-width:100%}
    dadurch zum weissen Klotz. Es liegt aber als sauberes Vektor-SVG vor.
    Also getrennt: Icon als eigenes Bild, behaelt seine Farben. Schriftzug
    weiter als Maske, wechselt beim Scrollen von hell nach dunkel. */
-.marke{grid-column:2; display:flex; align-items:center; gap:9px}
-.marke-ic{width:26px; height:26px; flex:none;
+/* Marke links wie bei Coachway, nicht mittig wie bei Weber. Das Raster ist
+   jetzt auto|1fr|auto: Marke, dann der dehnbare Teil, dann die Aktionen. */
+.marke{grid-column:1; display:flex; align-items:center; gap:9px; flex:none}
+.marke-ic{width:32px; height:32px; flex:none;
   transition:width .4s var(--ease), height .4s var(--ease)}
 .marke-tx{display:block; width:89px; height:24px; background:currentColor;
   -webkit-mask:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUyIiBoZWlnaHQ9IjEyMiIgdmlld0JveD0iMTk5IDI4IDQ1MiAxMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPiA8cGF0aCBkPSJNMjMzLjU2MiAxNDUuMTI1QzIyOC4yMjkgMTQ1LjEyNSAyMjMuNTYyIDE0NC4zNTQgMjE5LjU2MiAxNDIuODEyQzIxNS42MDQgMTQxLjMxMiAyMTIuMzk2IDEzOS4yNSAyMDkuOTM4IDEzNi42MjVDMjA3LjUyMSAxMzQuMDQyIDIwNS45NTggMTMxLjE0NiAyMDUuMjUgMTI3LjkzOEwyMDUuMTI1IDEyNy4zNzVIMjE2LjA2MkwyMTYuMzEyIDEyNy45MzhDMjE3LjM1NCAxMzAuMjcxIDIxOS4zNTQgMTMyLjEwNCAyMjIuMzEyIDEzMy40MzhDMjI1LjMxMiAxMzQuODEyIDIyOS4wMjEgMTM1LjUgMjMzLjQzOCAxMzUuNUMyMzkuMTQ2IDEzNS41IDI0My41NjIgMTM0LjAyMSAyNDYuNjg4IDEzMS4wNjJDMjQ5LjgxMiAxMjguMTQ2IDI1MS4zNzUgMTI0LjE2NyAyNTEuMzc1IDExOS4xMjVWMTEwLjgxMkgyNTEuMTI1QzI0OS44MzMgMTEzLjIyOSAyNDguMTY3IDExNS4zMTIgMjQ2LjEyNSAxMTcuMDYyQzI0NC4wODMgMTE4LjgxMiAyNDEuNzI5IDEyMC4xODggMjM5LjA2MiAxMjEuMTg4QzIzNi40MzggMTIyLjE0NiAyMzMuNTYyIDEyMi42MjUgMjMwLjQzOCAxMjIuNjI1QzIyNC45NzkgMTIyLjYyNSAyMjAuMTY3IDEyMS4yNSAyMTYgMTE4LjVDMjExLjg3NSAxMTUuNzA4IDIwOC42NDYgMTExLjgxMiAyMDYuMzEyIDEwNi44MTJDMjA0LjAyMSAxMDEuNzcxIDIwMi44NzUgOTUuODc1IDIwMi44NzUgODkuMTI1Vjg5LjA2MjVDMjAyLjg3NSA4Mi4zMTI1IDIwNC4wNDIgNzYuNDU4MyAyMDYuMzc1IDcxLjVDMjA4Ljc1IDY2LjUgMjEyLjAyMSA2Mi42MjUgMjE2LjE4OCA1OS44NzVDMjIwLjM1NCA1Ny4xMjUgMjI1LjE4OCA1NS43NSAyMzAuNjg4IDU1Ljc1QzIzMy43NzEgNTUuNzUgMjM2LjYwNCA1Ni4yNzA4IDIzOS4xODggNTcuMzEyNUMyNDEuNzcxIDU4LjM1NDIgMjQ0LjA2MiA1OS43OTE3IDI0Ni4wNjIgNjEuNjI1QzI0OC4xMDQgNjMuNDU4MyAyNDkuNzkyIDY1LjU4MzMgMjUxLjEyNSA2OEgyNTEuMzc1VjU3SDI2Mi4yNVYxMjAuMTg4QzI2Mi4yNSAxMjUuMjI5IDI2MS4wODMgMTI5LjYwNCAyNTguNzUgMTMzLjMxMkMyNTYuNDE3IDEzNy4wNjIgMjUzLjEwNCAxMzkuOTU4IDI0OC44MTIgMTQyQzI0NC41MjEgMTQ0LjA4MyAyMzkuNDM4IDE0NS4xMjUgMjMzLjU2MiAxNDUuMTI1Wk0yMzIuODEyIDExM0MyMzYuNTIxIDExMyAyMzkuNzUgMTEyLjAyMSAyNDIuNSAxMTAuMDYyQzI0NS4yOTIgMTA4LjA2MiAyNDcuNDU4IDEwNS4yNzEgMjQ5IDEwMS42ODhDMjUwLjU4MyA5OC4xMDQyIDI1MS4zNzUgOTMuOTE2NyAyNTEuMzc1IDg5LjEyNVY4OS4wNjI1QzI1MS4zNzUgODQuMjcwOCAyNTAuNTgzIDgwLjEwNDIgMjQ5IDc2LjU2MjVDMjQ3LjQ1OCA3My4wMjA4IDI0NS4yOTIgNzAuMjcwOCAyNDIuNSA2OC4zMTI1QzIzOS43MDggNjYuMzU0MiAyMzYuNDc5IDY1LjM3NSAyMzIuODEyIDY1LjM3NUMyMjguOTc5IDY1LjM3NSAyMjUuNjQ2IDY2LjM1NDIgMjIyLjgxMiA2OC4zMTI1QzIxOS45NzkgNzAuMjI5MiAyMTcuNzkyIDcyLjk1ODMgMjE2LjI1IDc2LjVDMjE0Ljc1IDgwLjA0MTcgMjE0IDg0LjIyOTIgMjE0IDg5LjA2MjVWODkuMTI1QzIxNCA5NC4wNDE3IDIxNC43NSA5OC4yOTE3IDIxNi4yNSAxMDEuODc1QzIxNy43OTIgMTA1LjQxNyAyMTkuOTc5IDEwOC4xNjcgMjIyLjgxMiAxMTAuMTI1QzIyNS42NDYgMTEyLjA0MiAyMjguOTc5IDExMyAyMzIuODEyIDExM1pNMjgyLjU2MiAxNDMuODc1QzI4MS41MjEgMTQzLjg3NSAyODAuNDU4IDE0My44MTIgMjc5LjM3NSAxNDMuNjg4QzI3OC4zMzMgMTQzLjYwNCAyNzcuNDU4IDE0My41IDI3Ni43NSAxNDMuMzc1VjEzNC41QzI3Ny4yMDggMTM0LjU4MyAyNzcuNzI5IDEzNC42NjcgMjc4LjMxMiAxMzQuNzVDMjc4LjkzOCAxMzQuODMzIDI3OS41ODMgMTM0Ljg3NSAyODAuMjUgMTM0Ljg3NUMyODMuNzA4IDEzNC44NzUgMjg2LjQ1OCAxMzQuMjcxIDI4OC41IDEzMy4wNjJDMjkwLjU4MyAxMzEuODU0IDI5Mi4yNzEgMTI5LjQxNyAyOTMuNTYyIDEyNS43NUwyOTQuODc1IDEyMi4wNjJMMjcwLjc1IDU3SDI4Mi4zNzVMMzAxLjEyNSAxMTMuNjI1TDI5OC44MTIgMTExLjEyNUgzMDIuMDYyTDI5OS43NSAxMTMuNjI1TDMxOC41NjIgNTdIMzMwTDMwNC42MjUgMTI2LjA2MkMzMDMuMDgzIDEzMC4xODggMzAxLjM1NCAxMzMuNTYyIDI5OS40MzggMTM2LjE4OEMyOTcuNTIxIDEzOC44MTIgMjk1LjIwOCAxNDAuNzUgMjkyLjUgMTQyQzI4OS43OTIgMTQzLjI1IDI4Ni40NzkgMTQzLjg3NSAyODIuNTYyIDE0My44NzVaTTMzOC41NjIgMTIyVjU3SDM0OS40MzhWNjYuNUgzNDkuNjg4QzM1MS4xNDYgNjMuMjkxNyAzNTMuNDM4IDYwLjcwODMgMzU2LjU2MiA1OC43NUMzNTkuNjg4IDU2Ljc1IDM2My4zMzMgNTUuNzUgMzY3LjUgNTUuNzVDMzcwLjQ1OCA1NS43NSAzNzMuMTI1IDU2LjI1IDM3NS41IDU3LjI1QzM3Ny45MTcgNTguMjA4MyAzODAgNTkuNjI1IDM4MS43NSA2MS41QzM4My41IDYzLjMzMzMgMzg0LjgzMyA2NS41ODMzIDM4NS43NSA2OC4yNUgzODZDMzg3LjIwOCA2NS42MjUgMzg4LjgxMiA2My4zOTU4IDM5MC44MTIgNjEuNTYyNUMzOTIuODU0IDU5LjY4NzUgMzk1LjE4OCA1OC4yNSAzOTcuODEyIDU3LjI1QzQwMC40NzkgNTYuMjUgNDAzLjMzMyA1NS43NSA0MDYuMzc1IDU1Ljc1QzQxMC42NjcgNTUuNzUgNDE0LjM5NiA1Ni42NDU4IDQxNy41NjIgNTguNDM3NUM0MjAuNzI5IDYwLjE4NzUgNDIzLjE4OCA2Mi42NjY3IDQyNC45MzggNjUuODc1QzQyNi42ODggNjkuMDQxNyA0MjcuNTYyIDcyLjc5MTcgNDI3LjU2MiA3Ny4xMjVWMTIySDQxNi42ODhWNzkuNjI1QzQxNi42ODggNzYuNjI1IDQxNi4xNDYgNzQuMDYyNSA0MTUuMDYyIDcxLjkzNzVDNDE0LjAyMSA2OS44MTI1IDQxMi41IDY4LjE4NzUgNDEwLjUgNjcuMDYyNUM0MDguNSA2NS45Mzc1IDQwNi4wNjIgNjUuMzc1IDQwMy4xODggNjUuMzc1QzQwMC4zMTIgNjUuMzc1IDM5Ny43NzEgNjYuMDQxNyAzOTUuNTYyIDY3LjM3NUMzOTMuMzU0IDY4LjY2NjcgMzkxLjYyNSA3MC40NzkyIDM5MC4zNzUgNzIuODEyNUMzODkuMTI1IDc1LjEwNDIgMzg4LjUgNzcuNzI5MiAzODguNSA4MC42ODc1VjEyMkgzNzcuNjI1Vjc4LjQzNzVDMzc3LjYyNSA3NS44MTI1IDM3Ny4wNjIgNzMuNTIwOCAzNzUuOTM4IDcxLjU2MjVDMzc0Ljg1NCA2OS42MDQyIDM3My4zMTIgNjguMDgzMyAzNzEuMzEyIDY3QzM2OS4zNTQgNjUuOTE2NyAzNjcuMDIxIDY1LjM3NSAzNjQuMzEyIDY1LjM3NUMzNjEuNDM4IDY1LjM3NSAzNTguODc1IDY2LjA4MzMgMzU2LjYyNSA2Ny41QzM1NC40MTcgNjguODc1IDM1Mi42NjcgNzAuNzUgMzUxLjM3NSA3My4xMjVDMzUwLjA4MyA3NS41IDM0OS40MzggNzguMjA4MyAzNDkuNDM4IDgxLjI1VjEyMkgzMzguNTYyWk00NDEuODc1IDEyMlYzMS44MTI1SDQ2MC43NVYxMDYuNDM4SDUwMC4xODhWMTIySDQ0MS44NzVaTTUzOS42ODggMTIzLjM3NUM1MzIuODk2IDEyMy4zNzUgNTI3LjAyMSAxMjEuOTc5IDUyMi4wNjIgMTE5LjE4OEM1MTcuMTA0IDExNi4zOTYgNTEzLjI3MSAxMTIuMzk2IDUxMC41NjIgMTA3LjE4OEM1MDcuODU0IDEwMS45NzkgNTA2LjUgOTUuNzUgNTA2LjUgODguNVY4OC4zNzVDNTA2LjUgODEuMTY2NyA1MDcuODc1IDc0Ljk3OTIgNTEwLjYyNSA2OS44MTI1QzUxMy4zNzUgNjQuNjA0MiA1MTcuMjI5IDYwLjYwNDIgNTIyLjE4OCA1Ny44MTI1QzUyNy4xNDYgNTUuMDIwOCA1MzIuOTU4IDUzLjYyNSA1MzkuNjI1IDUzLjYyNUM1NDYuMzMzIDUzLjYyNSA1NTIuMTY3IDU1LjAyMDggNTU3LjEyNSA1Ny44MTI1QzU2Mi4xMjUgNjAuNTYyNSA1NjYgNjQuNTQxNyA1NjguNzUgNjkuNzVDNTcxLjUgNzQuOTE2NyA1NzIuODc1IDgxLjEyNSA1NzIuODc1IDg4LjM3NVY4OC41QzU3Mi44NzUgOTUuNzkxNyA1NzEuNSAxMDIuMDQyIDU2OC43NSAxMDcuMjVDNTY2LjA0MiAxMTIuNDU4IDU2Mi4yMDggMTE2LjQ1OCA1NTcuMjUgMTE5LjI1QzU1Mi4yOTIgMTIyIDU0Ni40MzggMTIzLjM3NSA1MzkuNjg4IDEyMy4zNzVaTTUzOS43NSAxMDkuMDYyQzU0Mi43MDggMTA5LjA2MiA1NDUuMjcxIDEwOC4yNzEgNTQ3LjQzOCAxMDYuNjg4QzU0OS42NDYgMTA1LjA2MiA1NTEuMzMzIDEwMi43MjkgNTUyLjUgOTkuNjg3NUM1NTMuNzA4IDk2LjYwNDIgNTU0LjMxMiA5Mi44NzUgNTU0LjMxMiA4OC41Vjg4LjM3NUM1NTQuMzEyIDg0LjA0MTcgNTUzLjcwOCA4MC4zNTQyIDU1Mi41IDc3LjMxMjVDNTUxLjI5MiA3NC4yNzA4IDU0OS41ODMgNzEuOTU4MyA1NDcuMzc1IDcwLjM3NUM1NDUuMTY3IDY4Ljc1IDU0Mi41ODMgNjcuOTM3NSA1MzkuNjI1IDY3LjkzNzVDNTM2LjcwOCA2Ny45Mzc1IDUzNC4xNDYgNjguNzUgNTMxLjkzOCA3MC4zNzVDNTI5Ljc3MSA3MS45NTgzIDUyOC4wODMgNzQuMjcwOCA1MjYuODc1IDc3LjMxMjVDNTI1LjY2NyA4MC4zNTQyIDUyNS4wNjIgODQuMDQxNyA1MjUuMDYyIDg4LjM3NVY4OC41QzUyNS4wNjIgOTIuODc1IDUyNS42NDYgOTYuNjA0MiA1MjYuODEyIDk5LjY4NzVDNTI4LjAyMSAxMDIuNzI5IDUyOS43MjkgMTA1LjA2MiA1MzEuOTM4IDEwNi42ODhDNTM0LjE0NiAxMDguMjcxIDUzNi43NSAxMDkuMDYyIDUzOS43NSAxMDkuMDYyWk02MTMuNjI1IDE0NS4yNUM2MDcuNSAxNDUuMjUgNjAyLjE0NiAxNDQuMzk2IDU5Ny41NjIgMTQyLjY4OEM1OTMuMDIxIDE0MS4wMjEgNTg5LjM5NiAxMzguNzUgNTg2LjY4OCAxMzUuODc1QzU4NC4wMjEgMTMzIDU4Mi4zOTYgMTI5Ljc3MSA1ODEuODEyIDEyNi4xODhMNTgxLjc1IDEyNS42MjVINTk5LjVMNTk5LjY4OCAxMjYuMDYyQzYwMC40MzggMTI3LjY4OCA2MDIgMTI5LjEyNSA2MDQuMzc1IDEzMC4zNzVDNjA2Ljc1IDEzMS42MjUgNjA5LjgzMyAxMzIuMjUgNjEzLjYyNSAxMzIuMjVDNjE4LjMzMyAxMzIuMjUgNjIxLjkxNyAxMzEuMTI1IDYyNC4zNzUgMTI4Ljg3NUM2MjYuODMzIDEyNi42MjUgNjI4LjA2MiAxMjMuNjI1IDYyOC4wNjIgMTE5Ljg3NVYxMDkuNjI1SDYyNy42ODhDNjI2LjUyMSAxMTEuOTU4IDYyNC45MzggMTEzLjk3OSA2MjIuOTM4IDExNS42ODhDNjIwLjkzOCAxMTcuMzk2IDYxOC41ODMgMTE4LjcyOSA2MTUuODc1IDExOS42ODhDNjEzLjIwOCAxMjAuNjA0IDYxMC4yNSAxMjEuMDYyIDYwNyAxMjEuMDYyQzYwMS40MTcgMTIxLjA2MiA1OTYuNTgzIDExOS43MjkgNTkyLjUgMTE3LjA2MkM1ODguNDU4IDExNC4zOTYgNTg1LjMzMyAxMTAuNTgzIDU4My4xMjUgMTA1LjYyNUM1ODAuOTU4IDEwMC42MjUgNTc5Ljg3NSA5NC42NjY3IDU3OS44NzUgODcuNzVWODcuNjg3NUM1NzkuODc1IDgwLjU2MjUgNTgwLjk3OSA3NC40NTgzIDU4My4xODggNjkuMzc1QzU4NS40MzggNjQuMjkxNyA1ODguNjA0IDYwLjM5NTggNTkyLjY4OCA1Ny42ODc1QzU5Ni43NzEgNTQuOTc5MiA2MDEuNjQ2IDUzLjYyNSA2MDcuMzEyIDUzLjYyNUM2MTAuNDc5IDUzLjYyNSA2MTMuMzc1IDU0LjE0NTggNjE2IDU1LjE4NzVDNjE4LjYyNSA1Ni4yMjkyIDYyMC45MTcgNTcuNzA4MyA2MjIuODc1IDU5LjYyNUM2MjQuODc1IDYxLjU0MTcgNjI2LjQ3OSA2My44MTI1IDYyNy42ODggNjYuNDM3NUg2MjguMDYyVjU1SDY0Ni4zMTJWMTIwLjEyNUM2NDYuMzEyIDEyNS4wODMgNjQ0Ljk3OSAxMjkuNDM4IDY0Mi4zMTIgMTMzLjE4OEM2MzkuNjg4IDEzNi45NzkgNjM1LjkxNyAxMzkuOTM4IDYzMSAxNDIuMDYyQzYyNi4xMjUgMTQ0LjE4OCA2MjAuMzMzIDE0NS4yNSA2MTMuNjI1IDE0NS4yNVpNNjEzLjMxMiAxMDcuNjg4QzYxNi4zMTIgMTA3LjY4OCA2MTguOTE3IDEwNi44OTYgNjIxLjEyNSAxMDUuMzEyQzYyMy4zMzMgMTAzLjcyOSA2MjUuMDQyIDEwMS40NzkgNjI2LjI1IDk4LjU2MjVDNjI3LjUgOTUuNjQ1OCA2MjguMTI1IDkyLjE4NzUgNjI4LjEyNSA4OC4xODc1Vjg4LjEyNUM2MjguMTI1IDg0LjEyNSA2MjcuNSA4MC42ODc1IDYyNi4yNSA3Ny44MTI1QzYyNS4wNDIgNzQuODk1OCA2MjMuMzEyIDcyLjY2NjcgNjIxLjA2MiA3MS4xMjVDNjE4Ljg1NCA2OS41NDE3IDYxNi4yNzEgNjguNzUgNjEzLjMxMiA2OC43NUM2MTAuMzEyIDY4Ljc1IDYwNy42ODggNjkuNTQxNyA2MDUuNDM4IDcxLjEyNUM2MDMuMTg4IDcyLjY2NjcgNjAxLjQ1OCA3NC44NzUgNjAwLjI1IDc3Ljc1QzU5OS4wNDIgODAuNjI1IDU5OC40MzggODQuMDgzMyA1OTguNDM4IDg4LjEyNVY4OC4xODc1QzU5OC40MzggOTIuMTg3NSA1OTkuMDQyIDk1LjY0NTggNjAwLjI1IDk4LjU2MjVDNjAxLjQ1OCAxMDEuNDc5IDYwMy4xODggMTAzLjcyOSA2MDUuNDM4IDEwNS4zMTJDNjA3LjY4OCAxMDYuODk2IDYxMC4zMTIgMTA3LjY4OCA2MTMuMzEyIDEwNy42ODhaIiBmaWxsPSIjMTIxMjBGIi8+ICAgPC9zdmc+') no-repeat center/contain;
   mask:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUyIiBoZWlnaHQ9IjEyMiIgdmlld0JveD0iMTk5IDI4IDQ1MiAxMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPiA8cGF0aCBkPSJNMjMzLjU2MiAxNDUuMTI1QzIyOC4yMjkgMTQ1LjEyNSAyMjMuNTYyIDE0NC4zNTQgMjE5LjU2MiAxNDIuODEyQzIxNS42MDQgMTQxLjMxMiAyMTIuMzk2IDEzOS4yNSAyMDkuOTM4IDEzNi42MjVDMjA3LjUyMSAxMzQuMDQyIDIwNS45NTggMTMxLjE0NiAyMDUuMjUgMTI3LjkzOEwyMDUuMTI1IDEyNy4zNzVIMjE2LjA2MkwyMTYuMzEyIDEyNy45MzhDMjE3LjM1NCAxMzAuMjcxIDIxOS4zNTQgMTMyLjEwNCAyMjIuMzEyIDEzMy40MzhDMjI1LjMxMiAxMzQuODEyIDIyOS4wMjEgMTM1LjUgMjMzLjQzOCAxMzUuNUMyMzkuMTQ2IDEzNS41IDI0My41NjIgMTM0LjAyMSAyNDYuNjg4IDEzMS4wNjJDMjQ5LjgxMiAxMjguMTQ2IDI1MS4zNzUgMTI0LjE2NyAyNTEuMzc1IDExOS4xMjVWMTEwLjgxMkgyNTEuMTI1QzI0OS44MzMgMTEzLjIyOSAyNDguMTY3IDExNS4zMTIgMjQ2LjEyNSAxMTcuMDYyQzI0NC4wODMgMTE4LjgxMiAyNDEuNzI5IDEyMC4xODggMjM5LjA2MiAxMjEuMTg4QzIzNi40MzggMTIyLjE0NiAyMzMuNTYyIDEyMi42MjUgMjMwLjQzOCAxMjIuNjI1QzIyNC45NzkgMTIyLjYyNSAyMjAuMTY3IDEyMS4yNSAyMTYgMTE4LjVDMjExLjg3NSAxMTUuNzA4IDIwOC42NDYgMTExLjgxMiAyMDYuMzEyIDEwNi44MTJDMjA0LjAyMSAxMDEuNzcxIDIwMi44NzUgOTUuODc1IDIwMi44NzUgODkuMTI1Vjg5LjA2MjVDMjAyLjg3NSA4Mi4zMTI1IDIwNC4wNDIgNzYuNDU4MyAyMDYuMzc1IDcxLjVDMjA4Ljc1IDY2LjUgMjEyLjAyMSA2Mi42MjUgMjE2LjE4OCA1OS44NzVDMjIwLjM1NCA1Ny4xMjUgMjI1LjE4OCA1NS43NSAyMzAuNjg4IDU1Ljc1QzIzMy43NzEgNTUuNzUgMjM2LjYwNCA1Ni4yNzA4IDIzOS4xODggNTcuMzEyNUMyNDEuNzcxIDU4LjM1NDIgMjQ0LjA2MiA1OS43OTE3IDI0Ni4wNjIgNjEuNjI1QzI0OC4xMDQgNjMuNDU4MyAyNDkuNzkyIDY1LjU4MzMgMjUxLjEyNSA2OEgyNTEuMzc1VjU3SDI2Mi4yNVYxMjAuMTg4QzI2Mi4yNSAxMjUuMjI5IDI2MS4wODMgMTI5LjYwNCAyNTguNzUgMTMzLjMxMkMyNTYuNDE3IDEzNy4wNjIgMjUzLjEwNCAxMzkuOTU4IDI0OC44MTIgMTQyQzI0NC41MjEgMTQ0LjA4MyAyMzkuNDM4IDE0NS4xMjUgMjMzLjU2MiAxNDUuMTI1Wk0yMzIuODEyIDExM0MyMzYuNTIxIDExMyAyMzkuNzUgMTEyLjAyMSAyNDIuNSAxMTAuMDYyQzI0NS4yOTIgMTA4LjA2MiAyNDcuNDU4IDEwNS4yNzEgMjQ5IDEwMS42ODhDMjUwLjU4MyA5OC4xMDQyIDI1MS4zNzUgOTMuOTE2NyAyNTEuMzc1IDg5LjEyNVY4OS4wNjI1QzI1MS4zNzUgODQuMjcwOCAyNTAuNTgzIDgwLjEwNDIgMjQ5IDc2LjU2MjVDMjQ3LjQ1OCA3My4wMjA4IDI0NS4yOTIgNzAuMjcwOCAyNDIuNSA2OC4zMTI1QzIzOS43MDggNjYuMzU0MiAyMzYuNDc5IDY1LjM3NSAyMzIuODEyIDY1LjM3NUMyMjguOTc5IDY1LjM3NSAyMjUuNjQ2IDY2LjM1NDIgMjIyLjgxMiA2OC4zMTI1QzIxOS45NzkgNzAuMjI5MiAyMTcuNzkyIDcyLjk1ODMgMjE2LjI1IDc2LjVDMjE0Ljc1IDgwLjA0MTcgMjE0IDg0LjIyOTIgMjE0IDg5LjA2MjVWODkuMTI1QzIxNCA5NC4wNDE3IDIxNC43NSA5OC4yOTE3IDIxNi4yNSAxMDEuODc1QzIxNy43OTIgMTA1LjQxNyAyMTkuOTc5IDEwOC4xNjcgMjIyLjgxMiAxMTAuMTI1QzIyNS42NDYgMTEyLjA0MiAyMjguOTc5IDExMyAyMzIuODEyIDExM1pNMjgyLjU2MiAxNDMuODc1QzI4MS41MjEgMTQzLjg3NSAyODAuNDU4IDE0My44MTIgMjc5LjM3NSAxNDMuNjg4QzI3OC4zMzMgMTQzLjYwNCAyNzcuNDU4IDE0My41IDI3Ni43NSAxNDMuMzc1VjEzNC41QzI3Ny4yMDggMTM0LjU4MyAyNzcuNzI5IDEzNC42NjcgMjc4LjMxMiAxMzQuNzVDMjc4LjkzOCAxMzQuODMzIDI3OS41ODMgMTM0Ljg3NSAyODAuMjUgMTM0Ljg3NUMyODMuNzA4IDEzNC44NzUgMjg2LjQ1OCAxMzQuMjcxIDI4OC41IDEzMy4wNjJDMjkwLjU4MyAxMzEuODU0IDI5Mi4yNzEgMTI5LjQxNyAyOTMuNTYyIDEyNS43NUwyOTQuODc1IDEyMi4wNjJMMjcwLjc1IDU3SDI4Mi4zNzVMMzAxLjEyNSAxMTMuNjI1TDI5OC44MTIgMTExLjEyNUgzMDIuMDYyTDI5OS43NSAxMTMuNjI1TDMxOC41NjIgNTdIMzMwTDMwNC42MjUgMTI2LjA2MkMzMDMuMDgzIDEzMC4xODggMzAxLjM1NCAxMzMuNTYyIDI5OS40MzggMTM2LjE4OEMyOTcuNTIxIDEzOC44MTIgMjk1LjIwOCAxNDAuNzUgMjkyLjUgMTQyQzI4OS43OTIgMTQzLjI1IDI4Ni40NzkgMTQzLjg3NSAyODIuNTYyIDE0My44NzVaTTMzOC41NjIgMTIyVjU3SDM0OS40MzhWNjYuNUgzNDkuNjg4QzM1MS4xNDYgNjMuMjkxNyAzNTMuNDM4IDYwLjcwODMgMzU2LjU2MiA1OC43NUMzNTkuNjg4IDU2Ljc1IDM2My4zMzMgNTUuNzUgMzY3LjUgNTUuNzVDMzcwLjQ1OCA1NS43NSAzNzMuMTI1IDU2LjI1IDM3NS41IDU3LjI1QzM3Ny45MTcgNTguMjA4MyAzODAgNTkuNjI1IDM4MS43NSA2MS41QzM4My41IDYzLjMzMzMgMzg0LjgzMyA2NS41ODMzIDM4NS43NSA2OC4yNUgzODZDMzg3LjIwOCA2NS42MjUgMzg4LjgxMiA2My4zOTU4IDM5MC44MTIgNjEuNTYyNUMzOTIuODU0IDU5LjY4NzUgMzk1LjE4OCA1OC4yNSAzOTcuODEyIDU3LjI1QzQwMC40NzkgNTYuMjUgNDAzLjMzMyA1NS43NSA0MDYuMzc1IDU1Ljc1QzQxMC42NjcgNTUuNzUgNDE0LjM5NiA1Ni42NDU4IDQxNy41NjIgNTguNDM3NUM0MjAuNzI5IDYwLjE4NzUgNDIzLjE4OCA2Mi42NjY3IDQyNC45MzggNjUuODc1QzQyNi42ODggNjkuMDQxNyA0MjcuNTYyIDcyLjc5MTcgNDI3LjU2MiA3Ny4xMjVWMTIySDQxNi42ODhWNzkuNjI1QzQxNi42ODggNzYuNjI1IDQxNi4xNDYgNzQuMDYyNSA0MTUuMDYyIDcxLjkzNzVDNDE0LjAyMSA2OS44MTI1IDQxMi41IDY4LjE4NzUgNDEwLjUgNjcuMDYyNUM0MDguNSA2NS45Mzc1IDQwNi4wNjIgNjUuMzc1IDQwMy4xODggNjUuMzc1QzQwMC4zMTIgNjUuMzc1IDM5Ny43NzEgNjYuMDQxNyAzOTUuNTYyIDY3LjM3NUMzOTMuMzU0IDY4LjY2NjcgMzkxLjYyNSA3MC40NzkyIDM5MC4zNzUgNzIuODEyNUMzODkuMTI1IDc1LjEwNDIgMzg4LjUgNzcuNzI5MiAzODguNSA4MC42ODc1VjEyMkgzNzcuNjI1Vjc4LjQzNzVDMzc3LjYyNSA3NS44MTI1IDM3Ny4wNjIgNzMuNTIwOCAzNzUuOTM4IDcxLjU2MjVDMzc0Ljg1NCA2OS42MDQyIDM3My4zMTIgNjguMDgzMyAzNzEuMzEyIDY3QzM2OS4zNTQgNjUuOTE2NyAzNjcuMDIxIDY1LjM3NSAzNjQuMzEyIDY1LjM3NUMzNjEuNDM4IDY1LjM3NSAzNTguODc1IDY2LjA4MzMgMzU2LjYyNSA2Ny41QzM1NC40MTcgNjguODc1IDM1Mi42NjcgNzAuNzUgMzUxLjM3NSA3My4xMjVDMzUwLjA4MyA3NS41IDM0OS40MzggNzguMjA4MyAzNDkuNDM4IDgxLjI1VjEyMkgzMzguNTYyWk00NDEuODc1IDEyMlYzMS44MTI1SDQ2MC43NVYxMDYuNDM4SDUwMC4xODhWMTIySDQ0MS44NzVaTTUzOS42ODggMTIzLjM3NUM1MzIuODk2IDEyMy4zNzUgNTI3LjAyMSAxMjEuOTc5IDUyMi4wNjIgMTE5LjE4OEM1MTcuMTA0IDExNi4zOTYgNTEzLjI3MSAxMTIuMzk2IDUxMC41NjIgMTA3LjE4OEM1MDcuODU0IDEwMS45NzkgNTA2LjUgOTUuNzUgNTA2LjUgODguNVY4OC4zNzVDNTA2LjUgODEuMTY2NyA1MDcuODc1IDc0Ljk3OTIgNTEwLjYyNSA2OS44MTI1QzUxMy4zNzUgNjQuNjA0MiA1MTcuMjI5IDYwLjYwNDIgNTIyLjE4OCA1Ny44MTI1QzUyNy4xNDYgNTUuMDIwOCA1MzIuOTU4IDUzLjYyNSA1MzkuNjI1IDUzLjYyNUM1NDYuMzMzIDUzLjYyNSA1NTIuMTY3IDU1LjAyMDggNTU3LjEyNSA1Ny44MTI1QzU2Mi4xMjUgNjAuNTYyNSA1NjYgNjQuNTQxNyA1NjguNzUgNjkuNzVDNTcxLjUgNzQuOTE2NyA1NzIuODc1IDgxLjEyNSA1NzIuODc1IDg4LjM3NVY4OC41QzU3Mi44NzUgOTUuNzkxNyA1NzEuNSAxMDIuMDQyIDU2OC43NSAxMDcuMjVDNTY2LjA0MiAxMTIuNDU4IDU2Mi4yMDggMTE2LjQ1OCA1NTcuMjUgMTE5LjI1QzU1Mi4yOTIgMTIyIDU0Ni40MzggMTIzLjM3NSA1MzkuNjg4IDEyMy4zNzVaTTUzOS43NSAxMDkuMDYyQzU0Mi43MDggMTA5LjA2MiA1NDUuMjcxIDEwOC4yNzEgNTQ3LjQzOCAxMDYuNjg4QzU0OS42NDYgMTA1LjA2MiA1NTEuMzMzIDEwMi43MjkgNTUyLjUgOTkuNjg3NUM1NTMuNzA4IDk2LjYwNDIgNTU0LjMxMiA5Mi44NzUgNTU0LjMxMiA4OC41Vjg4LjM3NUM1NTQuMzEyIDg0LjA0MTcgNTUzLjcwOCA4MC4zNTQyIDU1Mi41IDc3LjMxMjVDNTUxLjI5MiA3NC4yNzA4IDU0OS41ODMgNzEuOTU4MyA1NDcuMzc1IDcwLjM3NUM1NDUuMTY3IDY4Ljc1IDU0Mi41ODMgNjcuOTM3NSA1MzkuNjI1IDY3LjkzNzVDNTM2LjcwOCA2Ny45Mzc1IDUzNC4xNDYgNjguNzUgNTMxLjkzOCA3MC4zNzVDNTI5Ljc3MSA3MS45NTgzIDUyOC4wODMgNzQuMjcwOCA1MjYuODc1IDc3LjMxMjVDNTI1LjY2NyA4MC4zNTQyIDUyNS4wNjIgODQuMDQxNyA1MjUuMDYyIDg4LjM3NVY4OC41QzUyNS4wNjIgOTIuODc1IDUyNS42NDYgOTYuNjA0MiA1MjYuODEyIDk5LjY4NzVDNTI4LjAyMSAxMDIuNzI5IDUyOS43MjkgMTA1LjA2MiA1MzEuOTM4IDEwNi42ODhDNTM0LjE0NiAxMDguMjcxIDUzNi43NSAxMDkuMDYyIDUzOS43NSAxMDkuMDYyWk02MTMuNjI1IDE0NS4yNUM2MDcuNSAxNDUuMjUgNjAyLjE0NiAxNDQuMzk2IDU5Ny41NjIgMTQyLjY4OEM1OTMuMDIxIDE0MS4wMjEgNTg5LjM5NiAxMzguNzUgNTg2LjY4OCAxMzUuODc1QzU4NC4wMjEgMTMzIDU4Mi4zOTYgMTI5Ljc3MSA1ODEuODEyIDEyNi4xODhMNTgxLjc1IDEyNS42MjVINTk5LjVMNTk5LjY4OCAxMjYuMDYyQzYwMC40MzggMTI3LjY4OCA2MDIgMTI5LjEyNSA2MDQuMzc1IDEzMC4zNzVDNjA2Ljc1IDEzMS42MjUgNjA5LjgzMyAxMzIuMjUgNjEzLjYyNSAxMzIuMjVDNjE4LjMzMyAxMzIuMjUgNjIxLjkxNyAxMzEuMTI1IDYyNC4zNzUgMTI4Ljg3NUM2MjYuODMzIDEyNi42MjUgNjI4LjA2MiAxMjMuNjI1IDYyOC4wNjIgMTE5Ljg3NVYxMDkuNjI1SDYyNy42ODhDNjI2LjUyMSAxMTEuOTU4IDYyNC45MzggMTEzLjk3OSA2MjIuOTM4IDExNS42ODhDNjIwLjkzOCAxMTcuMzk2IDYxOC41ODMgMTE4LjcyOSA2MTUuODc1IDExOS42ODhDNjEzLjIwOCAxMjAuNjA0IDYxMC4yNSAxMjEuMDYyIDYwNyAxMjEuMDYyQzYwMS40MTcgMTIxLjA2MiA1OTYuNTgzIDExOS43MjkgNTkyLjUgMTE3LjA2MkM1ODguNDU4IDExNC4zOTYgNTg1LjMzMyAxMTAuNTgzIDU4My4xMjUgMTA1LjYyNUM1ODAuOTU4IDEwMC42MjUgNTc5Ljg3NSA5NC42NjY3IDU3OS44NzUgODcuNzVWODcuNjg3NUM1NzkuODc1IDgwLjU2MjUgNTgwLjk3OSA3NC40NTgzIDU4My4xODggNjkuMzc1QzU4NS40MzggNjQuMjkxNyA1ODguNjA0IDYwLjM5NTggNTkyLjY4OCA1Ny42ODc1QzU5Ni43NzEgNTQuOTc5MiA2MDEuNjQ2IDUzLjYyNSA2MDcuMzEyIDUzLjYyNUM2MTAuNDc5IDUzLjYyNSA2MTMuMzc1IDU0LjE0NTggNjE2IDU1LjE4NzVDNjE4LjYyNSA1Ni4yMjkyIDYyMC45MTcgNTcuNzA4MyA2MjIuODc1IDU5LjYyNUM2MjQuODc1IDYxLjU0MTcgNjI2LjQ3OSA2My44MTI1IDYyNy42ODggNjYuNDM3NUg2MjguMDYyVjU1SDY0Ni4zMTJWMTIwLjEyNUM2NDYuMzEyIDEyNS4wODMgNjQ0Ljk3OSAxMjkuNDM4IDY0Mi4zMTIgMTMzLjE4OEM2MzkuNjg4IDEzNi45NzkgNjM1LjkxNyAxMzkuOTM4IDYzMSAxNDIuMDYyQzYyNi4xMjUgMTQ0LjE4OCA2MjAuMzMzIDE0NS4yNSA2MTMuNjI1IDE0NS4yNVpNNjEzLjMxMiAxMDcuNjg4QzYxNi4zMTIgMTA3LjY4OCA2MTguOTE3IDEwNi44OTYgNjIxLjEyNSAxMDUuMzEyQzYyMy4zMzMgMTAzLjcyOSA2MjUuMDQyIDEwMS40NzkgNjI2LjI1IDk4LjU2MjVDNjI3LjUgOTUuNjQ1OCA2MjguMTI1IDkyLjE4NzUgNjI4LjEyNSA4OC4xODc1Vjg4LjEyNUM2MjguMTI1IDg0LjEyNSA2MjcuNSA4MC42ODc1IDYyNi4yNSA3Ny44MTI1QzYyNS4wNDIgNzQuODk1OCA2MjMuMzEyIDcyLjY2NjcgNjIxLjA2MiA3MS4xMjVDNjE4Ljg1NCA2OS41NDE3IDYxNi4yNzEgNjguNzUgNjEzLjMxMiA2OC43NUM2MTAuMzEyIDY4Ljc1IDYwNy42ODggNjkuNTQxNyA2MDUuNDM4IDcxLjEyNUM2MDMuMTg4IDcyLjY2NjcgNjAxLjQ1OCA3NC44NzUgNjAwLjI1IDc3Ljc1QzU5OS4wNDIgODAuNjI1IDU5OC40MzggODQuMDgzMyA1OTguNDM4IDg4LjEyNVY4OC4xODc1QzU5OC40MzggOTIuMTg3NSA1OTkuMDQyIDk1LjY0NTggNjAwLjI1IDk4LjU2MjVDNjAxLjQ1OCAxMDEuNDc5IDYwMy4xODggMTAzLjcyOSA2MDUuNDM4IDEwNS4zMTJDNjA3LjY4OCAxMDYuODk2IDYxMC4zMTIgMTA3LjY4OCA2MTMuMzEyIDEwNy42ODhaIiBmaWxsPSIjMTIxMjBGIi8+ICAgPC9zdmc+') no-repeat center/contain;
   transition:width .4s var(--ease), height .4s var(--ease)}
-.nav.fest .marke-ic{width:23px; height:23px}
-.nav.fest .marke-tx{width:78px; height:21px}
+/* Kein Schrumpfen mehr: die Leiste bleibt in einer Groesse. */
 .fmarke{display:flex; align-items:center; gap:10px; margin-bottom:36px}
 .fmarke-ic{width:30px; height:30px; flex:none}
 .fmarke-tx{display:block; width:104px; height:28px; background:var(--nacht-ink);
   -webkit-mask:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUyIiBoZWlnaHQ9IjEyMiIgdmlld0JveD0iMTk5IDI4IDQ1MiAxMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPiA8cGF0aCBkPSJNMjMzLjU2MiAxNDUuMTI1QzIyOC4yMjkgMTQ1LjEyNSAyMjMuNTYyIDE0NC4zNTQgMjE5LjU2MiAxNDIuODEyQzIxNS42MDQgMTQxLjMxMiAyMTIuMzk2IDEzOS4yNSAyMDkuOTM4IDEzNi42MjVDMjA3LjUyMSAxMzQuMDQyIDIwNS45NTggMTMxLjE0NiAyMDUuMjUgMTI3LjkzOEwyMDUuMTI1IDEyNy4zNzVIMjE2LjA2MkwyMTYuMzEyIDEyNy45MzhDMjE3LjM1NCAxMzAuMjcxIDIxOS4zNTQgMTMyLjEwNCAyMjIuMzEyIDEzMy40MzhDMjI1LjMxMiAxMzQuODEyIDIyOS4wMjEgMTM1LjUgMjMzLjQzOCAxMzUuNUMyMzkuMTQ2IDEzNS41IDI0My41NjIgMTM0LjAyMSAyNDYuNjg4IDEzMS4wNjJDMjQ5LjgxMiAxMjguMTQ2IDI1MS4zNzUgMTI0LjE2NyAyNTEuMzc1IDExOS4xMjVWMTEwLjgxMkgyNTEuMTI1QzI0OS44MzMgMTEzLjIyOSAyNDguMTY3IDExNS4zMTIgMjQ2LjEyNSAxMTcuMDYyQzI0NC4wODMgMTE4LjgxMiAyNDEuNzI5IDEyMC4xODggMjM5LjA2MiAxMjEuMTg4QzIzNi40MzggMTIyLjE0NiAyMzMuNTYyIDEyMi42MjUgMjMwLjQzOCAxMjIuNjI1QzIyNC45NzkgMTIyLjYyNSAyMjAuMTY3IDEyMS4yNSAyMTYgMTE4LjVDMjExLjg3NSAxMTUuNzA4IDIwOC42NDYgMTExLjgxMiAyMDYuMzEyIDEwNi44MTJDMjA0LjAyMSAxMDEuNzcxIDIwMi44NzUgOTUuODc1IDIwMi44NzUgODkuMTI1Vjg5LjA2MjVDMjAyLjg3NSA4Mi4zMTI1IDIwNC4wNDIgNzYuNDU4MyAyMDYuMzc1IDcxLjVDMjA4Ljc1IDY2LjUgMjEyLjAyMSA2Mi42MjUgMjE2LjE4OCA1OS44NzVDMjIwLjM1NCA1Ny4xMjUgMjI1LjE4OCA1NS43NSAyMzAuNjg4IDU1Ljc1QzIzMy43NzEgNTUuNzUgMjM2LjYwNCA1Ni4yNzA4IDIzOS4xODggNTcuMzEyNUMyNDEuNzcxIDU4LjM1NDIgMjQ0LjA2MiA1OS43OTE3IDI0Ni4wNjIgNjEuNjI1QzI0OC4xMDQgNjMuNDU4MyAyNDkuNzkyIDY1LjU4MzMgMjUxLjEyNSA2OEgyNTEuMzc1VjU3SDI2Mi4yNVYxMjAuMTg4QzI2Mi4yNSAxMjUuMjI5IDI2MS4wODMgMTI5LjYwNCAyNTguNzUgMTMzLjMxMkMyNTYuNDE3IDEzNy4wNjIgMjUzLjEwNCAxMzkuOTU4IDI0OC44MTIgMTQyQzI0NC41MjEgMTQ0LjA4MyAyMzkuNDM4IDE0NS4xMjUgMjMzLjU2MiAxNDUuMTI1Wk0yMzIuODEyIDExM0MyMzYuNTIxIDExMyAyMzkuNzUgMTEyLjAyMSAyNDIuNSAxMTAuMDYyQzI0NS4yOTIgMTA4LjA2MiAyNDcuNDU4IDEwNS4yNzEgMjQ5IDEwMS42ODhDMjUwLjU4MyA5OC4xMDQyIDI1MS4zNzUgOTMuOTE2NyAyNTEuMzc1IDg5LjEyNVY4OS4wNjI1QzI1MS4zNzUgODQuMjcwOCAyNTAuNTgzIDgwLjEwNDIgMjQ5IDc2LjU2MjVDMjQ3LjQ1OCA3My4wMjA4IDI0NS4yOTIgNzAuMjcwOCAyNDIuNSA2OC4zMTI1QzIzOS43MDggNjYuMzU0MiAyMzYuNDc5IDY1LjM3NSAyMzIuODEyIDY1LjM3NUMyMjguOTc5IDY1LjM3NSAyMjUuNjQ2IDY2LjM1NDIgMjIyLjgxMiA2OC4zMTI1QzIxOS45NzkgNzAuMjI5MiAyMTcuNzkyIDcyLjk1ODMgMjE2LjI1IDc2LjVDMjE0Ljc1IDgwLjA0MTcgMjE0IDg0LjIyOTIgMjE0IDg5LjA2MjVWODkuMTI1QzIxNCA5NC4wNDE3IDIxNC43NSA5OC4yOTE3IDIxNi4yNSAxMDEuODc1QzIxNy43OTIgMTA1LjQxNyAyMTkuOTc5IDEwOC4xNjcgMjIyLjgxMiAxMTAuMTI1QzIyNS42NDYgMTEyLjA0MiAyMjguOTc5IDExMyAyMzIuODEyIDExM1pNMjgyLjU2MiAxNDMuODc1QzI4MS41MjEgMTQzLjg3NSAyODAuNDU4IDE0My44MTIgMjc5LjM3NSAxNDMuNjg4QzI3OC4zMzMgMTQzLjYwNCAyNzcuNDU4IDE0My41IDI3Ni43NSAxNDMuMzc1VjEzNC41QzI3Ny4yMDggMTM0LjU4MyAyNzcuNzI5IDEzNC42NjcgMjc4LjMxMiAxMzQuNzVDMjc4LjkzOCAxMzQuODMzIDI3OS41ODMgMTM0Ljg3NSAyODAuMjUgMTM0Ljg3NUMyODMuNzA4IDEzNC44NzUgMjg2LjQ1OCAxMzQuMjcxIDI4OC41IDEzMy4wNjJDMjkwLjU4MyAxMzEuODU0IDI5Mi4yNzEgMTI5LjQxNyAyOTMuNTYyIDEyNS43NUwyOTQuODc1IDEyMi4wNjJMMjcwLjc1IDU3SDI4Mi4zNzVMMzAxLjEyNSAxMTMuNjI1TDI5OC44MTIgMTExLjEyNUgzMDIuMDYyTDI5OS43NSAxMTMuNjI1TDMxOC41NjIgNTdIMzMwTDMwNC42MjUgMTI2LjA2MkMzMDMuMDgzIDEzMC4xODggMzAxLjM1NCAxMzMuNTYyIDI5OS40MzggMTM2LjE4OEMyOTcuNTIxIDEzOC44MTIgMjk1LjIwOCAxNDAuNzUgMjkyLjUgMTQyQzI4OS43OTIgMTQzLjI1IDI4Ni40NzkgMTQzLjg3NSAyODIuNTYyIDE0My44NzVaTTMzOC41NjIgMTIyVjU3SDM0OS40MzhWNjYuNUgzNDkuNjg4QzM1MS4xNDYgNjMuMjkxNyAzNTMuNDM4IDYwLjcwODMgMzU2LjU2MiA1OC43NUMzNTkuNjg4IDU2Ljc1IDM2My4zMzMgNTUuNzUgMzY3LjUgNTUuNzVDMzcwLjQ1OCA1NS43NSAzNzMuMTI1IDU2LjI1IDM3NS41IDU3LjI1QzM3Ny45MTcgNTguMjA4MyAzODAgNTkuNjI1IDM4MS43NSA2MS41QzM4My41IDYzLjMzMzMgMzg0LjgzMyA2NS41ODMzIDM4NS43NSA2OC4yNUgzODZDMzg3LjIwOCA2NS42MjUgMzg4LjgxMiA2My4zOTU4IDM5MC44MTIgNjEuNTYyNUMzOTIuODU0IDU5LjY4NzUgMzk1LjE4OCA1OC4yNSAzOTcuODEyIDU3LjI1QzQwMC40NzkgNTYuMjUgNDAzLjMzMyA1NS43NSA0MDYuMzc1IDU1Ljc1QzQxMC42NjcgNTUuNzUgNDE0LjM5NiA1Ni42NDU4IDQxNy41NjIgNTguNDM3NUM0MjAuNzI5IDYwLjE4NzUgNDIzLjE4OCA2Mi42NjY3IDQyNC45MzggNjUuODc1QzQyNi42ODggNjkuMDQxNyA0MjcuNTYyIDcyLjc5MTcgNDI3LjU2MiA3Ny4xMjVWMTIySDQxNi42ODhWNzkuNjI1QzQxNi42ODggNzYuNjI1IDQxNi4xNDYgNzQuMDYyNSA0MTUuMDYyIDcxLjkzNzVDNDE0LjAyMSA2OS44MTI1IDQxMi41IDY4LjE4NzUgNDEwLjUgNjcuMDYyNUM0MDguNSA2NS45Mzc1IDQwNi4wNjIgNjUuMzc1IDQwMy4xODggNjUuMzc1QzQwMC4zMTIgNjUuMzc1IDM5Ny43NzEgNjYuMDQxNyAzOTUuNTYyIDY3LjM3NUMzOTMuMzU0IDY4LjY2NjcgMzkxLjYyNSA3MC40NzkyIDM5MC4zNzUgNzIuODEyNUMzODkuMTI1IDc1LjEwNDIgMzg4LjUgNzcuNzI5MiAzODguNSA4MC42ODc1VjEyMkgzNzcuNjI1Vjc4LjQzNzVDMzc3LjYyNSA3NS44MTI1IDM3Ny4wNjIgNzMuNTIwOCAzNzUuOTM4IDcxLjU2MjVDMzc0Ljg1NCA2OS42MDQyIDM3My4zMTIgNjguMDgzMyAzNzEuMzEyIDY3QzM2OS4zNTQgNjUuOTE2NyAzNjcuMDIxIDY1LjM3NSAzNjQuMzEyIDY1LjM3NUMzNjEuNDM4IDY1LjM3NSAzNTguODc1IDY2LjA4MzMgMzU2LjYyNSA2Ny41QzM1NC40MTcgNjguODc1IDM1Mi42NjcgNzAuNzUgMzUxLjM3NSA3My4xMjVDMzUwLjA4MyA3NS41IDM0OS40MzggNzguMjA4MyAzNDkuNDM4IDgxLjI1VjEyMkgzMzguNTYyWk00NDEuODc1IDEyMlYzMS44MTI1SDQ2MC43NVYxMDYuNDM4SDUwMC4xODhWMTIySDQ0MS44NzVaTTUzOS42ODggMTIzLjM3NUM1MzIuODk2IDEyMy4zNzUgNTI3LjAyMSAxMjEuOTc5IDUyMi4wNjIgMTE5LjE4OEM1MTcuMTA0IDExNi4zOTYgNTEzLjI3MSAxMTIuMzk2IDUxMC41NjIgMTA3LjE4OEM1MDcuODU0IDEwMS45NzkgNTA2LjUgOTUuNzUgNTA2LjUgODguNVY4OC4zNzVDNTA2LjUgODEuMTY2NyA1MDcuODc1IDc0Ljk3OTIgNTEwLjYyNSA2OS44MTI1QzUxMy4zNzUgNjQuNjA0MiA1MTcuMjI5IDYwLjYwNDIgNTIyLjE4OCA1Ny44MTI1QzUyNy4xNDYgNTUuMDIwOCA1MzIuOTU4IDUzLjYyNSA1MzkuNjI1IDUzLjYyNUM1NDYuMzMzIDUzLjYyNSA1NTIuMTY3IDU1LjAyMDggNTU3LjEyNSA1Ny44MTI1QzU2Mi4xMjUgNjAuNTYyNSA1NjYgNjQuNTQxNyA1NjguNzUgNjkuNzVDNTcxLjUgNzQuOTE2NyA1NzIuODc1IDgxLjEyNSA1NzIuODc1IDg4LjM3NVY4OC41QzU3Mi44NzUgOTUuNzkxNyA1NzEuNSAxMDIuMDQyIDU2OC43NSAxMDcuMjVDNTY2LjA0MiAxMTIuNDU4IDU2Mi4yMDggMTE2LjQ1OCA1NTcuMjUgMTE5LjI1QzU1Mi4yOTIgMTIyIDU0Ni40MzggMTIzLjM3NSA1MzkuNjg4IDEyMy4zNzVaTTUzOS43NSAxMDkuMDYyQzU0Mi43MDggMTA5LjA2MiA1NDUuMjcxIDEwOC4yNzEgNTQ3LjQzOCAxMDYuNjg4QzU0OS42NDYgMTA1LjA2MiA1NTEuMzMzIDEwMi43MjkgNTUyLjUgOTkuNjg3NUM1NTMuNzA4IDk2LjYwNDIgNTU0LjMxMiA5Mi44NzUgNTU0LjMxMiA4OC41Vjg4LjM3NUM1NTQuMzEyIDg0LjA0MTcgNTUzLjcwOCA4MC4zNTQyIDU1Mi41IDc3LjMxMjVDNTUxLjI5MiA3NC4yNzA4IDU0OS41ODMgNzEuOTU4MyA1NDcuMzc1IDcwLjM3NUM1NDUuMTY3IDY4Ljc1IDU0Mi41ODMgNjcuOTM3NSA1MzkuNjI1IDY3LjkzNzVDNTM2LjcwOCA2Ny45Mzc1IDUzNC4xNDYgNjguNzUgNTMxLjkzOCA3MC4zNzVDNTI5Ljc3MSA3MS45NTgzIDUyOC4wODMgNzQuMjcwOCA1MjYuODc1IDc3LjMxMjVDNTI1LjY2NyA4MC4zNTQyIDUyNS4wNjIgODQuMDQxNyA1MjUuMDYyIDg4LjM3NVY4OC41QzUyNS4wNjIgOTIuODc1IDUyNS42NDYgOTYuNjA0MiA1MjYuODEyIDk5LjY4NzVDNTI4LjAyMSAxMDIuNzI5IDUyOS43MjkgMTA1LjA2MiA1MzEuOTM4IDEwNi42ODhDNTM0LjE0NiAxMDguMjcxIDUzNi43NSAxMDkuMDYyIDUzOS43NSAxMDkuMDYyWk02MTMuNjI1IDE0NS4yNUM2MDcuNSAxNDUuMjUgNjAyLjE0NiAxNDQuMzk2IDU5Ny41NjIgMTQyLjY4OEM1OTMuMDIxIDE0MS4wMjEgNTg5LjM5NiAxMzguNzUgNTg2LjY4OCAxMzUuODc1QzU4NC4wMjEgMTMzIDU4Mi4zOTYgMTI5Ljc3MSA1ODEuODEyIDEyNi4xODhMNTgxLjc1IDEyNS42MjVINTk5LjVMNTk5LjY4OCAxMjYuMDYyQzYwMC40MzggMTI3LjY4OCA2MDIgMTI5LjEyNSA2MDQuMzc1IDEzMC4zNzVDNjA2Ljc1IDEzMS42MjUgNjA5LjgzMyAxMzIuMjUgNjEzLjYyNSAxMzIuMjVDNjE4LjMzMyAxMzIuMjUgNjIxLjkxNyAxMzEuMTI1IDYyNC4zNzUgMTI4Ljg3NUM2MjYuODMzIDEyNi42MjUgNjI4LjA2MiAxMjMuNjI1IDYyOC4wNjIgMTE5Ljg3NVYxMDkuNjI1SDYyNy42ODhDNjI2LjUyMSAxMTEuOTU4IDYyNC45MzggMTEzLjk3OSA2MjIuOTM4IDExNS42ODhDNjIwLjkzOCAxMTcuMzk2IDYxOC41ODMgMTE4LjcyOSA2MTUuODc1IDExOS42ODhDNjEzLjIwOCAxMjAuNjA0IDYxMC4yNSAxMjEuMDYyIDYwNyAxMjEuMDYyQzYwMS40MTcgMTIxLjA2MiA1OTYuNTgzIDExOS43MjkgNTkyLjUgMTE3LjA2MkM1ODguNDU4IDExNC4zOTYgNTg1LjMzMyAxMTAuNTgzIDU4My4xMjUgMTA1LjYyNUM1ODAuOTU4IDEwMC42MjUgNTc5Ljg3NSA5NC42NjY3IDU3OS44NzUgODcuNzVWODcuNjg3NUM1NzkuODc1IDgwLjU2MjUgNTgwLjk3OSA3NC40NTgzIDU4My4xODggNjkuMzc1QzU4NS40MzggNjQuMjkxNyA1ODguNjA0IDYwLjM5NTggNTkyLjY4OCA1Ny42ODc1QzU5Ni43NzEgNTQuOTc5MiA2MDEuNjQ2IDUzLjYyNSA2MDcuMzEyIDUzLjYyNUM2MTAuNDc5IDUzLjYyNSA2MTMuMzc1IDU0LjE0NTggNjE2IDU1LjE4NzVDNjE4LjYyNSA1Ni4yMjkyIDYyMC45MTcgNTcuNzA4MyA2MjIuODc1IDU5LjYyNUM2MjQuODc1IDYxLjU0MTcgNjI2LjQ3OSA2My44MTI1IDYyNy42ODggNjYuNDM3NUg2MjguMDYyVjU1SDY0Ni4zMTJWMTIwLjEyNUM2NDYuMzEyIDEyNS4wODMgNjQ0Ljk3OSAxMjkuNDM4IDY0Mi4zMTIgMTMzLjE4OEM2MzkuNjg4IDEzNi45NzkgNjM1LjkxNyAxMzkuOTM4IDYzMSAxNDIuMDYyQzYyNi4xMjUgMTQ0LjE4OCA2MjAuMzMzIDE0NS4yNSA2MTMuNjI1IDE0NS4yNVpNNjEzLjMxMiAxMDcuNjg4QzYxNi4zMTIgMTA3LjY4OCA2MTguOTE3IDEwNi44OTYgNjIxLjEyNSAxMDUuMzEyQzYyMy4zMzMgMTAzLjcyOSA2MjUuMDQyIDEwMS40NzkgNjI2LjI1IDk4LjU2MjVDNjI3LjUgOTUuNjQ1OCA2MjguMTI1IDkyLjE4NzUgNjI4LjEyNSA4OC4xODc1Vjg4LjEyNUM2MjguMTI1IDg0LjEyNSA2MjcuNSA4MC42ODc1IDYyNi4yNSA3Ny44MTI1QzYyNS4wNDIgNzQuODk1OCA2MjMuMzEyIDcyLjY2NjcgNjIxLjA2MiA3MS4xMjVDNjE4Ljg1NCA2OS41NDE3IDYxNi4yNzEgNjguNzUgNjEzLjMxMiA2OC43NUM2MTAuMzEyIDY4Ljc1IDYwNy42ODggNjkuNTQxNyA2MDUuNDM4IDcxLjEyNUM2MDMuMTg4IDcyLjY2NjcgNjAxLjQ1OCA3NC44NzUgNjAwLjI1IDc3Ljc1QzU5OS4wNDIgODAuNjI1IDU5OC40MzggODQuMDgzMyA1OTguNDM4IDg4LjEyNVY4OC4xODc1QzU5OC40MzggOTIuMTg3NSA1OTkuMDQyIDk1LjY0NTggNjAwLjI1IDk4LjU2MjVDNjAxLjQ1OCAxMDEuNDc5IDYwMy4xODggMTAzLjcyOSA2MDUuNDM4IDEwNS4zMTJDNjA3LjY4OCAxMDYuODk2IDYxMC4zMTIgMTA3LjY4OCA2MTMuMzEyIDEwNy42ODhaIiBmaWxsPSIjMTIxMjBGIi8+ICAgPC9zdmc+') no-repeat left center/contain;
   mask:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUyIiBoZWlnaHQ9IjEyMiIgdmlld0JveD0iMTk5IDI4IDQ1MiAxMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPiA8cGF0aCBkPSJNMjMzLjU2MiAxNDUuMTI1QzIyOC4yMjkgMTQ1LjEyNSAyMjMuNTYyIDE0NC4zNTQgMjE5LjU2MiAxNDIuODEyQzIxNS42MDQgMTQxLjMxMiAyMTIuMzk2IDEzOS4yNSAyMDkuOTM4IDEzNi42MjVDMjA3LjUyMSAxMzQuMDQyIDIwNS45NTggMTMxLjE0NiAyMDUuMjUgMTI3LjkzOEwyMDUuMTI1IDEyNy4zNzVIMjE2LjA2MkwyMTYuMzEyIDEyNy45MzhDMjE3LjM1NCAxMzAuMjcxIDIxOS4zNTQgMTMyLjEwNCAyMjIuMzEyIDEzMy40MzhDMjI1LjMxMiAxMzQuODEyIDIyOS4wMjEgMTM1LjUgMjMzLjQzOCAxMzUuNUMyMzkuMTQ2IDEzNS41IDI0My41NjIgMTM0LjAyMSAyNDYuNjg4IDEzMS4wNjJDMjQ5LjgxMiAxMjguMTQ2IDI1MS4zNzUgMTI0LjE2NyAyNTEuMzc1IDExOS4xMjVWMTEwLjgxMkgyNTEuMTI1QzI0OS44MzMgMTEzLjIyOSAyNDguMTY3IDExNS4zMTIgMjQ2LjEyNSAxMTcuMDYyQzI0NC4wODMgMTE4LjgxMiAyNDEuNzI5IDEyMC4xODggMjM5LjA2MiAxMjEuMTg4QzIzNi40MzggMTIyLjE0NiAyMzMuNTYyIDEyMi42MjUgMjMwLjQzOCAxMjIuNjI1QzIyNC45NzkgMTIyLjYyNSAyMjAuMTY3IDEyMS4yNSAyMTYgMTE4LjVDMjExLjg3NSAxMTUuNzA4IDIwOC42NDYgMTExLjgxMiAyMDYuMzEyIDEwNi44MTJDMjA0LjAyMSAxMDEuNzcxIDIwMi44NzUgOTUuODc1IDIwMi44NzUgODkuMTI1Vjg5LjA2MjVDMjAyLjg3NSA4Mi4zMTI1IDIwNC4wNDIgNzYuNDU4MyAyMDYuMzc1IDcxLjVDMjA4Ljc1IDY2LjUgMjEyLjAyMSA2Mi42MjUgMjE2LjE4OCA1OS44NzVDMjIwLjM1NCA1Ny4xMjUgMjI1LjE4OCA1NS43NSAyMzAuNjg4IDU1Ljc1QzIzMy43NzEgNTUuNzUgMjM2LjYwNCA1Ni4yNzA4IDIzOS4xODggNTcuMzEyNUMyNDEuNzcxIDU4LjM1NDIgMjQ0LjA2MiA1OS43OTE3IDI0Ni4wNjIgNjEuNjI1QzI0OC4xMDQgNjMuNDU4MyAyNDkuNzkyIDY1LjU4MzMgMjUxLjEyNSA2OEgyNTEuMzc1VjU3SDI2Mi4yNVYxMjAuMTg4QzI2Mi4yNSAxMjUuMjI5IDI2MS4wODMgMTI5LjYwNCAyNTguNzUgMTMzLjMxMkMyNTYuNDE3IDEzNy4wNjIgMjUzLjEwNCAxMzkuOTU4IDI0OC44MTIgMTQyQzI0NC41MjEgMTQ0LjA4MyAyMzkuNDM4IDE0NS4xMjUgMjMzLjU2MiAxNDUuMTI1Wk0yMzIuODEyIDExM0MyMzYuNTIxIDExMyAyMzkuNzUgMTEyLjAyMSAyNDIuNSAxMTAuMDYyQzI0NS4yOTIgMTA4LjA2MiAyNDcuNDU4IDEwNS4yNzEgMjQ5IDEwMS42ODhDMjUwLjU4MyA5OC4xMDQyIDI1MS4zNzUgOTMuOTE2NyAyNTEuMzc1IDg5LjEyNVY4OS4wNjI1QzI1MS4zNzUgODQuMjcwOCAyNTAuNTgzIDgwLjEwNDIgMjQ5IDc2LjU2MjVDMjQ3LjQ1OCA3My4wMjA4IDI0NS4yOTIgNzAuMjcwOCAyNDIuNSA2OC4zMTI1QzIzOS43MDggNjYuMzU0MiAyMzYuNDc5IDY1LjM3NSAyMzIuODEyIDY1LjM3NUMyMjguOTc5IDY1LjM3NSAyMjUuNjQ2IDY2LjM1NDIgMjIyLjgxMiA2OC4zMTI1QzIxOS45NzkgNzAuMjI5MiAyMTcuNzkyIDcyLjk1ODMgMjE2LjI1IDc2LjVDMjE0Ljc1IDgwLjA0MTcgMjE0IDg0LjIyOTIgMjE0IDg5LjA2MjVWODkuMTI1QzIxNCA5NC4wNDE3IDIxNC43NSA5OC4yOTE3IDIxNi4yNSAxMDEuODc1QzIxNy43OTIgMTA1LjQxNyAyMTkuOTc5IDEwOC4xNjcgMjIyLjgxMiAxMTAuMTI1QzIyNS42NDYgMTEyLjA0MiAyMjguOTc5IDExMyAyMzIuODEyIDExM1pNMjgyLjU2MiAxNDMuODc1QzI4MS41MjEgMTQzLjg3NSAyODAuNDU4IDE0My44MTIgMjc5LjM3NSAxNDMuNjg4QzI3OC4zMzMgMTQzLjYwNCAyNzcuNDU4IDE0My41IDI3Ni43NSAxNDMuMzc1VjEzNC41QzI3Ny4yMDggMTM0LjU4MyAyNzcuNzI5IDEzNC42NjcgMjc4LjMxMiAxMzQuNzVDMjc4LjkzOCAxMzQuODMzIDI3OS41ODMgMTM0Ljg3NSAyODAuMjUgMTM0Ljg3NUMyODMuNzA4IDEzNC44NzUgMjg2LjQ1OCAxMzQuMjcxIDI4OC41IDEzMy4wNjJDMjkwLjU4MyAxMzEuODU0IDI5Mi4yNzEgMTI5LjQxNyAyOTMuNTYyIDEyNS43NUwyOTQuODc1IDEyMi4wNjJMMjcwLjc1IDU3SDI4Mi4zNzVMMzAxLjEyNSAxMTMuNjI1TDI5OC44MTIgMTExLjEyNUgzMDIuMDYyTDI5OS43NSAxMTMuNjI1TDMxOC41NjIgNTdIMzMwTDMwNC42MjUgMTI2LjA2MkMzMDMuMDgzIDEzMC4xODggMzAxLjM1NCAxMzMuNTYyIDI5OS40MzggMTM2LjE4OEMyOTcuNTIxIDEzOC44MTIgMjk1LjIwOCAxNDAuNzUgMjkyLjUgMTQyQzI4OS43OTIgMTQzLjI1IDI4Ni40NzkgMTQzLjg3NSAyODIuNTYyIDE0My44NzVaTTMzOC41NjIgMTIyVjU3SDM0OS40MzhWNjYuNUgzNDkuNjg4QzM1MS4xNDYgNjMuMjkxNyAzNTMuNDM4IDYwLjcwODMgMzU2LjU2MiA1OC43NUMzNTkuNjg4IDU2Ljc1IDM2My4zMzMgNTUuNzUgMzY3LjUgNTUuNzVDMzcwLjQ1OCA1NS43NSAzNzMuMTI1IDU2LjI1IDM3NS41IDU3LjI1QzM3Ny45MTcgNTguMjA4MyAzODAgNTkuNjI1IDM4MS43NSA2MS41QzM4My41IDYzLjMzMzMgMzg0LjgzMyA2NS41ODMzIDM4NS43NSA2OC4yNUgzODZDMzg3LjIwOCA2NS42MjUgMzg4LjgxMiA2My4zOTU4IDM5MC44MTIgNjEuNTYyNUMzOTIuODU0IDU5LjY4NzUgMzk1LjE4OCA1OC4yNSAzOTcuODEyIDU3LjI1QzQwMC40NzkgNTYuMjUgNDAzLjMzMyA1NS43NSA0MDYuMzc1IDU1Ljc1QzQxMC42NjcgNTUuNzUgNDE0LjM5NiA1Ni42NDU4IDQxNy41NjIgNTguNDM3NUM0MjAuNzI5IDYwLjE4NzUgNDIzLjE4OCA2Mi42NjY3IDQyNC45MzggNjUuODc1QzQyNi42ODggNjkuMDQxNyA0MjcuNTYyIDcyLjc5MTcgNDI3LjU2MiA3Ny4xMjVWMTIySDQxNi42ODhWNzkuNjI1QzQxNi42ODggNzYuNjI1IDQxNi4xNDYgNzQuMDYyNSA0MTUuMDYyIDcxLjkzNzVDNDE0LjAyMSA2OS44MTI1IDQxMi41IDY4LjE4NzUgNDEwLjUgNjcuMDYyNUM0MDguNSA2NS45Mzc1IDQwNi4wNjIgNjUuMzc1IDQwMy4xODggNjUuMzc1QzQwMC4zMTIgNjUuMzc1IDM5Ny43NzEgNjYuMDQxNyAzOTUuNTYyIDY3LjM3NUMzOTMuMzU0IDY4LjY2NjcgMzkxLjYyNSA3MC40NzkyIDM5MC4zNzUgNzIuODEyNUMzODkuMTI1IDc1LjEwNDIgMzg4LjUgNzcuNzI5MiAzODguNSA4MC42ODc1VjEyMkgzNzcuNjI1Vjc4LjQzNzVDMzc3LjYyNSA3NS44MTI1IDM3Ny4wNjIgNzMuNTIwOCAzNzUuOTM4IDcxLjU2MjVDMzc0Ljg1NCA2OS42MDQyIDM3My4zMTIgNjguMDgzMyAzNzEuMzEyIDY3QzM2OS4zNTQgNjUuOTE2NyAzNjcuMDIxIDY1LjM3NSAzNjQuMzEyIDY1LjM3NUMzNjEuNDM4IDY1LjM3NSAzNTguODc1IDY2LjA4MzMgMzU2LjYyNSA2Ny41QzM1NC40MTcgNjguODc1IDM1Mi42NjcgNzAuNzUgMzUxLjM3NSA3My4xMjVDMzUwLjA4MyA3NS41IDM0OS40MzggNzguMjA4MyAzNDkuNDM4IDgxLjI1VjEyMkgzMzguNTYyWk00NDEuODc1IDEyMlYzMS44MTI1SDQ2MC43NVYxMDYuNDM4SDUwMC4xODhWMTIySDQ0MS44NzVaTTUzOS42ODggMTIzLjM3NUM1MzIuODk2IDEyMy4zNzUgNTI3LjAyMSAxMjEuOTc5IDUyMi4wNjIgMTE5LjE4OEM1MTcuMTA0IDExNi4zOTYgNTEzLjI3MSAxMTIuMzk2IDUxMC41NjIgMTA3LjE4OEM1MDcuODU0IDEwMS45NzkgNTA2LjUgOTUuNzUgNTA2LjUgODguNVY4OC4zNzVDNTA2LjUgODEuMTY2NyA1MDcuODc1IDc0Ljk3OTIgNTEwLjYyNSA2OS44MTI1QzUxMy4zNzUgNjQuNjA0MiA1MTcuMjI5IDYwLjYwNDIgNTIyLjE4OCA1Ny44MTI1QzUyNy4xNDYgNTUuMDIwOCA1MzIuOTU4IDUzLjYyNSA1MzkuNjI1IDUzLjYyNUM1NDYuMzMzIDUzLjYyNSA1NTIuMTY3IDU1LjAyMDggNTU3LjEyNSA1Ny44MTI1QzU2Mi4xMjUgNjAuNTYyNSA1NjYgNjQuNTQxNyA1NjguNzUgNjkuNzVDNTcxLjUgNzQuOTE2NyA1NzIuODc1IDgxLjEyNSA1NzIuODc1IDg4LjM3NVY4OC41QzU3Mi44NzUgOTUuNzkxNyA1NzEuNSAxMDIuMDQyIDU2OC43NSAxMDcuMjVDNTY2LjA0MiAxMTIuNDU4IDU2Mi4yMDggMTE2LjQ1OCA1NTcuMjUgMTE5LjI1QzU1Mi4yOTIgMTIyIDU0Ni40MzggMTIzLjM3NSA1MzkuNjg4IDEyMy4zNzVaTTUzOS43NSAxMDkuMDYyQzU0Mi43MDggMTA5LjA2MiA1NDUuMjcxIDEwOC4yNzEgNTQ3LjQzOCAxMDYuNjg4QzU0OS42NDYgMTA1LjA2MiA1NTEuMzMzIDEwMi43MjkgNTUyLjUgOTkuNjg3NUM1NTMuNzA4IDk2LjYwNDIgNTU0LjMxMiA5Mi44NzUgNTU0LjMxMiA4OC41Vjg4LjM3NUM1NTQuMzEyIDg0LjA0MTcgNTUzLjcwOCA4MC4zNTQyIDU1Mi41IDc3LjMxMjVDNTUxLjI5MiA3NC4yNzA4IDU0OS41ODMgNzEuOTU4MyA1NDcuMzc1IDcwLjM3NUM1NDUuMTY3IDY4Ljc1IDU0Mi41ODMgNjcuOTM3NSA1MzkuNjI1IDY3LjkzNzVDNTM2LjcwOCA2Ny45Mzc1IDUzNC4xNDYgNjguNzUgNTMxLjkzOCA3MC4zNzVDNTI5Ljc3MSA3MS45NTgzIDUyOC4wODMgNzQuMjcwOCA1MjYuODc1IDc3LjMxMjVDNTI1LjY2NyA4MC4zNTQyIDUyNS4wNjIgODQuMDQxNyA1MjUuMDYyIDg4LjM3NVY4OC41QzUyNS4wNjIgOTIuODc1IDUyNS42NDYgOTYuNjA0MiA1MjYuODEyIDk5LjY4NzVDNTI4LjAyMSAxMDIuNzI5IDUyOS43MjkgMTA1LjA2MiA1MzEuOTM4IDEwNi42ODhDNTM0LjE0NiAxMDguMjcxIDUzNi43NSAxMDkuMDYyIDUzOS43NSAxMDkuMDYyWk02MTMuNjI1IDE0NS4yNUM2MDcuNSAxNDUuMjUgNjAyLjE0NiAxNDQuMzk2IDU5Ny41NjIgMTQyLjY4OEM1OTMuMDIxIDE0MS4wMjEgNTg5LjM5NiAxMzguNzUgNTg2LjY4OCAxMzUuODc1QzU4NC4wMjEgMTMzIDU4Mi4zOTYgMTI5Ljc3MSA1ODEuODEyIDEyNi4xODhMNTgxLjc1IDEyNS42MjVINTk5LjVMNTk5LjY4OCAxMjYuMDYyQzYwMC40MzggMTI3LjY4OCA2MDIgMTI5LjEyNSA2MDQuMzc1IDEzMC4zNzVDNjA2Ljc1IDEzMS42MjUgNjA5LjgzMyAxMzIuMjUgNjEzLjYyNSAxMzIuMjVDNjE4LjMzMyAxMzIuMjUgNjIxLjkxNyAxMzEuMTI1IDYyNC4zNzUgMTI4Ljg3NUM2MjYuODMzIDEyNi42MjUgNjI4LjA2MiAxMjMuNjI1IDYyOC4wNjIgMTE5Ljg3NVYxMDkuNjI1SDYyNy42ODhDNjI2LjUyMSAxMTEuOTU4IDYyNC45MzggMTEzLjk3OSA2MjIuOTM4IDExNS42ODhDNjIwLjkzOCAxMTcuMzk2IDYxOC41ODMgMTE4LjcyOSA2MTUuODc1IDExOS42ODhDNjEzLjIwOCAxMjAuNjA0IDYxMC4yNSAxMjEuMDYyIDYwNyAxMjEuMDYyQzYwMS40MTcgMTIxLjA2MiA1OTYuNTgzIDExOS43MjkgNTkyLjUgMTE3LjA2MkM1ODguNDU4IDExNC4zOTYgNTg1LjMzMyAxMTAuNTgzIDU4My4xMjUgMTA1LjYyNUM1ODAuOTU4IDEwMC42MjUgNTc5Ljg3NSA5NC42NjY3IDU3OS44NzUgODcuNzVWODcuNjg3NUM1NzkuODc1IDgwLjU2MjUgNTgwLjk3OSA3NC40NTgzIDU4My4xODggNjkuMzc1QzU4NS40MzggNjQuMjkxNyA1ODguNjA0IDYwLjM5NTggNTkyLjY4OCA1Ny42ODc1QzU5Ni43NzEgNTQuOTc5MiA2MDEuNjQ2IDUzLjYyNSA2MDcuMzEyIDUzLjYyNUM2MTAuNDc5IDUzLjYyNSA2MTMuMzc1IDU0LjE0NTggNjE2IDU1LjE4NzVDNjE4LjYyNSA1Ni4yMjkyIDYyMC45MTcgNTcuNzA4MyA2MjIuODc1IDU5LjYyNUM2MjQuODc1IDYxLjU0MTcgNjI2LjQ3OSA2My44MTI1IDYyNy42ODggNjYuNDM3NUg2MjguMDYyVjU1SDY0Ni4zMTJWMTIwLjEyNUM2NDYuMzEyIDEyNS4wODMgNjQ0Ljk3OSAxMjkuNDM4IDY0Mi4zMTIgMTMzLjE4OEM2MzkuNjg4IDEzNi45NzkgNjM1LjkxNyAxMzkuOTM4IDYzMSAxNDIuMDYyQzYyNi4xMjUgMTQ0LjE4OCA2MjAuMzMzIDE0NS4yNSA2MTMuNjI1IDE0NS4yNVpNNjEzLjMxMiAxMDcuNjg4QzYxNi4zMTIgMTA3LjY4OCA2MTguOTE3IDEwNi44OTYgNjIxLjEyNSAxMDUuMzEyQzYyMy4zMzMgMTAzLjcyOSA2MjUuMDQyIDEwMS40NzkgNjI2LjI1IDk4LjU2MjVDNjI3LjUgOTUuNjQ1OCA2MjguMTI1IDkyLjE4NzUgNjI4LjEyNSA4OC4xODc1Vjg4LjEyNUM2MjguMTI1IDg0LjEyNSA2MjcuNSA4MC42ODc1IDYyNi4yNSA3Ny44MTI1QzYyNS4wNDIgNzQuODk1OCA2MjMuMzEyIDcyLjY2NjcgNjIxLjA2MiA3MS4xMjVDNjE4Ljg1NCA2OS41NDE3IDYxNi4yNzEgNjguNzUgNjEzLjMxMiA2OC43NUM2MTAuMzEyIDY4Ljc1IDYwNy42ODggNjkuNTQxNyA2MDUuNDM4IDcxLjEyNUM2MDMuMTg4IDcyLjY2NjcgNjAxLjQ1OCA3NC44NzUgNjAwLjI1IDc3Ljc1QzU5OS4wNDIgODAuNjI1IDU5OC40MzggODQuMDgzMyA1OTguNDM4IDg4LjEyNVY4OC4xODc1QzU5OC40MzggOTIuMTg3NSA1OTkuMDQyIDk1LjY0NTggNjAwLjI1IDk4LjU2MjVDNjAxLjQ1OCAxMDEuNDc5IDYwMy4xODggMTAzLjcyOSA2MDUuNDM4IDEwNS4zMTJDNjA3LjY4OCAxMDYuODk2IDYxMC4zMTIgMTA3LjY4OCA2MTMuMzEyIDEwNy42ODhaIiBmaWxsPSIjMTIxMjBGIi8+ICAgPC9zdmc+') no-repeat left center/contain}
-.haupt{grid-column:1; display:none; gap:24px; justify-self:start}
+.haupt{grid-column:2; display:none; gap:28px; justify-self:center}
 .haupt a{font-size:13px; letter-spacing:.07em; text-transform:uppercase; position:relative; padding:4px 0}
 .haupt a::after{content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
   background:currentColor; transform:scaleX(0); transform-origin:left; transition:transform .3s var(--ease)}
 .haupt a:hover::after{transform:scaleX(1)}
-.rechts{grid-column:3; display:flex; align-items:center; justify-content:flex-end; gap:16px}
-.navcta{display:none; align-items:center; min-height:38px; padding:0 16px;
-  border:1px solid currentColor; border-radius:19px;
-  font-size:13px; letter-spacing:.07em; text-transform:uppercase;
+/* Der Abstand zwischen Ladeknopf und Burger ist derselbe wie zum Rand.
+   Bei 8px ist eine weitere Abstufung nach unten nicht mehr sinnvoll, und
+   beide Elemente sind rund, gehoeren also ohnehin sichtbar zusammen. */
+.rechts{grid-column:3; display:flex; align-items:center; justify-content:flex-end; gap:8px; flex:none}
+/* Kevin, 11.8.2026: "Der Downloadbutton soll in der Mobilenansicht nicht
+   verschwinden." Er stand vorher auf display:none und kam erst ab 900px.
+   Damit war der einzige Weg zum App Store auf dem Handy im Menue versteckt,
+   und die Website hat genau eine Aufgabe.
+
+   Gefuellt statt Umriss, wie der gruene Knopf bei Coachway: auf der dunklen
+   Pille ist ein Umriss zu leise fuer die Hauptaktion. Weiss auf Clay sind
+   3,76:1 — dieselbe Entscheidung wie in der App (Ticket 91, verworfen), aus
+   demselben Grund: 15px halbfett faellt unter die 3:1-Regel fuer grossen Text. */
+/* Kevin, 11.8.2026: "aus dem button das orange raus nur wenn man hovert wie
+   vorher ansonsten weiss." Weiss auf der dunklen Leiste ist ruhiger und
+   trotzdem die auffaelligste Flaeche dort. Das Orange wird zur Belohnung fuer
+   den, der hinfaehrt, statt zum Dauerruf.
+
+   Hoehe 40 = 5 x 8, damit sie ins Raster passt. Bei 72er Leiste mit 8 Polster
+   bleiben 56 Innenraum, der Knopf sitzt darin mittig mit 8 Luft. */
+.navcta{display:inline-flex; align-items:center; height:var(--nav-el); padding:0 20px;
+  background:var(--papier); color:var(--tinte); border:0; border-radius:999px;
+  font-size:13px; font-weight:500; letter-spacing:.06em; text-transform:uppercase;
+  white-space:nowrap;
   transition:background .3s var(--ease), color .3s var(--ease)}
-/* 9.8.2026, Kevin: "wird weiss, aber die Schrift nicht schwarz". Ursache war
-   background:currentColor plus Text in --papier — hellgrau auf weiss. Beide
-   Zustaende brauchen ausdrueckliche Farben, currentColor taugt hier nicht. */
-.navcta{border-color:currentColor}
-.navcta:hover{background:#fff; color:var(--tinte); border-color:#fff}
-.nav.fest .navcta:hover{background:var(--clay-tief); color:#fff; border-color:var(--clay-tief)}
+.navcta:hover{background:var(--clay); color:#fff}
 .navcta span{transition:none}
 
-.burger{width:44px;height:44px;display:grid;place-items:center;background:none;border:0;
-  color:inherit;cursor:pointer;grid-column:1;justify-self:start;margin-left:-11px}
+/* Burger nach RECHTS, neben den Ladeknopf. Links steht jetzt die Marke.
+   Heller Kreis wie im Vorbild: auf der dunklen Pille ist ein blosses Symbol
+   zu leise, und 44x44 bleibt die Trefferflaeche. */
+.burger{position:relative; width:var(--nav-el);height:var(--nav-el);display:grid;place-items:center;border:0;
+  background:var(--papier); color:var(--tinte); border-radius:50%;
+  cursor:pointer; flex:none;
+  transition:background .3s var(--ease)}
+/* 40 sitzt im Achtelraster, 44 ist die Trefferflaeche. Der unsichtbare Ring
+   loest den Widerspruch, ohne dass man ihn sieht. */
+.burger::after{content:""; position:absolute; left:50%; top:50%; width:44px; height:44px;
+  transform:translate(-50%,-50%)}
+.burger:hover{background:#fff}
 .bi{position:relative;width:22px;height:13px}
 .bi span{position:absolute;left:0;width:100%;height:1.4px;background:currentColor;
   transition:transform .4s var(--ease), top .2s var(--ease) .2s}
@@ -220,12 +275,19 @@ img{display:block;max-width:100%}
 .nav.offen .bi span:nth-child(1){top:5.8px;transform:rotate(45deg)}
 .nav.offen .bi span:nth-child(2){top:5.8px;transform:rotate(-45deg)}
 
-.mob{position:fixed;inset:0;z-index:44;background:var(--papier);
-  padding:calc(var(--band-h) + var(--nav-h) + 20px) var(--rand) 48px;
+/* 11.8.2026: das Menue war hell (--papier), der Rest der Seite dunkel. Beim
+   Oeffnen kippte damit der ganze Bildschirm, und die Leiste stand als grauer
+   Balken dazwischen: rgba(14,14,12,.72) ueber Papier ergibt #4D4D4B, und der
+   Ladeknopf fiel von 16,78:1 auf 7,36:1.
+
+   Jetzt dunkel wie alles andere. Die Leiste bleibt dabei genau so, wie sie
+   ueber dem Hero aussieht, und sie braucht keinen eigenen Zustand mehr. */
+.mob{position:fixed;inset:0;z-index:44;background:var(--nacht);color:var(--nacht-ink);
+  padding:calc(var(--band-h) + var(--nav-h) + var(--nav-oben) + 24px) var(--rand) 48px;
   opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility .3s}
 .mob.auf{opacity:1;visibility:visible}
 .mob a{display:flex;align-items:center;min-height:58px;font-size:24px;font-weight:500;
-  letter-spacing:-.02em;border-bottom:1px solid rgba(18,18,15,.12)}
+  letter-spacing:-.02em;border-bottom:1px solid rgba(250,248,245,.14)}
 
 /* ══ 1. KOPFBEREICH ═════════════════════════════════════════════════════ */
 /* 10.8.2026: hier lag ein Verlauf von #1B1A18 nach #46433D, wurde also nach
@@ -244,14 +306,87 @@ img{display:block;max-width:100%}
    dort aber fast nichts und wird erst spaeter steil. Bei 67 %, wo der
    Store-Knopf sitzt, ist die Flaeche noch #2B2B29 und traegt weisse Schrift
    mit 14,26:1. Linear waere sie dort schon mittelgrau. */
-.hero{min-height:100svh; display:grid; align-content:center; gap:32px;
-  padding:calc(var(--band-h) + var(--nav-h) + 40px) var(--rand) 56px;
+/* 11.8.2026, Kevin nach dem Vergleich mit coachway.com: "wir sollten den
+   verlauf loeschen der passt nicht auf die seite."
+
+   Vorher lief hier ein elfstufiger Verlauf von --nacht nach --papier ueber die
+   volle Bildschirmhoehe. Er war sorgfaeltig gebaut (smoothstep in CIE L*, damit
+   der Store-Knopf bei 67 % noch auf #2B2B29 steht), aber er loeste ein Problem,
+   das die Seite nicht hat: der Uebergang MUSS nicht weich sein.
+
+   Jetzt eine flache Flaeche mit harter Kante zum hellen Abschnitt. Das ist
+   ruhiger und ehrlicher: zwei Bereiche, zwei Farben, eine Grenze.
+
+   Die Hoehe bleibt bei 100svh. Damit steht aller Text im Hero garantiert auf
+   --nacht, und die Kontraste sind nicht mehr von der Scrollposition abhaengig.
+   Der schwaechste Wert war vorher 14,26:1 am Store-Knopf, jetzt sind es
+   ueberall 18,1:1 (--nacht-ink auf --nacht). */
+/* Kevin, 11.8.2026: "den hero bereich auch als karte." Sobald die Navigation
+   eine Pille ist, muss der Block darunter dieselbe Sprache sprechen, sonst
+   sieht es aus wie zwei Entwuerfe uebereinander. Genau das war am selben Tag
+   noch der Grund GEGEN die Karte, damals war die Leiste aber randlos.
+
+   Die Hoehe zieht die Luft oben und unten ab, sonst reicht die Karte ueber
+   den Bildschirm hinaus und man scrollt am ersten Bild vorbei. */
+/* KOPFSCHEIN, 11.8.2026 nach Kevins Coachway-Bild.
+
+   Was dort passiert: kein backdrop-filter, sondern eine gemalte Flaeche. Ein
+   sehr weicher radialer Verlauf, hellster Punkt bei rund 55 Prozent Breite
+   und 25 Prozent Hoehe, nach aussen dunkler werdend. Gemessen an den
+   Bildpunkten: hell etwa L* 31, Ecken L* 19, Delta 12.
+
+   Bei uns dasselbe in Clay statt Gruen. Deckung 24 Prozent trifft dasselbe
+   Delta von 12 auf --nacht.
+
+   Der eigentliche Gewinn ist ein anderer: die Navigationsleiste traegt einen
+   backdrop-filter, und auf reinem Schwarz zeigt der NICHTS. Man kann nicht
+   verwischen, was keine Struktur hat. Erst dieser Schein gibt der Unschaerfe
+   etwas zu tun, und die Leiste sieht endlich nach Glas aus statt nach einer
+   dunklen Flaeche mit Rand. */
+.hero{position:relative; isolation:isolate; overflow:hidden;
+  min-height:calc(100svh - 2 * var(--nav-luft)); display:grid; align-content:center; gap:32px;
+  padding:calc(var(--band-h) + var(--nav-h) + var(--nav-oben) + 40px) var(--rand) 56px;
+  margin:var(--nav-luft);
   color:var(--nacht-ink);
-  background:linear-gradient(180deg,
-    var(--nacht) 0%, var(--nacht) 56%,
-    #161614 60.9%, #272725 65.8%, #41413F 70.7%, #626260 75.6%,
-    #888886 80.4%, #AEAEAC 85.3%, #CFCFCD 90.2%, #E6E6E4 95.1%,
-    var(--papier) 100%)}
+  background:
+    radial-gradient(88% 62% at 56% 18%, rgba(232,80,2,.24) 0%, rgba(232,80,2,.10) 42%, rgba(232,80,2,0) 72%),
+    radial-gradient(64% 44% at 18% 6%,  rgba(255,138,80,.10) 0%, rgba(255,138,80,0) 66%),
+    var(--nacht);
+  border-radius:var(--r-karte);
+  box-shadow:var(--schatten-karte)}
+
+/* UNTERES LICHT.
+
+   Hier lag bis zum 11.8.2026 ein Riffelglas aus 18 bis 51 Lamellen, jede mit
+   eigenem backdrop-filter, nach dem Figma-Rezept von @viscend.agency. Kevin
+   hat es nach zwei Runden wieder herausgenommen.
+
+   Uebrig bleibt der Farbverlauf, der im Rezept das "anything behind the
+   glass" war. Er allein traegt die Stelle, an der das Telefonbild steht, und
+   das war rueckblickend immer der Teil, der gewirkt hat. Die Lamellen haben
+   ihn eher zerschnitten.
+
+   Alter Stand: git tag vor-glas, oder Commit 922dc24 fuer die reaktive
+   Fassung.
+
+   Alter Stand: git tag vor-glas, oder Commit 922dc24 fuer die reaktive
+   Fassung mit Lamellen. */
+.glas{position:absolute; inset:auto 0 0; height:58%; z-index:-1;
+  pointer-events:none; overflow:hidden;
+  border-bottom-left-radius:var(--r-karte); border-bottom-right-radius:var(--r-karte);
+  -webkit-mask-image:linear-gradient(to top, #000 0%, #000 62%, transparent 100%);
+  mask-image:linear-gradient(to top, #000 0%, #000 62%, transparent 100%)}
+
+/* Der Farbverlauf dahinter. Zwei Lichtquellen von unten, wie im Vorbild,
+   nur in Clay: Blau war bis zum 10.8. die Palette und ist mit Ticket 93
+   ausdruecklich hinausgeflogen. */
+.glas-farbe{position:absolute; inset:-10%;
+  background:
+    radial-gradient(58% 62% at 24% 108%, rgba(232,80,2,.85) 0%, rgba(232,80,2,0) 64%),
+    radial-gradient(46% 54% at 62% 116%, rgba(255,138,80,.62) 0%, rgba(255,138,80,0) 60%),
+    radial-gradient(38% 44% at 86% 112%, rgba(232,80,2,.42) 0%, rgba(232,80,2,0) 62%);
+  filter:blur(34px)}
+
 /* Der Text braucht einen eigenen Block. Lagen h1, Absatz und Knopf direkt im
    Raster und bekamen alle dieselbe grid-area, stapelten sie sich uebereinander
    (Kevin, 9.8.2026, Desktop-Ansicht). */
@@ -369,7 +504,10 @@ img{display:block;max-width:100%}
 .fa p + p{padding-top:16px}
 
 /* ══ FUSSZEILE ══════════════════════════════════════════════════════════ */
-footer{background:var(--nacht); color:var(--nacht-ink); padding:56px var(--rand) 28px}
+/* Footer ebenso: dieselbe Rundung, dieselbe Luft. Damit rahmen zwei dunkle
+   Karten den hellen Inhalt in der Mitte. */
+footer{background:var(--nacht); color:var(--nacht-ink); padding:56px var(--rand) 28px;
+  margin:var(--nav-luft); border-radius:var(--r-karte)}
 .fmarke{margin-bottom:40px}
 .fspalten{display:grid; gap:32px}
 .fsp h4{font-size:13px; font-weight:500; letter-spacing:.04em; padding-bottom:8px;
@@ -384,7 +522,7 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:56px var(--rand)
 @media (min-width:900px){
   :root{--rand-fix:32px;
          --rand:max(var(--rand-fix), calc((100% - var(--max)) / 2))}
-  .haupt{display:flex} .burger{display:none} .navcta{display:inline-flex}
+  .haupt{display:flex} .burger{display:none}
   .hero{grid-template-columns:1.05fr .95fr; align-items:center; gap:56px; align-content:center}
   .heroschuss{justify-self:center; width:min(268px,26vw); margin:0}
   .lock .inhalt{grid-template-columns:1fr 1fr; align-items:center; gap:52px}
@@ -523,23 +661,18 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:56px var(--rand)
 <span id="oben"></span>
 
 <div class="kopf" id="kopf">
-  <div class="band"><div class="spur">
-    <span>Version 2.1 — Training auf dem Sperrbildschirm</span><span>Dauerhaft kostenlos, ohne Konto</span><span>Pläne als Text teilen</span><span>Keine Cloud, alles bleibt auf dem Gerät</span><span>Keine Werbung, kein Tracking</span><span>Backup als Datei, jederzeit exportierbar</span>
-    <span>Version 2.1 — Training auf dem Sperrbildschirm</span><span>Dauerhaft kostenlos, ohne Konto</span><span>Pläne als Text teilen</span><span>Keine Cloud, alles bleibt auf dem Gerät</span><span>Keine Werbung, kein Tracking</span><span>Backup als Datei, jederzeit exportierbar</span>
-    <span>Version 2.1 — Training auf dem Sperrbildschirm</span><span>Dauerhaft kostenlos, ohne Konto</span><span>Pläne als Text teilen</span><span>Keine Cloud, alles bleibt auf dem Gerät</span><span>Keine Werbung, kein Tracking</span><span>Backup als Datei, jederzeit exportierbar</span>
-  </div></div>
 
   <nav class="nav" id="nav">
-    <button class="burger" id="burger" aria-label="Menü öffnen" aria-expanded="false">
-      <span class="bi"><span></span><span></span></span>
-    </button>
+    <a href="#oben" class="marke" aria-label="gymLog, zum Seitenanfang"><img class="marke-ic" src="img/icon.svg" width="26" height="26" alt=""><span class="marke-tx"></span></a>
     <div class="haupt">
       <a href="#sperrbildschirm">Sperrbildschirm</a>
       <a href="#kostenlos">Warum kostenlos</a>
     </div>
-    <a href="#oben" class="marke" aria-label="gymLog, zum Seitenanfang"><img class="marke-ic" src="img/icon.svg" width="26" height="26" alt=""><span class="marke-tx"></span></a>
     <div class="rechts">
       <a class="navcta" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640"><span>Laden</span></a>
+      <button class="burger" id="burger" aria-label="Menü öffnen" aria-expanded="false">
+        <span class="bi"><span></span><span></span></span>
+      </button>
     </div>
   </nav>
 </div>
@@ -552,6 +685,7 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:56px var(--rand)
 
 <!-- ══ 1 ══════════════════════════════════════════════════════════════ -->
 <header class="hero">
+  <div class="glas" aria-hidden="true"><div class="glas-farbe"></div></div>
   <div class="herotext">
   <h1>Sätze festhalten<br>braucht kein Konto.</h1>
   <p>Ein Trainings-Tracker für Leute, die ihren Plan schon haben. Alles bleibt auf deinem iPhone. Keine Anmeldung, keine Werbung, keine monatliche Rechnung.</p>
@@ -706,6 +840,8 @@ footer{background:var(--nacht); color:var(--nacht-ink); padding:56px var(--rand)
   mob.addEventListener("click",function(e){ if(e.target.closest("a")) um(); });
   document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&offen) um(); });
 })();
+
+
 </script>
 </body>
 </html>
