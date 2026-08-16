@@ -6,6 +6,7 @@
 <meta name="description" content="Impressum und Anbieterkennzeichnung für gymLog und gymlogtracker.com.">
 <link rel="canonical" href="https://gymlogtracker.com/impressum/">
 <link rel="icon" href="../img/favicon.svg">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
 <meta name="robots" content="noindex">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFFFFF">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
@@ -27,7 +28,7 @@
   --leiste:rgba(255,255,255,.82);
 }
 @media (prefers-color-scheme: dark){
-  :root{
+  :root{--marke-grund:#FFFFFF;--marke-strich:#18191A;
     --grund:#000000;
     --band:#1C1C1E;
     --tinte:#FFFFFF;
@@ -124,7 +125,7 @@ html.js .sprachwahl{display:inline-flex}
 
 footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line-height:22px}
 .fuss{display:grid;gap:36px}
-.fuss .marke{display:inline-block}
+.fuss .marke{display:inline-flex;align-items:center;gap:7px}.marke-symbol{width:28px;height:28px;flex:0 0 auto;border-radius:6px;display:block}:root{--marke-grund:#18191A;--marke-strich:#FFFFFF}
 .fuss .satz{color:var(--leise);margin-top:10px;max-width:280px}
 .fuss h4{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--leise);margin:0 0 12px}
 .fuss ul{list-style:none;margin:0;padding:0}
@@ -149,7 +150,7 @@ footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line
 
 <header class="leiste">
   <div class="container nav">
-    <a class="marke" href="/">gymLog</a>
+    <a class="marke" href="/"><svg class="marke-symbol" viewBox="0 0 1024 1024" aria-hidden="true"><rect width="1024" height="1024" rx="230" fill="var(--marke-grund)"/><g fill="var(--marke-strich)"><circle cx="189.439" cy="512" r="35.84"/><circle cx="834.561" cy="512" r="35.84"/><rect x="337.921" y="417.279" width="20.48" height="189.442"/><circle cx="348.161" cy="417.279" r="38.4"/><circle cx="348.161" cy="606.721" r="38.4"/><rect x="665.6" y="417.279" width="20.48" height="189.442"/><circle cx="675.84" cy="417.279" r="38.4"/><circle cx="675.84" cy="606.721" r="38.4"/><rect x="501.76" y="320" width="20.48" height="384"/><circle cx="512" cy="320" r="38.4"/><circle cx="512" cy="704" r="38.4"/><circle cx="512" cy="512" r="40.96"/></g></svg><span>gymLog</span></a>
     <nav class="nav-links" aria-label="Bereiche">
       <a href="/#funktionen">Funktionen</a>
       <a href="/#privat">Privat</a>
@@ -233,7 +234,7 @@ footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line
 <footer>
   <div class="container fuss">
     <div>
-      <a class="marke" href="/">gymLog</a>
+      <a class="marke" href="/"><svg class="marke-symbol" viewBox="0 0 1024 1024" aria-hidden="true"><rect width="1024" height="1024" rx="230" fill="var(--marke-grund)"/><g fill="var(--marke-strich)"><circle cx="189.439" cy="512" r="35.84"/><circle cx="834.561" cy="512" r="35.84"/><rect x="337.921" y="417.279" width="20.48" height="189.442"/><circle cx="348.161" cy="417.279" r="38.4"/><circle cx="348.161" cy="606.721" r="38.4"/><rect x="665.6" y="417.279" width="20.48" height="189.442"/><circle cx="675.84" cy="417.279" r="38.4"/><circle cx="675.84" cy="606.721" r="38.4"/><rect x="501.76" y="320" width="20.48" height="384"/><circle cx="512" cy="320" r="38.4"/><circle cx="512" cy="704" r="38.4"/><circle cx="512" cy="512" r="40.96"/></g></svg><span>gymLog</span></a>
       <p class="satz">Ein Trainingstagebuch für iOS. Kein Konto, keine Cloud, kein Abo.</p>
     </div>
     <div class="fuss-spalten">
