@@ -141,7 +141,15 @@ th[scope="row"],thead th:first-child{
   border-right:1px solid var(--kante);
 }
 td.gym{background:var(--band);font-weight:600}
-@media (prefers-color-scheme: dark){ td.gym{background:#2C2C2E} }
+/* 16.8.2026: dritter Fund derselben Sorte. Diese Regel stand in einem
+   ZWEITEN Dunkelblock weiter unten im Stylesheet, ohne Ausnahme und ohne
+   Gegenstueck fuer erzwungenes Dunkel. Kevin hat es gemeldet: helle Seite,
+   dunkle gymLog-Spalte, dunkler Text darin. Ab jetzt prueft webcheck.cjs
+   jeden Dunkelblock im ganzen Stylesheet, nicht nur den ersten. */
+@media (prefers-color-scheme: dark){
+  :root:not([data-mode="hell"]) td.gym{background:#2C2C2E}
+}
+:root[data-mode="dunkel"] td.gym{background:#2C2C2E}
 td small,th small{display:block;font-weight:400;color:var(--leise);font-size:13px;line-height:18px;margin-top:2px}
 .offen{color:var(--leise);font-style:italic}
 .quelle{max-width:740px;margin-inline:auto}
@@ -237,7 +245,7 @@ html.js .fuss-schalter{display:flex}
       <p class="einordnung text">Hevy, Strong, JEFIT und Fitbod sind gute Apps. Sie wollen nur etwas anderes sein als gymLog — und kosten dafür Geld.</p>
     </div>
 
-    <p class="quelle">Angaben geprüft am <span class="platzhalter">16.&nbsp;August 2026</span> anhand der Seiten im deutschen App&nbsp;Store. Preise, Sprachen und Datenschutzangaben stammen von den App-Store-Seiten der jeweiligen App, die Android-Angabe von der Herstellerseite. Legacy-Preise sind nicht mitgezählt, die bekommt ein neuer Nutzer nicht mehr.</p>
+    <p class="quelle">Angaben geprüft am <span class="platzhalter">16.&nbsp;August 2026</span> anhand der Seiten im deutschen App&nbsp;Store. Preise, Sprachen und Datenschutzangaben stammen von den App-Store-Seiten der jeweiligen App, die Android-Angabe von der Herstellerseite. Konto, Verbindung, Sperrbildschirm und Datenexport habe ich selbst am Gerät ausprobiert. Legacy-Preise sind nicht mitgezählt, die bekommt ein neuer Nutzer nicht mehr.</p>
 
     <div class="tafel karte">
       <div class="rollen" tabindex="0" aria-label="Vergleichstabelle, seitlich scrollbar">
@@ -260,11 +268,7 @@ html.js .fuss-schalter{display:flex}
             </tr>
             <tr>
               <th scope="row">Alle Funktionen ohne Bezahlung</th>
-              <td class="gym">Ja</td>
-              <td>Nein<small>voller Umfang kostet</small></td>
-              <td>Nein<small>voller Umfang kostet</small></td>
-              <td>Nein<small>voller Umfang kostet</small></td>
-              <td>Nein<small>nur im Abo</small></td>
+              <td class="gym">Ja</td><td>Nein<small>voller Umfang kostet</small></td><td>Nein<small>voller Umfang kostet</small></td><td>Nein<small>voller Umfang kostet</small></td><td>Nein<small>7 Tage Test, dann Abo</small></td>
             </tr>
             <tr>
               <th scope="row">Ohne Werbung</th>
@@ -276,11 +280,7 @@ html.js .fuss-schalter{display:flex}
             </tr>
             <tr>
               <th scope="row">Ohne Konto nutzbar</th>
-              <td class="gym">Ja</td>
-              <td>Nein</td>
-              <td class="offen">wird geprüft</td>
-              <td>Nein</td>
-              <td>Nein</td>
+              <td class="gym">Ja</td><td>Nein<small>Konto nötig</small></td><td>Nein<small>Konto nötig</small></td><td>Nein<small>Konto nötig</small></td><td>Nein<small>Konto nötig</small></td>
             </tr>
             <tr>
               <th scope="row">Daten bleiben auf dem Gerät</th>
@@ -292,23 +292,15 @@ html.js .fuss-schalter{display:flex}
             </tr>
             <tr>
               <th scope="row">Funktioniert ohne Verbindung</th>
-              <td class="gym">Ja, immer</td>
-              <td class="offen">wird geprüft</td>
-              <td class="offen">wird geprüft</td>
-              <td class="offen">wird geprüft</td>
-              <td class="offen">wird geprüft</td>
+              <td class="gym">Ja, immer</td><td>Ja<small>nach der Anmeldung</small></td><td>Ja<small>nach der Anmeldung</small></td><td>Ja<small>nach der Anmeldung</small></td><td class="offen">wird geprüft</td>
             </tr>
             <tr>
               <th scope="row">Datenexport</th>
-              <td class="gym">CSV und JSON</td><td class="offen">wird geprüft</td><td>CSV<small>laut strong.app</small></td><td class="offen">wird geprüft</td><td class="offen">wird geprüft</td>
+              <td class="gym">CSV und JSON<small>Sicherung wieder einlesbar</small></td><td>CSV<small>nicht wieder einlesbar</small></td><td>Textdatei</td><td class="offen">wird geprüft</td><td class="offen">wird geprüft</td>
             </tr>
             <tr>
               <th scope="row">Sperrbildschirm mit Abhaken</th>
-              <td class="gym">Ja</td>
-              <td class="offen">wird geprüft</td>
-              <td class="offen">wird geprüft</td>
-              <td class="offen">wird geprüft</td>
-              <td class="offen">wird geprüft</td>
+              <td class="gym">Ja</td><td>Ja</td><td>Nein<small>nicht gefunden</small></td><td>Ja</td><td>Ja<small>Live Activity</small></td>
             </tr>
             <tr>
               <th scope="row">Trennung nach Studio</th>
@@ -360,7 +352,7 @@ html.js .fuss-schalter{display:flex}
       <p class="einordnung text">Hevy, Strong, JEFIT and Fitbod are good apps. They just want to be something other than gymLog, and they charge for it.</p>
     </div>
 
-    <p class="stand">Checked on 16&nbsp;August 2026 against the pages in the German App&nbsp;Store. Prices, languages and privacy details come from each app&#8217;s App&nbsp;Store page, the Android entry from the maker&#8217;s own site. Legacy prices are not counted, a new user cannot get them any more.</p>
+    <p class="stand">Checked on 16&nbsp;August 2026 against the pages in the German App&nbsp;Store. Prices, languages and privacy details come from each app&#8217;s App&nbsp;Store page, the Android entry from the maker&#8217;s own site. Account, connection, Lock Screen and data export I tried out myself on the device. Legacy prices are not counted, a new user cannot get them any more.</p>
 
     <div class="tabellenrahmen">
       <div class="tabelle karte">
@@ -369,13 +361,23 @@ html.js .fuss-schalter{display:flex}
 <thead><tr><th scope="col">&nbsp;</th><th scope="col">gymLog</th><th scope="col">Hevy</th><th scope="col">Strong</th><th scope="col">JEFIT</th><th scope="col">Fitbod</th></tr></thead>
 <tbody>
 <tr><th scope="row">Price</th><td class="gym">0&nbsp;€, for good</td><td>from 3.49&nbsp;€/month<small>26.49&nbsp;€/year · 89.99&nbsp;€ one-off</small></td><td>from 3.99&nbsp;€/month<small>24.49–33.99&nbsp;€/year · 89.99–99.99&nbsp;€ one-off</small></td><td>from 13.49&nbsp;€/month<small>20.99–79.99&nbsp;€/year</small></td><td>from 13.49&nbsp;€/month<small>81.99–99.99&nbsp;€/year</small></td></tr>
-<tr><th scope="row">Every feature without paying</th><td class="gym">Yes</td><td>No<small>the full app costs</small></td><td>No<small>the full app costs</small></td><td>No<small>the full app costs</small></td><td>No<small>subscription only</small></td></tr>
+<tr><th scope="row">Every feature without paying</th>
+              <td class="gym">Yes</td><td>No<small>the full app costs</small></td><td>No<small>the full app costs</small></td><td>No<small>the full app costs</small></td><td>No<small>7-day trial, then subscription</small></td>
+            </tr>
 <tr><th scope="row">No ads</th><td class="gym">Yes</td><td>Yes</td><td>Yes</td><td class="offen">being checked</td><td>Yes</td></tr>
-<tr><th scope="row">Usable without an account</th><td class="gym">Yes</td><td>No</td><td class="offen">being checked</td><td>No</td><td>No</td></tr>
+<tr><th scope="row">Usable without an account</th>
+              <td class="gym">Yes</td><td>No<small>account required</small></td><td>No<small>account required</small></td><td>No<small>account required</small></td><td>No<small>account required</small></td>
+            </tr>
 <tr><th scope="row">Data stays on the device</th><td class="gym">Yes, always</td><td>No<small>cloud account</small></td><td>No<small>cloud account</small></td><td>No<small>cloud account</small></td><td>No<small>cloud account</small></td></tr>
-<tr><th scope="row">Works without a connection</th><td class="gym">Yes, always</td><td class="offen">being checked</td><td class="offen">being checked</td><td class="offen">being checked</td><td class="offen">being checked</td></tr>
-<tr><th scope="row">Data export</th><td class="gym">CSV and JSON</td><td class="offen">being checked</td><td>CSV<small>per strong.app</small></td><td class="offen">being checked</td><td class="offen">being checked</td></tr>
-<tr><th scope="row">Lock Screen with tick-off</th><td class="gym">Yes</td><td class="offen">being checked</td><td class="offen">being checked</td><td class="offen">being checked</td><td class="offen">being checked</td></tr>
+<tr><th scope="row">Works without a connection</th>
+              <td class="gym">Yes, always</td><td>Yes<small>once signed in</small></td><td>Yes<small>once signed in</small></td><td>Yes<small>once signed in</small></td><td class="offen">being checked</td>
+            </tr>
+<tr><th scope="row">Data export</th>
+              <td class="gym">CSV and JSON<small>backup can be read back in</small></td><td>CSV<small>cannot be read back in</small></td><td>Text file</td><td class="offen">being checked</td><td class="offen">being checked</td>
+            </tr>
+<tr><th scope="row">Lock Screen with tick-off</th>
+              <td class="gym">Yes</td><td>Yes</td><td>No<small>not found</small></td><td>Yes</td><td>Yes<small>Live Activity</small></td>
+            </tr>
 <tr><th scope="row">Separate by gym</th><td class="gym">Yes</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
 <tr><th scope="row">Sync between devices</th><td class="gym">No<small>through the backup file only</small></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
 <tr><th scope="row">Data used to track you</th><td class="gym">None</td><td>None</td><td>None</td><td>Usage data</td><td>Usage data</td></tr>
