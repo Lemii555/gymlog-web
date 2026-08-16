@@ -30,7 +30,7 @@
   --leiste:rgba(255,255,255,.82);
 }
 @media (prefers-color-scheme: dark){
-  :root{--marke-grund:#FFFFFF;--marke-strich:#18191A;
+  :root:not([data-mode="hell"]){--marke-grund:#FFFFFF;--marke-strich:#18191A;
     --grund:#000000;
     --band:#1C1C1E;
     --tinte:#FFFFFF;
@@ -42,6 +42,18 @@
   }
   .band .karte{background:#2C2C2E}
 }
+:root[data-mode="dunkel"]{--marke-grund:#FFFFFF;--marke-strich:#18191A;
+    --grund:#000000;
+    --band:#1C1C1E;
+    --tinte:#FFFFFF;
+    --leise:#A1A1A6;
+    --akzent:#0A84FF;
+    --kante:#48484A;
+    --karte:#1C1C1E;
+    --leiste:rgba(0,0,0,.82);
+}
+:root[data-mode="dunkel"] .band .karte{background:#2C2C2E}
+
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
@@ -86,7 +98,7 @@ header.leiste{
   border-bottom:1px solid var(--kante);
 }
 .nav{display:flex;align-items:center;gap:20px;min-height:52px}
-.marke{font-size:19px;font-weight:700;color:var(--tinte);text-decoration:none;letter-spacing:-.01em}
+.marke{display:inline-flex;align-items:center;gap:7px;font-size:19px;font-weight:700;color:var(--tinte);text-decoration:none;letter-spacing:-.01em}
 .nav-links{display:none;gap:24px;margin-inline:auto}
 .nav-links a{color:var(--tinte);text-decoration:none;font-size:15px}
 .nav-links a:hover{color:var(--akzent)}
@@ -209,30 +221,47 @@ html.js .reveal.da{opacity:1;transform:none}
 @media (prefers-reduced-motion: reduce){
   html.js .reveal{opacity:1;transform:none;transition:none}
 }
+
+.spr{display:none}.spr.an{display:block}span.spr.an,a.spr.an{display:inline}/* 16.8.2026: die Staerke muss ueber span.spr.an liegen, sonst gewinnt
+   dessen display:inline (zwei Klassen PLUS ein Typ) gegen zwei Klassen
+   hier. Dann ist der Wrapper inline, der Knopf ist kein Flexkind mehr
+   und sein margin-left:auto verpufft -- genau das hat auf dem Handy
+   Laden und Menue nach links gezogen. */
+.nav .nav-cta-wrap.an{display:contents}.nav .nav-cta-wrap:not(.an){display:none}.nav-links .spr.an,.menue-feld .spr.an{display:contents}html.js 
+
+
+
+/* ── Schalter in der Fusszeile ────────────────────────────────────────────
+   16.8.2026, Kevin: Sprache und Darstellung gehoeren dorthin, wo Apple sie
+   auch hat -- unten, ueber dem Copyright. Beides ist eine Einstellung, keine
+   Navigation, und die Voreinstellung stimmt ohnehin fuer fast jeden:
+   Sprache nach Browser, Darstellung nach System. */
+.fuss-schalter{display:none;flex-wrap:wrap;gap:12px;justify-content:flex-end;
+  margin-top:44px;padding-top:20px;border-top:1px solid var(--kante)}
+html.js .fuss-schalter{display:flex}
+.fuss-schalter + .jahr{margin-top:16px;padding-top:0;border-top:0}
+.sprachwahl,.moduswahl{display:inline-flex;gap:4px;flex-wrap:wrap}
+.sprachwahl button,.moduswahl button{font:inherit;font-size:14px;line-height:1;cursor:pointer;
+  background:transparent;color:var(--leise);border:1px solid var(--kante);
+  padding:9px 14px;border-radius:980px;min-height:36px;white-space:nowrap}
+.sprachwahl button:hover,.moduswahl button:hover{color:var(--tinte)}
+.sprachwahl button.an,.moduswahl button.an{background:var(--tinte);color:var(--grund);border-color:var(--tinte)}
+@media (max-width:520px){ .fuss-schalter{justify-content:flex-start} }
 </style>
+<link rel="alternate" hreflang="de" href="https://gymlogtracker.com/">
+<link rel="alternate" hreflang="en" href="https://gymlogtracker.com/">
+<link rel="alternate" hreflang="x-default" href="https://gymlogtracker.com/">
 </head>
 <body>
 
 <header class="leiste">
   <div class="container nav">
     <a class="marke" href="/"><svg class="marke-symbol" viewBox="0 0 1024 1024" aria-hidden="true"><rect width="1024" height="1024" rx="230" fill="var(--marke-grund)"/><g fill="var(--marke-strich)"><circle cx="189.439" cy="512" r="35.84"/><circle cx="834.561" cy="512" r="35.84"/><rect x="337.921" y="417.279" width="20.48" height="189.442"/><circle cx="348.161" cy="417.279" r="38.4"/><circle cx="348.161" cy="606.721" r="38.4"/><rect x="665.6" y="417.279" width="20.48" height="189.442"/><circle cx="675.84" cy="417.279" r="38.4"/><circle cx="675.84" cy="606.721" r="38.4"/><rect x="501.76" y="320" width="20.48" height="384"/><circle cx="512" cy="320" r="38.4"/><circle cx="512" cy="704" r="38.4"/><circle cx="512" cy="512" r="40.96"/></g></svg><span>gymLog</span></a>
-    <nav class="nav-links" aria-label="Bereiche">
-      <a href="#funktionen">Funktionen</a>
-      <a href="#privat">Privat</a>
-      <a href="#preis">Preis</a>
-      <a href="vergleich.html">Vergleich</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-    <a class="knopf nav-cta" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640"><span class="lang">Im App Store laden</span><span class="kurz">Laden</span></a>
+    <nav class="nav-links" aria-label="Bereiche"><span class="spr an" lang="de"><a href="#funktionen">Funktionen</a><a href="#privat">Privat</a><a href="#preis">Preis</a><a href="vergleich.html">Vergleich</a><a href="#faq">FAQ</a></span><span class="spr" lang="en"><a href="#funktionen">Features</a><a href="#privat">Privacy</a><a href="#preis">Price</a><a href="vergleich.html">Comparison</a><a href="#faq">FAQ</a></span></nav>
+    <span class="spr an nav-cta-wrap" lang="de"><a class="knopf nav-cta" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640"><span class="lang">Im App Store laden</span><span class="kurz">Laden</span></a></span><span class="spr nav-cta-wrap" lang="en"><a class="knopf nav-cta" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640"><span class="lang">Download on the App&nbsp;Store</span><span class="kurz">Get</span></a></span>
     <details class="menue">
       <summary>Menü</summary>
-      <nav class="menue-feld karte" aria-label="Bereiche">
-        <a href="#funktionen">Funktionen</a>
-        <a href="#privat">Privat</a>
-        <a href="#preis">Preis</a>
-        <a href="vergleich.html">Vergleich</a>
-        <a href="#faq">FAQ</a>
-      </nav>
+      <nav class="menue-feld karte" aria-label="Bereiche"><span class="spr an" lang="de"><a href="#funktionen">Funktionen</a><a href="#privat">Privat</a><a href="#preis">Preis</a><a href="vergleich.html">Vergleich</a><a href="#faq">FAQ</a></span><span class="spr" lang="en"><a href="#funktionen">Features</a><a href="#privat">Privacy</a><a href="#preis">Price</a><a href="vergleich.html">Comparison</a><a href="#faq">FAQ</a></span></nav>
     </details>
   </div>
 </header>
@@ -241,6 +270,7 @@ html.js .reveal.da{opacity:1;transform:none}
 
 <section class="hero" data-screen-label="Hero">
   <div class="container reveal">
+<div class="spr an" lang="de">
     <p class="kennzeile">Für immer kostenlos</p>
     <h1>Mitschreiben,<br>nicht einstellen.</h1>
     <p>gymLog ist ein Trainingstagebuch für Leute, die ihren Plan schon haben. Kein Konto, keine Cloud, kein Abo. Alles bleibt auf deinem iPhone.</p>
@@ -251,10 +281,21 @@ html.js .reveal.da{opacity:1;transform:none}
       <div class="kachel karte"><div class="zahl">0&nbsp;€</div><p class="kennzeile">Preis</p></div>
     </div>
   </div>
+<div class="spr" lang="en"><p class="kennzeile">Free for ever</p>
+    <h1>Log it.<br>Don't configure it.</h1>
+    <p>gymLog is a workout log for people who already have a plan. No account, no cloud, no subscription. Everything stays on your iPhone.</p>
+    <a class="knopf" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Download on the App&nbsp;Store</a>
+    <div class="kacheln">
+      <div class="kachel karte"><div class="zahl">170</div><p class="kennzeile">Exercises</p></div>
+      <div class="kachel karte"><div class="zahl">2</div><p class="kennzeile">Languages</p></div>
+      <div class="kachel karte"><div class="zahl">0&nbsp;€</div><p class="kennzeile">Price</p></div>
+    </div></div>
+</div>
 </section>
 
 <section class="band" id="blick" data-screen-label="Auf einen Blick">
   <div class="container reveal">
+<div class="spr an" lang="de">
     <div class="kopfblock">
       <p class="kennzeile">Auf einen Blick</p>
       <h2>Die Eckdaten.</h2>
@@ -270,10 +311,26 @@ html.js .reveal.da{opacity:1;transform:none}
       <div><dt>Deine Daten</dt><dd>JSON-Sicherung und CSV-Export</dd></div>
     </dl>
   </div>
+<div class="spr" lang="en"><div class="kopfblock">
+      <p class="kennzeile">At a glance</p>
+      <h2>The essentials.</h2>
+      <p class="einordnung text">Ten seconds is enough. This is all of it.</p>
+    </div>
+    <dl class="blick karte">
+      <div><dt>Platform</dt><dd>iPhone, iOS&nbsp;15 and later</dd></div>
+      <div><dt>Price</dt><dd>Free, no in-app purchases</dd></div>
+      <div><dt>Account</dt><dd>None needed</dd></div>
+      <div><dt>Connection</dt><dd>Never required</dd></div>
+      <div><dt>Storage</dt><dd>Local, on your device</dd></div>
+      <div><dt>Languages</dt><dd>German and English</dd></div>
+      <div><dt>Your data</dt><dd>JSON backup and CSV export</dd></div>
+    </dl></div>
+</div>
 </section>
 
 <section id="funktionen" data-screen-label="Funktionen">
   <div class="container">
+<div class="spr an" lang="de">
     <div class="kopfblock reveal">
       <p class="kennzeile">Funktionen</p>
       <h2>Eintragen, abhaken, weiter.</h2>
@@ -312,10 +369,49 @@ html.js .reveal.da{opacity:1;transform:none}
       </div>
     </article>
   </div>
+<div class="spr" lang="en"><div class="kopfblock reveal">
+      <p class="kennzeile">Features</p>
+      <h2>Log it, tick it, move on.</h2>
+      <p class="einordnung text">Four things gymLog does. Nothing more, and that is on purpose.</p>
+    </div>
+
+    <article class="funktion reveal">
+      <div class="bild"><img src="img/13f6136a.webp" width="900" height="1948" alt="A workout running in gymLog: Wide Lat Pulldown with three sets, weight and reps pre-filled, one set ticked off" loading="lazy"></div>
+      <div class="wort">
+        <h3>Log it between two sets.</h3>
+        <p>Weight, reps, tick. Last time&#8217;s numbers are already there. Only the exercise you are on stays open, the rest stays closed.</p>
+      </div>
+    </article>
+
+    <article class="funktion tausch reveal">
+      <div class="bild"><img src="img/0b81bdd2.webp" width="900" height="1948" alt="iPhone Lock Screen with a running gymLog workout: exercise, weight times reps, progress bar and a tick button" loading="lazy"></div>
+      <div class="wort">
+        <h3>Even without the app.</h3>
+        <p>Your running workout sits on the Lock Screen with time and progress. Tick sets off from there without opening the app.</p>
+      </div>
+    </article>
+
+    <article class="funktion reveal">
+      <div class="bild"><img src="img/eefb564d.webp" width="900" height="1948" alt="Weight overview in gymLog filtered by gym: All gyms, Iron Works and Hotel Gym, with 7-day and 30-day averages per exercise" loading="lazy"></div>
+      <div class="wort">
+        <h3>Same workout, real comparison.</h3>
+        <p>Keep weights separate per gym. The same machine pulls differently somewhere else. gymLog compares you with yourself, on the same machine, in the same gym.</p>
+      </div>
+    </article>
+
+    <article class="funktion tausch reveal">
+      <div class="bild"><img src="img/1d2a7106.webp" width="900" height="1948" alt="Body section in gymLog: weight and body fat as curves over a year, with goal, weekly rate and a calorie recommendation" loading="lazy"></div>
+      <div class="wort">
+        <h3>Progress, not guesswork.</h3>
+        <p>Weight, body fat, goal and pace as a curve over months. Plus a calorie recommendation, worked out from your own numbers.</p>
+      </div>
+    </article></div>
+</div>
 </section>
 
 <section class="band" id="privat" data-screen-label="Privat">
   <div class="container reveal">
+<div class="spr an" lang="de">
     <div class="kopfblock">
       <p class="kennzeile">Privat</p>
       <h2>Es verlässt dein Gerät nicht.</h2>
@@ -337,10 +433,32 @@ html.js .reveal.da{opacity:1;transform:none}
     </div>
     <p class="text" style="text-align:center">Apple Health? Auf Wunsch schreibt gymLog Trainings, Gewicht und Körperfett dorthin — und liest nichts. Details in der <a href="/datenschutz/">Datenschutzerklärung</a>.</p>
   </div>
+<div class="spr" lang="en"><div class="kopfblock">
+      <p class="kennzeile">Privacy</p>
+      <h2>It doesn&#8217;t leave your device.</h2>
+      <p class="einordnung text">Not as a setting. As the way it is built.</p>
+    </div>
+    <div class="punkte">
+      <div class="punkt karte">
+        <h3>No account</h3>
+        <p>There is no sign-up. Nothing to register, nothing to forget.</p>
+      </div>
+      <div class="punkt karte">
+        <h3>No server</h3>
+        <p>Your workouts sit on your iPhone and nowhere else.</p>
+      </div>
+      <div class="punkt karte">
+        <h3>No trackers</h3>
+        <p>No analytics, no advertising IDs, nothing passed to third parties.</p>
+      </div>
+    </div>
+    <p class="text" style="text-align:center">Apple Health? If you want it, gymLog writes workouts, weight and body fat there, and reads nothing. Details in the <a href="/datenschutz/">privacy policy</a>.</p></div>
+</div>
 </section>
 
 <section id="preis" data-screen-label="Preis">
   <div class="container reveal">
+<div class="spr an" lang="de">
     <div class="kopfblock">
       <p class="kennzeile">Preis</p>
       <h2 class="null" aria-label="Null Euro">0&nbsp;€</h2>
@@ -376,10 +494,46 @@ html.js .reveal.da{opacity:1;transform:none}
       </div>
     </div>
   </div>
+<div class="spr" lang="en"><div class="kopfblock">
+      <p class="kennzeile">Price</p>
+      <h2 class="null" aria-label="Zero euros">0&nbsp;€</h2>
+      <p class="einordnung text">For good. There is no Pro version waiting behind it.</p>
+    </div>
+    <div class="spalten">
+      <div class="spalte karte drin">
+        <p class="kennzeile">Included</p>
+        <ul>
+          <li>Every feature</li>
+          <li>Unlimited plans</li>
+          <li>Complete history</li>
+          <li>170 exercises</li>
+          <li>Gyms</li>
+          <li>Lock Screen</li>
+          <li>Apple Health</li>
+          <li>CSV and JSON</li>
+          <li>German and English</li>
+        </ul>
+      </div>
+      <div class="spalte karte fehlt">
+        <p class="kennzeile">Not in it</p>
+        <ul>
+          <li>No subscription</li>
+          <li>No in-app purchase</li>
+          <li>No ads</li>
+          <li>No required account</li>
+          <li>No trackers</li>
+          <li>No newsletter</li>
+          <li>No selling of data</li>
+          <li>No Pro version</li>
+        </ul>
+      </div>
+    </div></div>
+</div>
 </section>
 
 <section class="band" id="vergleich" data-screen-label="Vergleich-Anriss">
   <div class="container reveal">
+<div class="spr an" lang="de">
     <div class="kopfblock">
       <p class="kennzeile">Vergleich</p>
       <h2>Neben Hevy, Strong, JEFIT und Fitbod.</h2>
@@ -401,10 +555,32 @@ html.js .reveal.da{opacity:1;transform:none}
     </div>
     <p class="mittig"><a class="knopf leer" href="vergleich.html">Vollständigen Vergleich ansehen</a></p>
   </div>
+<div class="spr" lang="en"><div class="kopfblock">
+      <p class="kennzeile">Comparison</p>
+      <h2>Next to Hevy, Strong, JEFIT and Fitbod.</h2>
+      <p class="einordnung text">Compared honestly, including where gymLog loses.</p>
+    </div>
+    <div class="anriss karte">
+      <div>
+        <span class="frage">Price</span>
+        <span class="antwort">0&nbsp;€, for good<small>others: subscription or purchase</small></span>
+      </div>
+      <div>
+        <span class="frage">Usable without an account</span>
+        <span class="antwort">Yes<small>others: mostly no</small></span>
+      </div>
+      <div>
+        <span class="frage">Sync between devices</span>
+        <span class="antwort">No<small>others: yes — gymLog loses here</small></span>
+      </div>
+    </div>
+    <p class="mittig"><a class="knopf leer" href="vergleich.html">See the full comparison</a></p></div>
+</div>
 </section>
 
 <section id="faq" data-screen-label="FAQ">
   <div class="container reveal">
+<div class="spr an" lang="de">
     <div class="kopfblock">
       <p class="kennzeile">FAQ</p>
       <h2>Kurze Fragen, kurze Antworten.</h2>
@@ -452,15 +628,68 @@ html.js .reveal.da{opacity:1;transform:none}
       </details>
     </div>
   </div>
+<div class="spr" lang="en"><div class="kopfblock">
+      <p class="kennzeile">FAQ</p>
+      <h2>Short questions, short answers.</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Is gymLog really free?</summary>
+        <div class="antwort"><p>Yes. Every feature, no in-app purchases, no subscription. There is no Pro version that asks for money later.</p></div>
+      </details>
+      <details>
+        <summary>Do I need an account?</summary>
+        <div class="antwort"><p>No. gymLog has no sign-up. Download it, create a plan, train.</p></div>
+      </details>
+      <details>
+        <summary>Does it work without a connection?</summary>
+        <div class="antwort"><p>Yes, always. gymLog never needs a connection, not even in a basement gym with no signal.</p></div>
+      </details>
+      <details>
+        <summary>Where is my data?</summary>
+        <div class="antwort"><p>On your iPhone and nowhere else. There is no server and no cloud.</p></div>
+      </details>
+      <details>
+        <summary>Can I move it to a new iPhone?</summary>
+        <div class="antwort"><p>Yes, through the JSON backup: export on the old device, read it in on the new one. That is the only way. There is no automatic sync.</p></div>
+      </details>
+      <details>
+        <summary>Is there an Android version?</summary>
+        <div class="antwort"><p>No. gymLog is an iOS app and an Android version is not planned.</p></div>
+      </details>
+      <details>
+        <summary>Can I add my own exercises?</summary>
+        <div class="antwort"><p>Yes. 170 exercises are already there, sorted into eight body regions, and you can name exercises freely in your plans.</p></div>
+      </details>
+      <details>
+        <summary>Does it work with Apple Health?</summary>
+        <div class="antwort"><p>Yes, writing only: workouts, weight and body fat go to Health if you want them to. gymLog reads nothing out of Health.</p></div>
+      </details>
+      <details>
+        <summary>Does gymLog tell me what to train?</summary>
+        <div class="antwort"><p>No. gymLog is a log, not a coach. It is built for people who already have a plan.</p></div>
+      </details>
+      <details>
+        <summary>Why is there no sync?</summary>
+        <div class="antwort"><p>Because there is no server. That is the price of your data never leaving your device. When you change phones, you take the backup file with you.</p></div>
+      </details>
+    </div></div>
+</div>
 </section>
 
 <section class="band abschluss" data-screen-label="Abschluss">
   <div class="container reveal">
+<div class="spr an" lang="de">
     <p class="kennzeile">Kostenlos, ohne Konto</p>
     <h2>Bereit für die nächste Einheit?</h2>
     <p><a class="knopf" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Im App Store laden</a></p>
     <p class="einordnung">Laden, Plan eintragen, trainieren. Mehr ist es nicht.</p>
   </div>
+<div class="spr" lang="en"><p class="kennzeile">Free, no account</p>
+    <h2>Ready for the next session?</h2>
+    <p><a class="knopf" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Download on the App&nbsp;Store</a></p>
+    <p class="einordnung">Download it, type in your plan, train. That is all it is.</p></div>
+</div>
 </section>
 
 </main>
@@ -469,9 +698,9 @@ html.js .reveal.da{opacity:1;transform:none}
   <div class="container fuss">
     <div>
       <a class="marke" href="/"><svg class="marke-symbol" viewBox="0 0 1024 1024" aria-hidden="true"><rect width="1024" height="1024" rx="230" fill="var(--marke-grund)"/><g fill="var(--marke-strich)"><circle cx="189.439" cy="512" r="35.84"/><circle cx="834.561" cy="512" r="35.84"/><rect x="337.921" y="417.279" width="20.48" height="189.442"/><circle cx="348.161" cy="417.279" r="38.4"/><circle cx="348.161" cy="606.721" r="38.4"/><rect x="665.6" y="417.279" width="20.48" height="189.442"/><circle cx="675.84" cy="417.279" r="38.4"/><circle cx="675.84" cy="606.721" r="38.4"/><rect x="501.76" y="320" width="20.48" height="384"/><circle cx="512" cy="320" r="38.4"/><circle cx="512" cy="704" r="38.4"/><circle cx="512" cy="512" r="40.96"/></g></svg><span>gymLog</span></a>
-      <p class="satz">Ein Trainingstagebuch für iOS. Kein Konto, keine Cloud, kein Abo.</p>
+      <p class="satz spr an" lang="de">Ein Trainingstagebuch für iOS. Kein Konto, keine Cloud, kein Abo.</p><p class="satz spr" lang="en">A workout log for iOS. No account, no cloud, no subscription.</p>
     </div>
-    <div class="fuss-spalten">
+    <div class="spr an" lang="de"><div class="fuss-spalten">
       <div>
         <h4>Produkt</h4>
         <ul>
@@ -495,6 +724,36 @@ html.js .reveal.da{opacity:1;transform:none}
           <li><a href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></li>
         </ul>
       </div>
+    </div>
+    </div><div class="spr" lang="en"><div class="fuss-spalten">
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#funktionen">Features</a></li>
+          <li><a href="#preis">Price</a></li>
+          <li><a href="vergleich.html">Comparison</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Download on the App&nbsp;Store</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="/impressum/">Legal notice</a></li>
+          <li><a href="/datenschutz/">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></li>
+        </ul>
+      </div>
+    </div>
+    </div>
+    <div class="fuss-schalter">
+      <div class="sprachwahl" role="group" aria-label="Sprache"><button class="an" data-l="de">Deutsch</button><button data-l="en">English</button></div>
+      <div class="moduswahl" role="group" aria-label="Darstellung"><button data-m="hell">Hell</button><button data-m="dunkel">Dunkel</button><button class="an" data-m="auto">Automatisch</button></div>
     </div>
     <p class="jahr">© 2026 gymLog</p>
   </div>
@@ -525,4 +784,47 @@ if(menue){ menue.querySelectorAll('a').forEach(function(a){
 
 
 
+<script>
+/* Sprache und Darstellung. Ohne JavaScript erscheint keiner der beiden
+   Schalter, dann gilt Deutsch und die Systemeinstellung. */
+document.documentElement.classList.add('js');
+
+function sprache(l){
+  document.querySelectorAll('.spr').forEach(function(d){
+    d.classList.toggle('an', d.getAttribute('lang') === l);
+  });
+  document.querySelectorAll('.sprachwahl button').forEach(function(b){
+    b.classList.toggle('an', b.dataset.l === l);
+  });
+  document.documentElement.lang = l;
+  try { localStorage.setItem('gymlog-sprache', l); } catch(e){}
+}
+document.querySelectorAll('.sprachwahl button').forEach(function(b){
+  b.addEventListener('click', function(){ sprache(b.dataset.l); });
+});
+
+/* Darstellung: "auto" setzt gar kein Attribut, dann entscheidet
+   prefers-color-scheme wie bisher. Hell und Dunkel setzen data-mode und
+   ueberschreiben es. */
+function modus(m){
+  var w = document.documentElement;
+  if (m === 'auto') w.removeAttribute('data-mode'); else w.setAttribute('data-mode', m);
+  document.querySelectorAll('.moduswahl button').forEach(function(b){
+    b.classList.toggle('an', b.dataset.m === m);
+  });
+  try { localStorage.setItem('gymlog-modus', m); } catch(e){}
+}
+document.querySelectorAll('.moduswahl button').forEach(function(b){
+  b.addEventListener('click', function(){ modus(b.dataset.m); });
+});
+
+/* Beim Laden: gemerkte Wahl, sonst Browsersprache und Systemdarstellung. */
+(function(){
+  var l = null, m = null;
+  try { l = localStorage.getItem('gymlog-sprache'); m = localStorage.getItem('gymlog-modus'); } catch(e){}
+  if (!l) l = /^de\b/i.test(navigator.language || 'de') ? 'de' : 'en';
+  sprache(l);
+  if (m) modus(m);
+})();
+</script>
 </body></html>

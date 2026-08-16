@@ -28,7 +28,7 @@
   --leiste:rgba(255,255,255,.82);
 }
 @media (prefers-color-scheme: dark){
-  :root{--marke-grund:#FFFFFF;--marke-strich:#18191A;
+  :root:not([data-mode="hell"]){--marke-grund:#FFFFFF;--marke-strich:#18191A;
     --grund:#000000;
     --band:#1C1C1E;
     --tinte:#FFFFFF;
@@ -38,7 +38,7 @@
     --karte:#1C1C1E;
     --leiste:rgba(0,0,0,.82);
   }
-}
+  }
 *{box-sizing:border-box}
 body{
   margin:0;
@@ -50,6 +50,28 @@ body{
   -webkit-font-smoothing:antialiased;
   text-wrap:pretty;
 }
+:root[data-mode="dunkel"]{--marke-grund:#FFFFFF;--marke-strich:#18191A;
+    --grund:#000000;
+    --band:#1C1C1E;
+    --tinte:#FFFFFF;
+    --leise:#A1A1A6;
+    --akzent:#0A84FF;
+    --kante:#48484A;
+    --karte:#1C1C1E;
+    --leiste:rgba(0,0,0,.82);
+}
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--grund);
+  color:var(--tinte);
+  font-family:"SF Pro Text", system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size:17px;
+  line-height:25px;
+  -webkit-font-smoothing:antialiased;
+  text-wrap:pretty;
+
 a{color:var(--akzent)}
 a:hover{color:var(--akzent)}
 p a{text-decoration:underline}
@@ -65,7 +87,7 @@ header.leiste{
   border-bottom:1px solid var(--kante);
 }
 .nav{display:flex;align-items:center;gap:20px;min-height:52px}
-.marke{font-size:19px;font-weight:700;color:var(--tinte);text-decoration:none;letter-spacing:-.01em}
+.marke{display:inline-flex;align-items:center;gap:7px;font-size:19px;font-weight:700;color:var(--tinte);text-decoration:none;letter-spacing:-.01em}
 .nav-links{display:none;gap:24px;margin-inline:auto}
 .nav-links a{color:var(--tinte);text-decoration:none;font-size:15px}
 .nav-links a:hover{color:var(--akzent)}
@@ -112,14 +134,10 @@ main p.adresse{color:var(--tinte)}
 
 /* Sprachwahl — funktioniert ohne JS: Deutsch ist sichtbar, der Umschalter
    erscheint erst, wenn JS da ist. */
-.sprachwahl{display:none;gap:4px;margin-top:34px}
-html.js .sprachwahl{display:inline-flex}
-.sprachwahl button{
-  font:inherit;font-size:14px;line-height:1;cursor:pointer;
-  background:transparent;color:var(--tinte);border:1px solid var(--leise);
-  padding:8px 14px;border-radius:980px;
-}
-.sprachwahl button.an{background:var(--tinte);color:var(--grund);border-color:var(--tinte)}
+
+html.js 
+
+
 .spr{display:none}
 .spr.an{display:block}
 
@@ -134,6 +152,25 @@ footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line
 .fuss a:hover{color:var(--akzent);text-decoration:underline}
 .fuss-spalten{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:28px}
 .jahr{color:var(--leise);margin-top:44px;padding-top:20px;border-top:1px solid var(--kante)}
+
+
+
+/* ── Schalter in der Fusszeile ────────────────────────────────────────────
+   16.8.2026, Kevin: Sprache und Darstellung gehoeren dorthin, wo Apple sie
+   auch hat -- unten, ueber dem Copyright. Beides ist eine Einstellung, keine
+   Navigation, und die Voreinstellung stimmt ohnehin fuer fast jeden:
+   Sprache nach Browser, Darstellung nach System. */
+.fuss-schalter{display:none;flex-wrap:wrap;gap:12px;justify-content:flex-end;
+  margin-top:44px;padding-top:20px;border-top:1px solid var(--kante)}
+html.js .fuss-schalter{display:flex}
+.fuss-schalter + .jahr{margin-top:16px;padding-top:0;border-top:0}
+.sprachwahl,.moduswahl{display:inline-flex;gap:4px;flex-wrap:wrap}
+.sprachwahl button,.moduswahl button{font:inherit;font-size:14px;line-height:1;cursor:pointer;
+  background:transparent;color:var(--leise);border:1px solid var(--kante);
+  padding:9px 14px;border-radius:980px;min-height:36px;white-space:nowrap}
+.sprachwahl button:hover,.moduswahl button:hover{color:var(--tinte)}
+.sprachwahl button.an,.moduswahl button.an{background:var(--tinte);color:var(--grund);border-color:var(--tinte)}
+@media (max-width:520px){ .fuss-schalter{justify-content:flex-start} }
 </style>
 <script type="application/ld+json">
 {
@@ -145,6 +182,9 @@ footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line
   "isPartOf": { "@type": "WebSite", "name": "gymLog", "url": "https://gymlogtracker.com/" }
 }
 </script>
+<link rel="alternate" hreflang="de" href="https://gymlogtracker.com/impressum/">
+<link rel="alternate" hreflang="en" href="https://gymlogtracker.com/impressum/">
+<link rel="alternate" hreflang="x-default" href="https://gymlogtracker.com/impressum/">
 </head>
 <body>
 
@@ -182,10 +222,6 @@ footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line
       <div class="spr" lang="en">
         <p class="kennzeile">Legal</p>
         <h1>Legal notice</h1>
-      </div>
-      <div class="sprachwahl" role="group" aria-label="Sprache">
-        <button class="an" data-l="de">Deutsch</button>
-        <button data-l="en">English</button>
       </div>
     </div>
   </div>
@@ -262,14 +298,19 @@ footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line
         </ul>
       </div>
     </div>
+    <div class="fuss-schalter">
+      <div class="sprachwahl" role="group" aria-label="Sprache"><button class="an" data-l="de">Deutsch</button><button data-l="en">English</button></div>
+      <div class="moduswahl" role="group" aria-label="Darstellung"><button data-m="hell">Hell</button><button data-m="dunkel">Dunkel</button><button class="an" data-m="auto">Automatisch</button></div>
+    </div>
     <p class="jahr">© 2026 gymLog</p>
   </div>
 </footer>
 
 <script>
-/* Einziges Skript: der Sprachwechsel. Ohne JS bleibt Deutsch sichtbar,
-   der Umschalter erscheint gar nicht erst. */
+/* Sprache und Darstellung. Ohne JavaScript erscheint keiner der beiden
+   Schalter, dann gilt Deutsch und die Systemeinstellung. */
 document.documentElement.classList.add('js');
+
 function sprache(l){
   document.querySelectorAll('.spr').forEach(function(d){
     d.classList.toggle('an', d.getAttribute('lang') === l);
@@ -278,12 +319,34 @@ function sprache(l){
     b.classList.toggle('an', b.dataset.l === l);
   });
   document.documentElement.lang = l;
+  try { localStorage.setItem('gymlog-sprache', l); } catch(e){}
 }
 document.querySelectorAll('.sprachwahl button').forEach(function(b){
   b.addEventListener('click', function(){ sprache(b.dataset.l); });
 });
+
+/* Darstellung: "auto" setzt gar kein Attribut, dann entscheidet
+   prefers-color-scheme wie bisher. Hell und Dunkel setzen data-mode und
+   ueberschreiben es. */
+function modus(m){
+  var w = document.documentElement;
+  if (m === 'auto') w.removeAttribute('data-mode'); else w.setAttribute('data-mode', m);
+  document.querySelectorAll('.moduswahl button').forEach(function(b){
+    b.classList.toggle('an', b.dataset.m === m);
+  });
+  try { localStorage.setItem('gymlog-modus', m); } catch(e){}
+}
+document.querySelectorAll('.moduswahl button').forEach(function(b){
+  b.addEventListener('click', function(){ modus(b.dataset.m); });
+});
+
+/* Beim Laden: gemerkte Wahl, sonst Browsersprache und Systemdarstellung. */
+(function(){
+  var l = null, m = null;
+  try { l = localStorage.getItem('gymlog-sprache'); m = localStorage.getItem('gymlog-modus'); } catch(e){}
+  if (!l) l = /^de\b/i.test(navigator.language || 'de') ? 'de' : 'en';
+  sprache(l);
+  if (m) modus(m);
+})();
 </script>
-
-
-
 </body></html>
