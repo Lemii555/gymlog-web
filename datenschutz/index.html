@@ -37,7 +37,9 @@
     --karte:#1C1C1E;
     --leiste:rgba(0,0,0,.82);
   }
-  .kern{background:#2C2C2E}
+  /* 16.8.2026: dieselbe Ausnahme wie bei den Variablen darueber,
+     sonst bleibt der Kasten dunkel, wenn jemand auf "Hell" schaltet. */
+  :root:not([data-mode="hell"]) .kern{background:#2C2C2E}
 }
 :root[data-mode="dunkel"]{--marke-grund:#FFFFFF;--marke-strich:#18191A;
     --grund:#000000;
@@ -49,6 +51,7 @@
     --karte:#1C1C1E;
     --leiste:rgba(0,0,0,.82);
 }
+:root[data-mode="dunkel"] .kern{background:#2C2C2E}
 .kern{background:#2C2C2E}
 
 *{box-sizing:border-box}
@@ -169,12 +172,17 @@ footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line
   margin-top:44px;padding-top:20px;border-top:1px solid var(--kante)}
 html.js .fuss-schalter{display:flex}
 .fuss-schalter + .jahr{margin-top:16px;padding-top:0;border-top:0}
-.sprachwahl,.moduswahl{display:inline-flex;gap:4px;flex-wrap:wrap}
-.sprachwahl button,.moduswahl button{font:inherit;font-size:14px;line-height:1;cursor:pointer;
-  background:transparent;color:var(--leise);border:1px solid var(--kante);
-  padding:9px 14px;border-radius:980px;min-height:36px;white-space:nowrap}
+.sprachwahl,.moduswahl{display:inline-flex;gap:0;padding:2px;
+  border:1px solid var(--kante);border-radius:980px}
+.sprachwahl button,.moduswahl button{font:inherit;font-size:13px;font-weight:500;line-height:1;
+  cursor:pointer;background:transparent;color:var(--leise);border:0;
+  padding:7px 13px;border-radius:980px;min-height:32px;white-space:nowrap}
 .sprachwahl button:hover,.moduswahl button:hover{color:var(--tinte)}
-.sprachwahl button.an,.moduswahl button.an{background:var(--tinte);color:var(--grund);border-color:var(--tinte)}
+/* Die aktive Stufe wird mit --tinte gefuellt, nicht mit dem Akzent.
+   Gemessen: weisse Schrift auf #0A84FF ergibt im Dunkelmodus 3,65:1 und
+   reisst damit die 4,5:1-Marke. --tinte auf --grund liegt bei 16,8:1 hell
+   und 21:1 dunkel. Apple faerbt dort blau, das uebernehme ich nicht. */
+.sprachwahl button.an,.moduswahl button.an{background:var(--tinte);color:var(--grund)}
 @media (max-width:520px){ .fuss-schalter{justify-content:flex-start} }
 </style>
 <script type="application/ld+json">
