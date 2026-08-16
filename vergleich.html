@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="de"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vergleich — gymLog neben Hevy, Strong, JEFIT und Fitbod</title>
+<meta name="description" content="gymLog neben den kostenpflichtigen Trainingstagebüchern: Preis, Konto, Datenexport, Sperrbildschirm, Studios — und die Zeilen, in denen gymLog verliert.">
+<link rel="canonical" href="https://gymlogtracker.com/vergleich.html">
+<link rel="icon" href="img/favicon.svg">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFFFFF">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gymlogtracker.com/vergleich.html">
+<meta property="og:title" content="Vergleich — gymLog neben Hevy, Strong, JEFIT und Fitbod">
+<meta property="og:description" content="Datiert, belegt, mit sichtbaren Schwächen: keine Synchronisierung, kein Android. Dafür 0 €, kein Konto, alles lokal.">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="gymLog">
+<meta property="og:image" content="https://gymlogtracker.com/img/og-bild.jpg">
+<style>
+:root{
+  --grund:#FFFFFF;
+  --band:#F2F2F7;
+  --tinte:#1D1D1F;
+  --leise:#6E6E73;
+  --akzent:#0066CC;
+  --kante:#D1D1D6;
+  --karte:#FFFFFF;
+  --leiste:rgba(255,255,255,.82);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --grund:#000000;
+    --band:#1C1C1E;
+    --tinte:#FFFFFF;
+    --leise:#A1A1A6;
+    --akzent:#0A84FF;
+    --kante:#48484A;
+    --karte:#1C1C1E;
+    --leiste:rgba(0,0,0,.82);
+  }
+  .band .karte{background:#2C2C2E}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;
+  background:var(--grund);
+  color:var(--tinte);
+  font-family:"SF Pro Text", system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size:17px;
+  line-height:25px;
+  -webkit-font-smoothing:antialiased;
+  text-wrap:pretty;
+}
+a{color:var(--akzent)}
+a:hover{color:var(--akzent)}
+p a{text-decoration:underline}
+p{margin:27px 0 0}
+h1{font-size:clamp(32px,7vw,48px);font-weight:700;letter-spacing:-.003em;line-height:1.1;margin:16px 0 0}
+h2{font-size:clamp(27px,6vw,32px);font-weight:700;letter-spacing:-.003em;line-height:1.15;margin:12px 0 0}
+h3{font-size:19px;font-weight:700;line-height:1.2;margin:0}
+.kennzeile{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--leise);margin:0}
+.container{max-width:1100px;margin-inline:auto;padding-inline:22px}
+.text{max-width:740px;margin-inline:auto}
+.einordnung{color:var(--leise)}
+section{padding:72px 0}
+section.band{background:var(--band)}
+.kopfblock{text-align:center}
+.knopf{
+  display:inline-block;background:var(--akzent);color:#fff;text-decoration:none;
+  font-size:17px;font-weight:500;line-height:1;padding:14px 24px;border-radius:980px;
+}
+.knopf:hover{filter:brightness(.92);color:#fff}
+.karte{background:var(--karte);border:1px solid var(--kante);border-radius:16px}
+header.leiste{
+  position:sticky;top:0;z-index:10;background:var(--leiste);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--kante);
+}
+.nav{display:flex;align-items:center;gap:20px;min-height:52px}
+.marke{font-size:19px;font-weight:700;color:var(--tinte);text-decoration:none;letter-spacing:-.01em}
+.nav-links{display:none;gap:24px;margin-inline:auto}
+.nav-links a{color:var(--tinte);text-decoration:none;font-size:15px}
+.nav-links a:hover{color:var(--akzent)}
+.nav-cta{margin-left:auto;font-size:15px;padding:8px 16px}
+.nav-cta .lang{display:none}
+details.menue{position:relative}
+details.menue summary{
+  list-style:none;cursor:pointer;font-size:15px;color:var(--tinte);
+  border:1px solid var(--leise);border-radius:980px;padding:7px 14px;
+}
+details.menue summary::-webkit-details-marker{display:none}
+details.menue[open] summary{background:var(--band)}
+.menue-feld{
+  position:absolute;right:0;top:calc(100% + 10px);min-width:220px;padding:8px;
+  display:flex;flex-direction:column;z-index:20;
+}
+.menue-feld a{color:var(--tinte);text-decoration:none;padding:10px 12px;border-radius:10px;font-size:17px}
+.menue-feld a:hover{background:var(--band);color:var(--akzent)}
+@media (min-width:860px){
+  .nav-links{display:flex}
+  .nav-cta{margin-left:0}
+  .nav-cta .lang{display:inline}
+  .nav-cta .kurz{display:none}
+  details.menue{display:none}
+}
+
+/* Tabelle */
+.tafel{margin-top:44px;overflow:hidden}
+.rollen{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:760px}
+caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+th,td{
+  text-align:left;vertical-align:top;padding:13px 16px;
+  border-bottom:1px solid var(--kante);font-size:15px;line-height:21px;
+}
+thead th{
+  font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--leise);
+  padding-top:16px;padding-bottom:12px;
+}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+tbody th[scope="row"]{font-weight:600}
+th[scope="row"],thead th:first-child{
+  position:sticky;left:0;background:var(--karte);min-width:150px;max-width:190px;
+  border-right:1px solid var(--kante);
+}
+td.gym{background:var(--band);font-weight:600}
+@media (prefers-color-scheme: dark){ td.gym{background:#2C2C2E} }
+td small,th small{display:block;font-weight:400;color:var(--leise);font-size:13px;line-height:18px;margin-top:2px}
+.offen{color:var(--leise);font-style:italic}
+.quelle{max-width:740px;margin-inline:auto}
+.quelle .platzhalter{
+  font-style:italic;border-bottom:1px dashed var(--leise);
+}
+.legende{color:var(--leise);font-size:15px;line-height:22px;max-width:740px;margin-inline:auto}
+
+/* Nichts für dich */
+.nicht{list-style:none;margin:44px auto 0;padding:8px 28px;max-width:740px}
+.nicht li{padding:16px 0 16px 34px;position:relative;border-bottom:1px solid var(--kante)}
+.nicht li:last-child{border-bottom:0}
+.nicht li::before{content:"—";position:absolute;left:2px;color:var(--leise);font-weight:600}
+
+.mittig{text-align:center;margin-top:34px}
+.abschluss{text-align:center}
+.abschluss .knopf{margin-top:34px}
+.abschluss .einordnung{margin-top:20px}
+footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line-height:22px}
+.fuss{display:grid;gap:36px}
+.fuss .marke{display:inline-block}
+.fuss .satz{color:var(--leise);margin-top:10px;max-width:280px}
+.fuss h4{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--leise);margin:0 0 12px}
+.fuss ul{list-style:none;margin:0;padding:0}
+.fuss li{margin-bottom:8px}
+.fuss a{color:var(--tinte);text-decoration:none}
+.fuss a:hover{color:var(--akzent);text-decoration:underline}
+.fuss-spalten{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:28px}
+.jahr{color:var(--leise);margin-top:44px;padding-top:20px;border-top:1px solid var(--kante)}
+html.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+html.js .reveal.da{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){
+  html.js .reveal{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<header class="leiste">
+  <div class="container nav">
+    <a class="marke" href="/">gymLog</a>
+    <nav class="nav-links" aria-label="Bereiche">
+      <a href="/#funktionen">Funktionen</a>
+      <a href="/#privat">Privat</a>
+      <a href="/#preis">Preis</a>
+      <a href="vergleich.html" aria-current="page">Vergleich</a>
+      <a href="/#faq">FAQ</a>
+    </nav>
+    <a class="knopf nav-cta" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640"><span class="lang">Im App Store laden</span><span class="kurz">Laden</span></a>
+    <details class="menue">
+      <summary>Menü</summary>
+      <nav class="menue-feld karte" aria-label="Bereiche">
+        <a href="/#funktionen">Funktionen</a>
+        <a href="/#privat">Privat</a>
+        <a href="/#preis">Preis</a>
+        <a href="vergleich.html">Vergleich</a>
+        <a href="/#faq">FAQ</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main>
+
+<section data-screen-label="Vergleichstabelle">
+  <div class="container reveal">
+    <div class="kopfblock">
+      <p class="kennzeile">Vergleich</p>
+      <h1>gymLog neben den kostenpflichtigen Trainingstagebüchern.</h1>
+      <p class="einordnung text">Hevy, Strong, JEFIT und Fitbod sind gute Apps. Sie wollen nur etwas anderes sein als gymLog — und kosten dafür Geld.</p>
+    </div>
+
+    <p class="quelle">Angaben geprüft am <span class="platzhalter">16.&nbsp;August 2026</span> anhand der Seiten im deutschen App&nbsp;Store. Preise, Sprachen und Datenschutzangaben stammen von den App-Store-Seiten der jeweiligen App, die Android-Angabe von der Herstellerseite. Legacy-Preise sind nicht mitgezählt, die bekommt ein neuer Nutzer nicht mehr.</p>
+
+    <div class="tafel karte">
+      <div class="rollen" tabindex="0" aria-label="Vergleichstabelle, seitlich scrollbar">
+        <table>
+          <caption>gymLog im Vergleich mit Hevy, Strong, JEFIT und Fitbod</caption>
+          <thead>
+            <tr>
+              <th scope="col">&nbsp;</th>
+              <th scope="col">gymLog</th>
+              <th scope="col">Hevy</th>
+              <th scope="col">Strong</th>
+              <th scope="col">JEFIT</th>
+              <th scope="col">Fitbod</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Preis</th>
+              <td class="gym">0&nbsp;€, dauerhaft</td><td>ab 3,49&nbsp;€/Monat<small>26,49&nbsp;€/Jahr · 89,99&nbsp;€ einmalig</small></td><td>ab 3,99&nbsp;€/Monat<small>24,49–33,99&nbsp;€/Jahr · 89,99–99,99&nbsp;€ einmalig</small></td><td>ab 13,49&nbsp;€/Monat<small>20,99–79,99&nbsp;€/Jahr</small></td><td>ab 13,49&nbsp;€/Monat<small>81,99–99,99&nbsp;€/Jahr</small></td>
+            </tr>
+            <tr>
+              <th scope="row">Alle Funktionen ohne Bezahlung</th>
+              <td class="gym">Ja</td>
+              <td>Nein<small>voller Umfang kostet</small></td>
+              <td>Nein<small>voller Umfang kostet</small></td>
+              <td>Nein<small>voller Umfang kostet</small></td>
+              <td>Nein<small>nur im Abo</small></td>
+            </tr>
+            <tr>
+              <th scope="row">Ohne Werbung</th>
+              <td class="gym">Ja</td>
+              <td>Ja</td>
+              <td>Ja</td>
+              <td class="offen">wird geprüft</td>
+              <td>Ja</td>
+            </tr>
+            <tr>
+              <th scope="row">Ohne Konto nutzbar</th>
+              <td class="gym">Ja</td>
+              <td>Nein</td>
+              <td class="offen">wird geprüft</td>
+              <td>Nein</td>
+              <td>Nein</td>
+            </tr>
+            <tr>
+              <th scope="row">Daten bleiben auf dem Gerät</th>
+              <td class="gym">Ja, immer</td>
+              <td>Nein<small>Cloud-Konto</small></td>
+              <td>Nein<small>Cloud-Konto</small></td>
+              <td>Nein<small>Cloud-Konto</small></td>
+              <td>Nein<small>Cloud-Konto</small></td>
+            </tr>
+            <tr>
+              <th scope="row">Funktioniert ohne Verbindung</th>
+              <td class="gym">Ja, immer</td>
+              <td class="offen">wird geprüft</td>
+              <td class="offen">wird geprüft</td>
+              <td class="offen">wird geprüft</td>
+              <td class="offen">wird geprüft</td>
+            </tr>
+            <tr>
+              <th scope="row">Datenexport</th>
+              <td class="gym">CSV und JSON</td><td class="offen">wird geprüft</td><td>CSV<small>laut strong.app</small></td><td class="offen">wird geprüft</td><td class="offen">wird geprüft</td>
+            </tr>
+            <tr>
+              <th scope="row">Sperrbildschirm mit Abhaken</th>
+              <td class="gym">Ja</td>
+              <td class="offen">wird geprüft</td>
+              <td class="offen">wird geprüft</td>
+              <td class="offen">wird geprüft</td>
+              <td class="offen">wird geprüft</td>
+            </tr>
+            <tr>
+              <th scope="row">Trennung nach Studio</th>
+              <td class="gym">Ja</td>
+              <td>Nein</td>
+              <td>Nein</td>
+              <td>Nein</td>
+              <td>Nein</td>
+            </tr>
+            <tr>
+              <th scope="row">Synchronisierung zwischen Geräten</th>
+              <td class="gym">Nein<small>nur über die Sicherungsdatei</small></td>
+              <td>Ja</td>
+              <td>Ja</td>
+              <td>Ja</td>
+              <td>Ja</td>
+            </tr>
+            <tr>
+              <th scope="row">Zum Tracking verwendete Daten</th>
+              <td class="gym">Keine</td>
+              <td>Keine</td>
+              <td>Keine</td>
+              <td>Nutzungsdaten</td>
+              <td>Nutzungsdaten</td>
+            </tr>
+            <tr>
+              <th scope="row">Mit dir verknüpfte Daten</th>
+              <td class="gym">Keine</td>
+              <td>4 Arten<small>u.&nbsp;a. Kontakte</small></td>
+              <td>6 Arten<small>u.&nbsp;a. Gesundheit</small></td>
+              <td>Keine<small>7 Arten ohne Verknüpfung</small></td>
+              <td>6 Arten<small>u.&nbsp;a. Gesundheit</small></td>
+            </tr>
+            <tr>
+              <th scope="row">Android</th>
+              <td class="gym">Nein</td><td>Ja</td><td>Ja</td><td>Ja</td><td>Ja</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="legende">„wird geprüft" heißt: Der Wert steht erst hier, wenn er anhand der App-Store-Seite belegt ist. Erfundene Angaben stehen in dieser Tabelle nicht.</p>
+    <p class="legende">Wo gymLog verliert, steht es drin: keine Synchronisierung zwischen Geräten, kein Android. Zwei Dinge fehlen darüber hinaus ganz — Übungsvideos in der App und fertige Trainingspläne.</p>
+  </div>
+</section>
+
+<section class="band" data-screen-label="Nichts für dich">
+  <div class="container reveal">
+    <div class="kopfblock">
+      <p class="kennzeile">Ehrlich gesagt</p>
+      <h2>gymLog ist nichts für dich, wenn&nbsp;…</h2>
+    </div>
+    <ul class="nicht karte">
+      <li>… die App dir sagen soll, was du trainieren sollst. gymLog schreibt mit, es plant nicht.</li>
+      <li>… du einen Feed und eine Community willst. Es gibt keine.</li>
+      <li>… du Übungsvideos in der App brauchst. Es gibt keine.</li>
+      <li>… du auf mehreren Geräten gleichzeitig trainierst. Es gibt keine Synchronisierung.</li>
+    </ul>
+    <p class="text" style="text-align:center">Dann bist du bei Hevy, Strong, JEFIT oder Fitbod besser aufgehoben — im Ernst.</p>
+  </div>
+</section>
+
+<section data-screen-label="Wie diese Seite entsteht">
+  <div class="container reveal">
+    <div class="kopfblock">
+      <p class="kennzeile">Quellen</p>
+      <h2>Wie diese Seite entsteht.</h2>
+    </div>
+    <p class="text">Jede Angabe zu den anderen Apps stammt von deren Seiten im deutschen App&nbsp;Store und wird mit Datum geprüft. Was nicht belegt ist, steht als „wird geprüft" da — nicht als Behauptung. Wenn hier etwas nicht mehr stimmt, schreib an <a href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a>, es wird korrigiert.</p>
+  </div>
+</section>
+
+<section class="band abschluss" data-screen-label="Abschluss">
+  <div class="container reveal">
+    <p class="kennzeile">Kostenlos, ohne Konto</p>
+    <h2>Selbst vergleichen kostet nichts.</h2>
+    <p><a class="knopf" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Im App Store laden</a></p>
+    <p class="einordnung">Wenn gymLog nichts für dich ist, hast du 0&nbsp;€ verloren.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container fuss">
+    <div>
+      <a class="marke" href="/">gymLog</a>
+      <p class="satz">Ein Trainingstagebuch für iOS. Kein Konto, keine Cloud, kein Abo.</p>
+    </div>
+    <div class="fuss-spalten">
+      <div>
+        <h4>Produkt</h4>
+        <ul>
+          <li><a href="/#funktionen">Funktionen</a></li>
+          <li><a href="/#preis">Preis</a></li>
+          <li><a href="vergleich.html">Vergleich</a></li>
+          <li><a href="/#faq">FAQ</a></li>
+          <li><a href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Im App Store laden</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="/impressum/">Impressum</a></li>
+          <li><a href="/datenschutz/">Datenschutz</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Kontakt</h4>
+        <ul>
+          <li><a href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="jahr">© 2026 gymLog</p>
+  </div>
+</footer>
+
+<script>
+document.documentElement.classList.add('js');
+var alle = document.querySelectorAll('.reveal');
+var io = new IntersectionObserver(function(eintraege){
+  eintraege.forEach(function(e){
+    if(e.isIntersecting){ e.target.classList.add('da'); io.unobserve(e.target); }
+  });
+},{rootMargin:'0px 0px -8% 0px'});
+alle.forEach(function(el){
+  if(el.getBoundingClientRect().top < window.innerHeight){ el.classList.add('da'); }
+  else{ io.observe(el); }
+});
+setTimeout(function(){ alle.forEach(function(el){ el.classList.add('da'); }); }, 800);
+var menue = document.querySelector('details.menue');
+if(menue){ menue.querySelectorAll('a').forEach(function(a){
+  a.addEventListener('click', function(){ menue.removeAttribute('open'); });
+}); }
+</script>
+
+
+
+</body></html>

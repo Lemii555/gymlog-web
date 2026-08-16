@@ -1,847 +1,527 @@
 <!DOCTYPE html>
-<html lang="de">
-<head>
+<html lang="de"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="icon" href="img/icon.svg">
-<link rel="apple-touch-icon" href="img/icon.svg">
+<title>gymLog — Trainingstagebuch fürs iPhone. Kein Konto, kein Abo, kostenlos.</title>
+<meta name="description" content="gymLog ist ein Trainingstagebuch für Leute, die ihren Plan schon haben. Kein Konto, keine Cloud, keine Werbung, kein Abo. Alles bleibt auf deinem iPhone. Dauerhaft kostenlos.">
 <link rel="canonical" href="https://gymlogtracker.com/">
-<meta name="theme-color" content="#0E0E0C">
-<meta name="robots" content="index, follow, max-image-preview:large">
-
-<!-- Open Graph: ohne diese Zeilen sieht jeder geteilte Link in WhatsApp,
-     Slack oder LinkedIn wie eine nackte URL aus. -->
+<link rel="icon" href="img/favicon.svg">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFFFFF">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://gymlogtracker.com/">
-<meta property="og:title" content="gymLog — Trainings-Tracker ohne Konto, ohne Cloud, ohne Abo">
-<meta property="og:description" content="Trainings-Tracker fürs iPhone. Alles bleibt lokal auf deinem Gerät. Keine Anmeldung, keine Werbung, kein Abo. Dauerhaft kostenlos.">
+<meta property="og:title" content="gymLog — Trainingstagebuch fürs iPhone. Kein Konto, kein Abo, kostenlos.">
+<meta property="og:description" content="Mitschreiben, nicht einstellen. Kein Konto, keine Cloud, kein Abo. Alles bleibt auf deinem iPhone.">
 <meta property="og:locale" content="de_DE">
 <meta property="og:site_name" content="gymLog">
 <meta property="og:image" content="https://gymlogtracker.com/img/og-bild.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="gymLog Planbildschirm mit Wochenkalender">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="gymLog — Trainings-Tracker ohne Konto, ohne Cloud, ohne Abo">
-<meta name="twitter:description" content="Trainings-Tracker fürs iPhone. Alles bleibt lokal auf deinem Gerät. Keine Anmeldung, keine Werbung, kein Abo. Dauerhaft kostenlos.">
-<meta name="twitter:image" content="https://gymlogtracker.com/img/og-bild.jpg">
-<title>gymLog — Trainings-Tracker ohne Konto, ohne Cloud, ohne Abo</title>
-<meta name="description" content="Trainings-Tracker fürs iPhone. Alles bleibt lokal auf deinem Gerät. Keine Anmeldung, keine Werbung, kein Abo. Dauerhaft kostenlos.">
 <style>
-/* Fraunces, dieselbe Datei wie in der App (public/fonts). Liegt sie nicht neben
-   der Seite, faellt es auf die Systemserife zurueck — nichts bricht. */
-@font-face{
-  font-family:"Fraunces";
-  src:url("fonts/Fraunces.woff2") format("woff2");
-  font-weight:300 700; font-style:normal; font-display:swap;
-}
 :root{
-  --papier:#EFEFED;
-  --tinte:#12120F;
-  --leise:#57544E;      /* 5,94:1 auf Papier */
-  /* ergibt sich: 40 Knopf + 2 x 16 Polster. Wer den Knopf aendert, aendert
-     die Leiste mit, und die Abstaende bleiben von allein richtig. */
-  --nav-h:calc(var(--nav-el) + 2 * var(--nav-pad));
-  /* Kevin, 11.8.2026: "loesche das infoband oben." Es sagte "Version 2.1",
-     stand ueber der Datenschutzerklaerung und war auf einer Rechtsseite
-     schlicht Werbung. Die Variable bleibt auf 0, damit die Abstandsrechnungen
-     in .hero und .mob nicht angefasst werden muessen. */
-  --band-h:0px;
-  --ease:cubic-bezier(.22,.61,.36,1);
-  --mono:"SFMono-Regular",ui-monospace,"Menlo",monospace;
-  --serif:"Fraunces", ui-serif, Georgia, "Times New Roman", serif;
-  /* Auf einem 32-Zoll-Schirm liefen die Spalten bis an die Glaskante und der
-     Text stand meterweit auseinander (Kevin, 10.8.2026). --rand ist deshalb
-     kein fester Wert mehr, sondern wird ab 1280px Inhaltsbreite von selbst
-     groesser. Die dunklen Flaechen und die Milchglas-Leiste bleiben dabei
-     ueber die volle Breite stehen, nur der Inhalt darin ruecht zusammen:
-     es gibt keine weissen Streifen links und rechts. Und weil alle Abschnitte
-     schon vorher var(--rand) benutzt haben, gilt das ueberall auf einmal. */
-  --max:1280px;
-  --rand-fix:22px;                                    /* reiner Innenrand */
-  --rand:max(var(--rand-fix), calc((100% - var(--max)) / 2));
-  /* Aus der App uebernommen. Nur der Akzent, nicht die ganze Palette:
-     die Website hat eine eigene Buehne, sie soll die App nicht nachbauen. */
-  --clay:#E85002;        /* Akzent hell   — Tinte darauf 4,99:1 */
-  --clay-tief:#CE4400;   /* Akzent gefuellt — Weiss darauf 4,72:1 */
-  --clay-hell:#FF8A50;   /* Akzent auf Dunkel — 8,28:1 */
-  --nacht:#0E0E0C;
-  /* 11.8.2026: Die Navigation ist eine eigene Flaeche, keine Ueberlagerung.
-     Sie muss sich vom Hero abheben, der seit heute flach --nacht ist. Bei
-     Delta L* 10 ist sie dezent erkennbar, ohne als zweiter Balken zu lesen.
-     Coachway macht es umgekehrt: dort ist die Leiste DUNKLER als der Hero.
-     Bei #0E0E0C geht dunkler nicht mehr, also nach oben. */
-  /* 11.8.2026, zweiter Anlauf nach Kevins Bildanalyse: die Coachway-Leiste HAT
-     eine Unschaerfe, sie ist nur dunkel statt milchig. Man sieht die Ueberschrift
-     verschwommen durch sie hindurch. Der erste Anlauf mit solidem #262320 war
-     eine Fehldeutung des Bildes. */
-  --nav-flaeche:rgba(14,14,12,.72);
-  --nav-kante:rgba(250,248,245,.13);
-  /* Alles in Achtelschritten. Kevin: "achte auch hier wieder auf 8 rasters."
-
-     ABER: das Achterraster allein reicht bei einer Pille nicht. Erster Anlauf
-     hatte 8 seitliches Polster, weil 8 im Raster liegt. Der Knopf sass damit
-     oben und unten 16 von der Kante entfernt, seitlich nur 8, und in der
-     Rundung lief beides zusammen: dort war der Abstand noch kleiner. Kevin:
-     "was sollen das fuer abstaende sein?"
-
-     Bei zwei ineinanderliegenden Pillen ist der Abstand nur dann RUNDUM
-     gleich, wenn seitlich derselbe Wert steht wie oben und unten:
-
-         (Leiste 72 - Knopf 40) / 2 = 16
-
-     16 liegt ebenfalls im Raster, und 40 + 2 x 16 ergibt genau die 72.
-     Die Leistenhoehe ist damit kein gesetzter Wert mehr, sondern das
-     Ergebnis von Knopfhoehe plus Polster. */
-  /* Zwei getrennte Werte, seit dem 11.8.2026:
-
-       --nav-luft   Rand der Karten zum Fensterrand, 8
-       --nav-oben   Abstand der Leiste von oben,     16
-
-     Kevin nach dem Coachway-Bild: "setz die navigation jetzt noch mal das
-     doppelte runter." Vorher war beides derselbe Wert, und die Leiste haette
-     den Kartenrand mitgezogen. Bei Coachway klebt die Karte oben und die
-     Pille schwebt DARIN, mit mehr Abstand nach oben als zur Seite. Genau
-     dieser Unterschied macht es natuerlicher. */
-  --nav-luft:8px;
-  --nav-oben:16px;
-  /* 11.8.2026, Kevin: "mach den burger 8px oben unten rechts 8px abstand,
-     72px - 16px, nav kleiner dafuer proportionen besser."
-
-     Das ist NICHT der Fehler vom Nachmittag zurueck. Damals stand seitlich 8
-     und oben/unten 16, die Leiste war 72 hoch bei 40er Knopf. Ungleich.
-     Jetzt sind alle drei Werte 8, und (56 - 40) / 2 = 8 geht auf. Die Regel
-     bleibt erfuellt, die Leiste wird nur kompakter. */
-  --nav-pad:8px;
-  --nav-el:40px;
-  --r-karte:24px;
-  --schatten-karte:0 1px 2px rgba(18,18,15,.05), 0 24px 60px -30px rgba(14,14,12,.45);      /* dunkle Abschnitte, wie --bg der App im Dunkelmodus */
-  --nacht-ink:#FAF8F5;  /* Text darauf — 18,23:1 */
-  --clay-num:#B93F00;    /* Akzent als KLEINER Text auf Papier — 4,83:1.
-                            #E85002 waere dort nur 3,27:1 (Kevin, 9.8.2026). */
+  --grund:#FFFFFF;
+  --band:#F2F2F7;
+  --tinte:#1D1D1F;
+  --leise:#6E6E73;
+  --akzent:#0066CC;
+  --kante:#D1D1D6;
+  --karte:#FFFFFF;
+  --leiste:rgba(255,255,255,.82);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,"Inter","Helvetica Neue",Arial,sans-serif;
-  background:var(--papier); color:var(--tinte); -webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
-/* Ohne eigene Regel zeichnet der Browser seinen blauen Standardring. Der sass
-   am 11.8. sichtbar um den X-Knopf im offenen Menue und passte zu nichts auf
-   der Seite. :focus-visible statt :focus, damit er nur bei Tastaturbedienung
-   erscheint und nicht nach jedem Mausklick. */
-:focus-visible{outline:2px solid var(--clay); outline-offset:3px; border-radius:4px}
-.navcta:focus-visible, .burger:focus-visible{outline-offset:4px; border-radius:999px}
-img{display:block;max-width:100%}
-
-/* ══ KOPF: Band und Leiste in einem fixierten Block ═════════════════════ */
-/* Luft unter der Leiste, damit die Pille schwebt statt am Rand zu kleben. */
-/* Der Kopf steht nicht mehr am Rand, sondern hat Luft nach oben. Kevin:
-   "die Nav liegt komplett oben an wenn man scrolled." Ursache war top:0.
-
-   Seitlich bleibt er auf 0: die Breite regelt .nav selbst, sonst kaeme der
-   Seitenabstand zweimal und die Leiste waere schmaler als der Inhalt. */
-.kopf{position:fixed; top:var(--nav-oben); left:0; right:0; z-index:50}
-/* 10.8.2026, Kevin: "der Info-Lauf ganz oben startet nicht ganz rechts."
-   Ursache war die Breite: die Spur traegt die Meldungen zweimal und wandert
-   um ihre halbe Laenge, zusammen rund 1660px. Auf einem 2600px breiten Schirm
-   reicht das nicht, rechts blieb ein Loch. Das Band auf dieselbe Breite wie
-   die Navigation zu setzen loest beides: es steht buendig, und die Spur ist
-   wieder laenger als das Fenster. */
-/* Kevin, 10.8.2026: auf Impressum und Datenschutz standen links und rechts
-   zwei weisse Balken. Ursache war max-width am Band selbst: auf hellem Grund
-   sieht man dort den Untergrund, auf der dunklen Startseite fiel es nicht auf.
-   Das Band laeuft wieder ueber die volle Breite. Die Luecke rechts, wegen der
-/* NAVIGATION, 11.8.2026 nach Kevins Vorbild coachway.com.
-
-   Vorher: Leiste ueber die volle Breite, Milchglas mit Unschaerfe, ein
-   Braunton-Verlauf darunter, beim Scrollen von 72 auf 58 geschrumpft. Das war
-   nach weberworkshops.com gebaut und hat vier Anlaeufe gekostet.
-
-   Kevin am 11.8.: "orientiere dich am coachway design das wirkt erwachsener
-   fuer ne app als weber workshops."
-
-   Jetzt: eine solide Pille, die auf der Seite liegt statt darueber zu
-   schweben. Kein Glas, keine Unschaerfe, kein Verlauf, kein Schrumpfen.
-   Ein Zustand statt vier. Das ist auch der Grund, warum es funktioniert:
-   die Weber-Leiste brauchte den Verlauf, weil weisse Schrift ueber wechselndem
-   Untergrund lag. Auf einer eigenen Flaeche stellt sich die Frage nicht. */
-.nav{position:relative; height:var(--nav-h); display:grid;
-  grid-template-columns:auto 1fr auto; align-items:center; gap:16px;
-  /* Kevin, 11.8.2026: "die Navigation muss exakt max die breite vom inhalt
-     selbst haben sonst ist es wie jetzt inhalt xx und nav xxxxxxx."
-
-     Vorher stand hier --max plus zweimal --rand. --rand waechst aber mit dem
-     Fenster (es ist der Aussenabstand, der den Inhalt auf 1280 haelt), also
-     wurde die Leiste auf einem 1920er Bildschirm 1904 breit, der Inhalt 1280.
-     624px Unterschied.
-
-     Jetzt dieselbe Rechnung wie der Inhalt: hoechstens --max, und auf schmalen
-     Fenstern derselbe feste Rand. */
-  width:min(100% - 2 * var(--rand-fix), var(--max)); margin:0 auto;
-  /* Links 16 statt 8: die Marke ist Symbol plus Schrift, keine Flaeche.
-     Buchstaben tragen eigene Seitenlagen, deshalb braucht Text optisch mehr
-     Luft als ein gefuellter Knopf, um gleich weit weg zu WIRKEN. Vorher waren
-     es 24 bei 16er Polster, das Verhaeltnis bleibt. */
-  padding:var(--nav-pad) var(--nav-pad) var(--nav-pad) 16px;
-  background:var(--nav-flaeche); border-radius:999px;
-  box-shadow:inset 0 0 0 1px var(--nav-kante);
-  -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%);
-  color:var(--nacht-ink)}
-
-/* Gescrollt aendert sich nichts. Kevin: "sobald ich scrolle soll sie nicht
-   schrumpfen tut sie bei coachway auch nicht." Die Klasse bleibt im HTML,
-   damit das Skript nichts wissen muss, sie traegt nur keine Regel mehr. */
-
-/* Menue offen: die Leiste bleibt, wie sie ist. Sie schwebt ueber dem dunklen
-   Blatt genau wie ueber dem Hero, weil beide --nacht sind. Ein eigener
-   Zustand waere hier nur eine weitere Stelle, an der etwas auseinanderlaufen
-   kann. Von vier Zustaenden heute Mittag ist damit einer uebrig. */
-
-/* Die Wortmarke als MASKE: so nimmt sie currentColor an und ist ueber dem
-   dunklen Kopfbereich hell, gescrollt dunkel. Ein <img> koennte das nicht.
-   10.8.2026: als EXTERNE Datei blieb sie beim lokalen Oeffnen unsichtbar —
-   Browser verweigern SVG-Masken ueber file:// aus Sicherheitsgruenden.
-   Deshalb direkt eingebettet. Kostet ein paar Kilobyte, funktioniert dafuer
-   ueberall, auch per Doppelklick. */
-/* 10.8.2026: das Icon steckte als 1024er Bitmap in der Maske und wurde
-   dadurch zum weissen Klotz. Es liegt aber als sauberes Vektor-SVG vor.
-   Also getrennt: Icon als eigenes Bild, behaelt seine Farben. Schriftzug
-   weiter als Maske, wechselt beim Scrollen von hell nach dunkel. */
-/* Marke links wie bei Coachway, nicht mittig wie bei Weber. Das Raster ist
-   jetzt auto|1fr|auto: Marke, dann der dehnbare Teil, dann die Aktionen. */
-.marke{grid-column:1; display:flex; align-items:center; gap:9px; flex:none}
-.marke-ic{width:32px; height:32px; flex:none;
-  transition:width .4s var(--ease), height .4s var(--ease)}
-.marke-tx{display:block; width:89px; height:24px; background:currentColor;
-  -webkit-mask:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUyIiBoZWlnaHQ9IjEyMiIgdmlld0JveD0iMTk5IDI4IDQ1MiAxMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPiA8cGF0aCBkPSJNMjMzLjU2MiAxNDUuMTI1QzIyOC4yMjkgMTQ1LjEyNSAyMjMuNTYyIDE0NC4zNTQgMjE5LjU2MiAxNDIuODEyQzIxNS42MDQgMTQxLjMxMiAyMTIuMzk2IDEzOS4yNSAyMDkuOTM4IDEzNi42MjVDMjA3LjUyMSAxMzQuMDQyIDIwNS45NTggMTMxLjE0NiAyMDUuMjUgMTI3LjkzOEwyMDUuMTI1IDEyNy4zNzVIMjE2LjA2MkwyMTYuMzEyIDEyNy45MzhDMjE3LjM1NCAxMzAuMjcxIDIxOS4zNTQgMTMyLjEwNCAyMjIuMzEyIDEzMy40MzhDMjI1LjMxMiAxMzQuODEyIDIyOS4wMjEgMTM1LjUgMjMzLjQzOCAxMzUuNUMyMzkuMTQ2IDEzNS41IDI0My41NjIgMTM0LjAyMSAyNDYuNjg4IDEzMS4wNjJDMjQ5LjgxMiAxMjguMTQ2IDI1MS4zNzUgMTI0LjE2NyAyNTEuMzc1IDExOS4xMjVWMTEwLjgxMkgyNTEuMTI1QzI0OS44MzMgMTEzLjIyOSAyNDguMTY3IDExNS4zMTIgMjQ2LjEyNSAxMTcuMDYyQzI0NC4wODMgMTE4LjgxMiAyNDEuNzI5IDEyMC4xODggMjM5LjA2MiAxMjEuMTg4QzIzNi40MzggMTIyLjE0NiAyMzMuNTYyIDEyMi42MjUgMjMwLjQzOCAxMjIuNjI1QzIyNC45NzkgMTIyLjYyNSAyMjAuMTY3IDEyMS4yNSAyMTYgMTE4LjVDMjExLjg3NSAxMTUuNzA4IDIwOC42NDYgMTExLjgxMiAyMDYuMzEyIDEwNi44MTJDMjA0LjAyMSAxMDEuNzcxIDIwMi44NzUgOTUuODc1IDIwMi44NzUgODkuMTI1Vjg5LjA2MjVDMjAyLjg3NSA4Mi4zMTI1IDIwNC4wNDIgNzYuNDU4MyAyMDYuMzc1IDcxLjVDMjA4Ljc1IDY2LjUgMjEyLjAyMSA2Mi42MjUgMjE2LjE4OCA1OS44NzVDMjIwLjM1NCA1Ny4xMjUgMjI1LjE4OCA1NS43NSAyMzAuNjg4IDU1Ljc1QzIzMy43NzEgNTUuNzUgMjM2LjYwNCA1Ni4yNzA4IDIzOS4xODggNTcuMzEyNUMyNDEuNzcxIDU4LjM1NDIgMjQ0LjA2MiA1OS43OTE3IDI0Ni4wNjIgNjEuNjI1QzI0OC4xMDQgNjMuNDU4MyAyNDkuNzkyIDY1LjU4MzMgMjUxLjEyNSA2OEgyNTEuMzc1VjU3SDI2Mi4yNVYxMjAuMTg4QzI2Mi4yNSAxMjUuMjI5IDI2MS4wODMgMTI5LjYwNCAyNTguNzUgMTMzLjMxMkMyNTYuNDE3IDEzNy4wNjIgMjUzLjEwNCAxMzkuOTU4IDI0OC44MTIgMTQyQzI0NC41MjEgMTQ0LjA4MyAyMzkuNDM4IDE0NS4xMjUgMjMzLjU2MiAxNDUuMTI1Wk0yMzIuODEyIDExM0MyMzYuNTIxIDExMyAyMzkuNzUgMTEyLjAyMSAyNDIuNSAxMTAuMDYyQzI0NS4yOTIgMTA4LjA2MiAyNDcuNDU4IDEwNS4yNzEgMjQ5IDEwMS42ODhDMjUwLjU4MyA5OC4xMDQyIDI1MS4zNzUgOTMuOTE2NyAyNTEuMzc1IDg5LjEyNVY4OS4wNjI1QzI1MS4zNzUgODQuMjcwOCAyNTAuNTgzIDgwLjEwNDIgMjQ5IDc2LjU2MjVDMjQ3LjQ1OCA3My4wMjA4IDI0NS4yOTIgNzAuMjcwOCAyNDIuNSA2OC4zMTI1QzIzOS43MDggNjYuMzU0MiAyMzYuNDc5IDY1LjM3NSAyMzIuODEyIDY1LjM3NUMyMjguOTc5IDY1LjM3NSAyMjUuNjQ2IDY2LjM1NDIgMjIyLjgxMiA2OC4zMTI1QzIxOS45NzkgNzAuMjI5MiAyMTcuNzkyIDcyLjk1ODMgMjE2LjI1IDc2LjVDMjE0Ljc1IDgwLjA0MTcgMjE0IDg0LjIyOTIgMjE0IDg5LjA2MjVWODkuMTI1QzIxNCA5NC4wNDE3IDIxNC43NSA5OC4yOTE3IDIxNi4yNSAxMDEuODc1QzIxNy43OTIgMTA1LjQxNyAyMTkuOTc5IDEwOC4xNjcgMjIyLjgxMiAxMTAuMTI1QzIyNS42NDYgMTEyLjA0MiAyMjguOTc5IDExMyAyMzIuODEyIDExM1pNMjgyLjU2MiAxNDMuODc1QzI4MS41MjEgMTQzLjg3NSAyODAuNDU4IDE0My44MTIgMjc5LjM3NSAxNDMuNjg4QzI3OC4zMzMgMTQzLjYwNCAyNzcuNDU4IDE0My41IDI3Ni43NSAxNDMuMzc1VjEzNC41QzI3Ny4yMDggMTM0LjU4MyAyNzcuNzI5IDEzNC42NjcgMjc4LjMxMiAxMzQuNzVDMjc4LjkzOCAxMzQuODMzIDI3OS41ODMgMTM0Ljg3NSAyODAuMjUgMTM0Ljg3NUMyODMuNzA4IDEzNC44NzUgMjg2LjQ1OCAxMzQuMjcxIDI4OC41IDEzMy4wNjJDMjkwLjU4MyAxMzEuODU0IDI5Mi4yNzEgMTI5LjQxNyAyOTMuNTYyIDEyNS43NUwyOTQuODc1IDEyMi4wNjJMMjcwLjc1IDU3SDI4Mi4zNzVMMzAxLjEyNSAxMTMuNjI1TDI5OC44MTIgMTExLjEyNUgzMDIuMDYyTDI5OS43NSAxMTMuNjI1TDMxOC41NjIgNTdIMzMwTDMwNC42MjUgMTI2LjA2MkMzMDMuMDgzIDEzMC4xODggMzAxLjM1NCAxMzMuNTYyIDI5OS40MzggMTM2LjE4OEMyOTcuNTIxIDEzOC44MTIgMjk1LjIwOCAxNDAuNzUgMjkyLjUgMTQyQzI4OS43OTIgMTQzLjI1IDI4Ni40NzkgMTQzLjg3NSAyODIuNTYyIDE0My44NzVaTTMzOC41NjIgMTIyVjU3SDM0OS40MzhWNjYuNUgzNDkuNjg4QzM1MS4xNDYgNjMuMjkxNyAzNTMuNDM4IDYwLjcwODMgMzU2LjU2MiA1OC43NUMzNTkuNjg4IDU2Ljc1IDM2My4zMzMgNTUuNzUgMzY3LjUgNTUuNzVDMzcwLjQ1OCA1NS43NSAzNzMuMTI1IDU2LjI1IDM3NS41IDU3LjI1QzM3Ny45MTcgNTguMjA4MyAzODAgNTkuNjI1IDM4MS43NSA2MS41QzM4My41IDYzLjMzMzMgMzg0LjgzMyA2NS41ODMzIDM4NS43NSA2OC4yNUgzODZDMzg3LjIwOCA2NS42MjUgMzg4LjgxMiA2My4zOTU4IDM5MC44MTIgNjEuNTYyNUMzOTIuODU0IDU5LjY4NzUgMzk1LjE4OCA1OC4yNSAzOTcuODEyIDU3LjI1QzQwMC40NzkgNTYuMjUgNDAzLjMzMyA1NS43NSA0MDYuMzc1IDU1Ljc1QzQxMC42NjcgNTUuNzUgNDE0LjM5NiA1Ni42NDU4IDQxNy41NjIgNTguNDM3NUM0MjAuNzI5IDYwLjE4NzUgNDIzLjE4OCA2Mi42NjY3IDQyNC45MzggNjUuODc1QzQyNi42ODggNjkuMDQxNyA0MjcuNTYyIDcyLjc5MTcgNDI3LjU2MiA3Ny4xMjVWMTIySDQxNi42ODhWNzkuNjI1QzQxNi42ODggNzYuNjI1IDQxNi4xNDYgNzQuMDYyNSA0MTUuMDYyIDcxLjkzNzVDNDE0LjAyMSA2OS44MTI1IDQxMi41IDY4LjE4NzUgNDEwLjUgNjcuMDYyNUM0MDguNSA2NS45Mzc1IDQwNi4wNjIgNjUuMzc1IDQwMy4xODggNjUuMzc1QzQwMC4zMTIgNjUuMzc1IDM5Ny43NzEgNjYuMDQxNyAzOTUuNTYyIDY3LjM3NUMzOTMuMzU0IDY4LjY2NjcgMzkxLjYyNSA3MC40NzkyIDM5MC4zNzUgNzIuODEyNUMzODkuMTI1IDc1LjEwNDIgMzg4LjUgNzcuNzI5MiAzODguNSA4MC42ODc1VjEyMkgzNzcuNjI1Vjc4LjQzNzVDMzc3LjYyNSA3NS44MTI1IDM3Ny4wNjIgNzMuNTIwOCAzNzUuOTM4IDcxLjU2MjVDMzc0Ljg1NCA2OS42MDQyIDM3My4zMTIgNjguMDgzMyAzNzEuMzEyIDY3QzM2OS4zNTQgNjUuOTE2NyAzNjcuMDIxIDY1LjM3NSAzNjQuMzEyIDY1LjM3NUMzNjEuNDM4IDY1LjM3NSAzNTguODc1IDY2LjA4MzMgMzU2LjYyNSA2Ny41QzM1NC40MTcgNjguODc1IDM1Mi42NjcgNzAuNzUgMzUxLjM3NSA3My4xMjVDMzUwLjA4MyA3NS41IDM0OS40MzggNzguMjA4MyAzNDkuNDM4IDgxLjI1VjEyMkgzMzguNTYyWk00NDEuODc1IDEyMlYzMS44MTI1SDQ2MC43NVYxMDYuNDM4SDUwMC4xODhWMTIySDQ0MS44NzVaTTUzOS42ODggMTIzLjM3NUM1MzIuODk2IDEyMy4zNzUgNTI3LjAyMSAxMjEuOTc5IDUyMi4wNjIgMTE5LjE4OEM1MTcuMTA0IDExNi4zOTYgNTEzLjI3MSAxMTIuMzk2IDUxMC41NjIgMTA3LjE4OEM1MDcuODU0IDEwMS45NzkgNTA2LjUgOTUuNzUgNTA2LjUgODguNVY4OC4zNzVDNTA2LjUgODEuMTY2NyA1MDcuODc1IDc0Ljk3OTIgNTEwLjYyNSA2OS44MTI1QzUxMy4zNzUgNjQuNjA0MiA1MTcuMjI5IDYwLjYwNDIgNTIyLjE4OCA1Ny44MTI1QzUyNy4xNDYgNTUuMDIwOCA1MzIuOTU4IDUzLjYyNSA1MzkuNjI1IDUzLjYyNUM1NDYuMzMzIDUzLjYyNSA1NTIuMTY3IDU1LjAyMDggNTU3LjEyNSA1Ny44MTI1QzU2Mi4xMjUgNjAuNTYyNSA1NjYgNjQuNTQxNyA1NjguNzUgNjkuNzVDNTcxLjUgNzQuOTE2NyA1NzIuODc1IDgxLjEyNSA1NzIuODc1IDg4LjM3NVY4OC41QzU3Mi44NzUgOTUuNzkxNyA1NzEuNSAxMDIuMDQyIDU2OC43NSAxMDcuMjVDNTY2LjA0MiAxMTIuNDU4IDU2Mi4yMDggMTE2LjQ1OCA1NTcuMjUgMTE5LjI1QzU1Mi4yOTIgMTIyIDU0Ni40MzggMTIzLjM3NSA1MzkuNjg4IDEyMy4zNzVaTTUzOS43NSAxMDkuMDYyQzU0Mi43MDggMTA5LjA2MiA1NDUuMjcxIDEwOC4yNzEgNTQ3LjQzOCAxMDYuNjg4QzU0OS42NDYgMTA1LjA2MiA1NTEuMzMzIDEwMi43MjkgNTUyLjUgOTkuNjg3NUM1NTMuNzA4IDk2LjYwNDIgNTU0LjMxMiA5Mi44NzUgNTU0LjMxMiA4OC41Vjg4LjM3NUM1NTQuMzEyIDg0LjA0MTcgNTUzLjcwOCA4MC4zNTQyIDU1Mi41IDc3LjMxMjVDNTUxLjI5MiA3NC4yNzA4IDU0OS41ODMgNzEuOTU4MyA1NDcuMzc1IDcwLjM3NUM1NDUuMTY3IDY4Ljc1IDU0Mi41ODMgNjcuOTM3NSA1MzkuNjI1IDY3LjkzNzVDNTM2LjcwOCA2Ny45Mzc1IDUzNC4xNDYgNjguNzUgNTMxLjkzOCA3MC4zNzVDNTI5Ljc3MSA3MS45NTgzIDUyOC4wODMgNzQuMjcwOCA1MjYuODc1IDc3LjMxMjVDNTI1LjY2NyA4MC4zNTQyIDUyNS4wNjIgODQuMDQxNyA1MjUuMDYyIDg4LjM3NVY4OC41QzUyNS4wNjIgOTIuODc1IDUyNS42NDYgOTYuNjA0MiA1MjYuODEyIDk5LjY4NzVDNTI4LjAyMSAxMDIuNzI5IDUyOS43MjkgMTA1LjA2MiA1MzEuOTM4IDEwNi42ODhDNTM0LjE0NiAxMDguMjcxIDUzNi43NSAxMDkuMDYyIDUzOS43NSAxMDkuMDYyWk02MTMuNjI1IDE0NS4yNUM2MDcuNSAxNDUuMjUgNjAyLjE0NiAxNDQuMzk2IDU5Ny41NjIgMTQyLjY4OEM1OTMuMDIxIDE0MS4wMjEgNTg5LjM5NiAxMzguNzUgNTg2LjY4OCAxMzUuODc1QzU4NC4wMjEgMTMzIDU4Mi4zOTYgMTI5Ljc3MSA1ODEuODEyIDEyNi4xODhMNTgxLjc1IDEyNS42MjVINTk5LjVMNTk5LjY4OCAxMjYuMDYyQzYwMC40MzggMTI3LjY4OCA2MDIgMTI5LjEyNSA2MDQuMzc1IDEzMC4zNzVDNjA2Ljc1IDEzMS42MjUgNjA5LjgzMyAxMzIuMjUgNjEzLjYyNSAxMzIuMjVDNjE4LjMzMyAxMzIuMjUgNjIxLjkxNyAxMzEuMTI1IDYyNC4zNzUgMTI4Ljg3NUM2MjYuODMzIDEyNi42MjUgNjI4LjA2MiAxMjMuNjI1IDYyOC4wNjIgMTE5Ljg3NVYxMDkuNjI1SDYyNy42ODhDNjI2LjUyMSAxMTEuOTU4IDYyNC45MzggMTEzLjk3OSA2MjIuOTM4IDExNS42ODhDNjIwLjkzOCAxMTcuMzk2IDYxOC41ODMgMTE4LjcyOSA2MTUuODc1IDExOS42ODhDNjEzLjIwOCAxMjAuNjA0IDYxMC4yNSAxMjEuMDYyIDYwNyAxMjEuMDYyQzYwMS40MTcgMTIxLjA2MiA1OTYuNTgzIDExOS43MjkgNTkyLjUgMTE3LjA2MkM1ODguNDU4IDExNC4zOTYgNTg1LjMzMyAxMTAuNTgzIDU4My4xMjUgMTA1LjYyNUM1ODAuOTU4IDEwMC42MjUgNTc5Ljg3NSA5NC42NjY3IDU3OS44NzUgODcuNzVWODcuNjg3NUM1NzkuODc1IDgwLjU2MjUgNTgwLjk3OSA3NC40NTgzIDU4My4xODggNjkuMzc1QzU4NS40MzggNjQuMjkxNyA1ODguNjA0IDYwLjM5NTggNTkyLjY4OCA1Ny42ODc1QzU5Ni43NzEgNTQuOTc5MiA2MDEuNjQ2IDUzLjYyNSA2MDcuMzEyIDUzLjYyNUM2MTAuNDc5IDUzLjYyNSA2MTMuMzc1IDU0LjE0NTggNjE2IDU1LjE4NzVDNjE4LjYyNSA1Ni4yMjkyIDYyMC45MTcgNTcuNzA4MyA2MjIuODc1IDU5LjYyNUM2MjQuODc1IDYxLjU0MTcgNjI2LjQ3OSA2My44MTI1IDYyNy42ODggNjYuNDM3NUg2MjguMDYyVjU1SDY0Ni4zMTJWMTIwLjEyNUM2NDYuMzEyIDEyNS4wODMgNjQ0Ljk3OSAxMjkuNDM4IDY0Mi4zMTIgMTMzLjE4OEM2MzkuNjg4IDEzNi45NzkgNjM1LjkxNyAxMzkuOTM4IDYzMSAxNDIuMDYyQzYyNi4xMjUgMTQ0LjE4OCA2MjAuMzMzIDE0NS4yNSA2MTMuNjI1IDE0NS4yNVpNNjEzLjMxMiAxMDcuNjg4QzYxNi4zMTIgMTA3LjY4OCA2MTguOTE3IDEwNi44OTYgNjIxLjEyNSAxMDUuMzEyQzYyMy4zMzMgMTAzLjcyOSA2MjUuMDQyIDEwMS40NzkgNjI2LjI1IDk4LjU2MjVDNjI3LjUgOTUuNjQ1OCA2MjguMTI1IDkyLjE4NzUgNjI4LjEyNSA4OC4xODc1Vjg4LjEyNUM2MjguMTI1IDg0LjEyNSA2MjcuNSA4MC42ODc1IDYyNi4yNSA3Ny44MTI1QzYyNS4wNDIgNzQuODk1OCA2MjMuMzEyIDcyLjY2NjcgNjIxLjA2MiA3MS4xMjVDNjE4Ljg1NCA2OS41NDE3IDYxNi4yNzEgNjguNzUgNjEzLjMxMiA2OC43NUM2MTAuMzEyIDY4Ljc1IDYwNy42ODggNjkuNTQxNyA2MDUuNDM4IDcxLjEyNUM2MDMuMTg4IDcyLjY2NjcgNjAxLjQ1OCA3NC44NzUgNjAwLjI1IDc3Ljc1QzU5OS4wNDIgODAuNjI1IDU5OC40MzggODQuMDgzMyA1OTguNDM4IDg4LjEyNVY4OC4xODc1QzU5OC40MzggOTIuMTg3NSA1OTkuMDQyIDk1LjY0NTggNjAwLjI1IDk4LjU2MjVDNjAxLjQ1OCAxMDEuNDc5IDYwMy4xODggMTAzLjcyOSA2MDUuNDM4IDEwNS4zMTJDNjA3LjY4OCAxMDYuODk2IDYxMC4zMTIgMTA3LjY4OCA2MTMuMzEyIDEwNy42ODhaIiBmaWxsPSIjMTIxMjBGIi8+ICAgPC9zdmc+') no-repeat center/contain;
-  mask:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUyIiBoZWlnaHQ9IjEyMiIgdmlld0JveD0iMTk5IDI4IDQ1MiAxMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPiA8cGF0aCBkPSJNMjMzLjU2MiAxNDUuMTI1QzIyOC4yMjkgMTQ1LjEyNSAyMjMuNTYyIDE0NC4zNTQgMjE5LjU2MiAxNDIuODEyQzIxNS42MDQgMTQxLjMxMiAyMTIuMzk2IDEzOS4yNSAyMDkuOTM4IDEzNi42MjVDMjA3LjUyMSAxMzQuMDQyIDIwNS45NTggMTMxLjE0NiAyMDUuMjUgMTI3LjkzOEwyMDUuMTI1IDEyNy4zNzVIMjE2LjA2MkwyMTYuMzEyIDEyNy45MzhDMjE3LjM1NCAxMzAuMjcxIDIxOS4zNTQgMTMyLjEwNCAyMjIuMzEyIDEzMy40MzhDMjI1LjMxMiAxMzQuODEyIDIyOS4wMjEgMTM1LjUgMjMzLjQzOCAxMzUuNUMyMzkuMTQ2IDEzNS41IDI0My41NjIgMTM0LjAyMSAyNDYuNjg4IDEzMS4wNjJDMjQ5LjgxMiAxMjguMTQ2IDI1MS4zNzUgMTI0LjE2NyAyNTEuMzc1IDExOS4xMjVWMTEwLjgxMkgyNTEuMTI1QzI0OS44MzMgMTEzLjIyOSAyNDguMTY3IDExNS4zMTIgMjQ2LjEyNSAxMTcuMDYyQzI0NC4wODMgMTE4LjgxMiAyNDEuNzI5IDEyMC4xODggMjM5LjA2MiAxMjEuMTg4QzIzNi40MzggMTIyLjE0NiAyMzMuNTYyIDEyMi42MjUgMjMwLjQzOCAxMjIuNjI1QzIyNC45NzkgMTIyLjYyNSAyMjAuMTY3IDEyMS4yNSAyMTYgMTE4LjVDMjExLjg3NSAxMTUuNzA4IDIwOC42NDYgMTExLjgxMiAyMDYuMzEyIDEwNi44MTJDMjA0LjAyMSAxMDEuNzcxIDIwMi44NzUgOTUuODc1IDIwMi44NzUgODkuMTI1Vjg5LjA2MjVDMjAyLjg3NSA4Mi4zMTI1IDIwNC4wNDIgNzYuNDU4MyAyMDYuMzc1IDcxLjVDMjA4Ljc1IDY2LjUgMjEyLjAyMSA2Mi42MjUgMjE2LjE4OCA1OS44NzVDMjIwLjM1NCA1Ny4xMjUgMjI1LjE4OCA1NS43NSAyMzAuNjg4IDU1Ljc1QzIzMy43NzEgNTUuNzUgMjM2LjYwNCA1Ni4yNzA4IDIzOS4xODggNTcuMzEyNUMyNDEuNzcxIDU4LjM1NDIgMjQ0LjA2MiA1OS43OTE3IDI0Ni4wNjIgNjEuNjI1QzI0OC4xMDQgNjMuNDU4MyAyNDkuNzkyIDY1LjU4MzMgMjUxLjEyNSA2OEgyNTEuMzc1VjU3SDI2Mi4yNVYxMjAuMTg4QzI2Mi4yNSAxMjUuMjI5IDI2MS4wODMgMTI5LjYwNCAyNTguNzUgMTMzLjMxMkMyNTYuNDE3IDEzNy4wNjIgMjUzLjEwNCAxMzkuOTU4IDI0OC44MTIgMTQyQzI0NC41MjEgMTQ0LjA4MyAyMzkuNDM4IDE0NS4xMjUgMjMzLjU2MiAxNDUuMTI1Wk0yMzIuODEyIDExM0MyMzYuNTIxIDExMyAyMzkuNzUgMTEyLjAyMSAyNDIuNSAxMTAuMDYyQzI0NS4yOTIgMTA4LjA2MiAyNDcuNDU4IDEwNS4yNzEgMjQ5IDEwMS42ODhDMjUwLjU4MyA5OC4xMDQyIDI1MS4zNzUgOTMuOTE2NyAyNTEuMzc1IDg5LjEyNVY4OS4wNjI1QzI1MS4zNzUgODQuMjcwOCAyNTAuNTgzIDgwLjEwNDIgMjQ5IDc2LjU2MjVDMjQ3LjQ1OCA3My4wMjA4IDI0NS4yOTIgNzAuMjcwOCAyNDIuNSA2OC4zMTI1QzIzOS43MDggNjYuMzU0MiAyMzYuNDc5IDY1LjM3NSAyMzIuODEyIDY1LjM3NUMyMjguOTc5IDY1LjM3NSAyMjUuNjQ2IDY2LjM1NDIgMjIyLjgxMiA2OC4zMTI1QzIxOS45NzkgNzAuMjI5MiAyMTcuNzkyIDcyLjk1ODMgMjE2LjI1IDc2LjVDMjE0Ljc1IDgwLjA0MTcgMjE0IDg0LjIyOTIgMjE0IDg5LjA2MjVWODkuMTI1QzIxNCA5NC4wNDE3IDIxNC43NSA5OC4yOTE3IDIxNi4yNSAxMDEuODc1QzIxNy43OTIgMTA1LjQxNyAyMTkuOTc5IDEwOC4xNjcgMjIyLjgxMiAxMTAuMTI1QzIyNS42NDYgMTEyLjA0MiAyMjguOTc5IDExMyAyMzIuODEyIDExM1pNMjgyLjU2MiAxNDMuODc1QzI4MS41MjEgMTQzLjg3NSAyODAuNDU4IDE0My44MTIgMjc5LjM3NSAxNDMuNjg4QzI3OC4zMzMgMTQzLjYwNCAyNzcuNDU4IDE0My41IDI3Ni43NSAxNDMuMzc1VjEzNC41QzI3Ny4yMDggMTM0LjU4MyAyNzcuNzI5IDEzNC42NjcgMjc4LjMxMiAxMzQuNzVDMjc4LjkzOCAxMzQuODMzIDI3OS41ODMgMTM0Ljg3NSAyODAuMjUgMTM0Ljg3NUMyODMuNzA4IDEzNC44NzUgMjg2LjQ1OCAxMzQuMjcxIDI4OC41IDEzMy4wNjJDMjkwLjU4MyAxMzEuODU0IDI5Mi4yNzEgMTI5LjQxNyAyOTMuNTYyIDEyNS43NUwyOTQuODc1IDEyMi4wNjJMMjcwLjc1IDU3SDI4Mi4zNzVMMzAxLjEyNSAxMTMuNjI1TDI5OC44MTIgMTExLjEyNUgzMDIuMDYyTDI5OS43NSAxMTMuNjI1TDMxOC41NjIgNTdIMzMwTDMwNC42MjUgMTI2LjA2MkMzMDMuMDgzIDEzMC4xODggMzAxLjM1NCAxMzMuNTYyIDI5OS40MzggMTM2LjE4OEMyOTcuNTIxIDEzOC44MTIgMjk1LjIwOCAxNDAuNzUgMjkyLjUgMTQyQzI4OS43OTIgMTQzLjI1IDI4Ni40NzkgMTQzLjg3NSAyODIuNTYyIDE0My44NzVaTTMzOC41NjIgMTIyVjU3SDM0OS40MzhWNjYuNUgzNDkuNjg4QzM1MS4xNDYgNjMuMjkxNyAzNTMuNDM4IDYwLjcwODMgMzU2LjU2MiA1OC43NUMzNTkuNjg4IDU2Ljc1IDM2My4zMzMgNTUuNzUgMzY3LjUgNTUuNzVDMzcwLjQ1OCA1NS43NSAzNzMuMTI1IDU2LjI1IDM3NS41IDU3LjI1QzM3Ny45MTcgNTguMjA4MyAzODAgNTkuNjI1IDM4MS43NSA2MS41QzM4My41IDYzLjMzMzMgMzg0LjgzMyA2NS41ODMzIDM4NS43NSA2OC4yNUgzODZDMzg3LjIwOCA2NS42MjUgMzg4LjgxMiA2My4zOTU4IDM5MC44MTIgNjEuNTYyNUMzOTIuODU0IDU5LjY4NzUgMzk1LjE4OCA1OC4yNSAzOTcuODEyIDU3LjI1QzQwMC40NzkgNTYuMjUgNDAzLjMzMyA1NS43NSA0MDYuMzc1IDU1Ljc1QzQxMC42NjcgNTUuNzUgNDE0LjM5NiA1Ni42NDU4IDQxNy41NjIgNTguNDM3NUM0MjAuNzI5IDYwLjE4NzUgNDIzLjE4OCA2Mi42NjY3IDQyNC45MzggNjUuODc1QzQyNi42ODggNjkuMDQxNyA0MjcuNTYyIDcyLjc5MTcgNDI3LjU2MiA3Ny4xMjVWMTIySDQxNi42ODhWNzkuNjI1QzQxNi42ODggNzYuNjI1IDQxNi4xNDYgNzQuMDYyNSA0MTUuMDYyIDcxLjkzNzVDNDE0LjAyMSA2OS44MTI1IDQxMi41IDY4LjE4NzUgNDEwLjUgNjcuMDYyNUM0MDguNSA2NS45Mzc1IDQwNi4wNjIgNjUuMzc1IDQwMy4xODggNjUuMzc1QzQwMC4zMTIgNjUuMzc1IDM5Ny43NzEgNjYuMDQxNyAzOTUuNTYyIDY3LjM3NUMzOTMuMzU0IDY4LjY2NjcgMzkxLjYyNSA3MC40NzkyIDM5MC4zNzUgNzIuODEyNUMzODkuMTI1IDc1LjEwNDIgMzg4LjUgNzcuNzI5MiAzODguNSA4MC42ODc1VjEyMkgzNzcuNjI1Vjc4LjQzNzVDMzc3LjYyNSA3NS44MTI1IDM3Ny4wNjIgNzMuNTIwOCAzNzUuOTM4IDcxLjU2MjVDMzc0Ljg1NCA2OS42MDQyIDM3My4zMTIgNjguMDgzMyAzNzEuMzEyIDY3QzM2OS4zNTQgNjUuOTE2NyAzNjcuMDIxIDY1LjM3NSAzNjQuMzEyIDY1LjM3NUMzNjEuNDM4IDY1LjM3NSAzNTguODc1IDY2LjA4MzMgMzU2LjYyNSA2Ny41QzM1NC40MTcgNjguODc1IDM1Mi42NjcgNzAuNzUgMzUxLjM3NSA3My4xMjVDMzUwLjA4MyA3NS41IDM0OS40MzggNzguMjA4MyAzNDkuNDM4IDgxLjI1VjEyMkgzMzguNTYyWk00NDEuODc1IDEyMlYzMS44MTI1SDQ2MC43NVYxMDYuNDM4SDUwMC4xODhWMTIySDQ0MS44NzVaTTUzOS42ODggMTIzLjM3NUM1MzIuODk2IDEyMy4zNzUgNTI3LjAyMSAxMjEuOTc5IDUyMi4wNjIgMTE5LjE4OEM1MTcuMTA0IDExNi4zOTYgNTEzLjI3MSAxMTIuMzk2IDUxMC41NjIgMTA3LjE4OEM1MDcuODU0IDEwMS45NzkgNTA2LjUgOTUuNzUgNTA2LjUgODguNVY4OC4zNzVDNTA2LjUgODEuMTY2NyA1MDcuODc1IDc0Ljk3OTIgNTEwLjYyNSA2OS44MTI1QzUxMy4zNzUgNjQuNjA0MiA1MTcuMjI5IDYwLjYwNDIgNTIyLjE4OCA1Ny44MTI1QzUyNy4xNDYgNTUuMDIwOCA1MzIuOTU4IDUzLjYyNSA1MzkuNjI1IDUzLjYyNUM1NDYuMzMzIDUzLjYyNSA1NTIuMTY3IDU1LjAyMDggNTU3LjEyNSA1Ny44MTI1QzU2Mi4xMjUgNjAuNTYyNSA1NjYgNjQuNTQxNyA1NjguNzUgNjkuNzVDNTcxLjUgNzQuOTE2NyA1NzIuODc1IDgxLjEyNSA1NzIuODc1IDg4LjM3NVY4OC41QzU3Mi44NzUgOTUuNzkxNyA1NzEuNSAxMDIuMDQyIDU2OC43NSAxMDcuMjVDNTY2LjA0MiAxMTIuNDU4IDU2Mi4yMDggMTE2LjQ1OCA1NTcuMjUgMTE5LjI1QzU1Mi4yOTIgMTIyIDU0Ni40MzggMTIzLjM3NSA1MzkuNjg4IDEyMy4zNzVaTTUzOS43NSAxMDkuMDYyQzU0Mi43MDggMTA5LjA2MiA1NDUuMjcxIDEwOC4yNzEgNTQ3LjQzOCAxMDYuNjg4QzU0OS42NDYgMTA1LjA2MiA1NTEuMzMzIDEwMi43MjkgNTUyLjUgOTkuNjg3NUM1NTMuNzA4IDk2LjYwNDIgNTU0LjMxMiA5Mi44NzUgNTU0LjMxMiA4OC41Vjg4LjM3NUM1NTQuMzEyIDg0LjA0MTcgNTUzLjcwOCA4MC4zNTQyIDU1Mi41IDc3LjMxMjVDNTUxLjI5MiA3NC4yNzA4IDU0OS41ODMgNzEuOTU4MyA1NDcuMzc1IDcwLjM3NUM1NDUuMTY3IDY4Ljc1IDU0Mi41ODMgNjcuOTM3NSA1MzkuNjI1IDY3LjkzNzVDNTM2LjcwOCA2Ny45Mzc1IDUzNC4xNDYgNjguNzUgNTMxLjkzOCA3MC4zNzVDNTI5Ljc3MSA3MS45NTgzIDUyOC4wODMgNzQuMjcwOCA1MjYuODc1IDc3LjMxMjVDNTI1LjY2NyA4MC4zNTQyIDUyNS4wNjIgODQuMDQxNyA1MjUuMDYyIDg4LjM3NVY4OC41QzUyNS4wNjIgOTIuODc1IDUyNS42NDYgOTYuNjA0MiA1MjYuODEyIDk5LjY4NzVDNTI4LjAyMSAxMDIuNzI5IDUyOS43MjkgMTA1LjA2MiA1MzEuOTM4IDEwNi42ODhDNTM0LjE0NiAxMDguMjcxIDUzNi43NSAxMDkuMDYyIDUzOS43NSAxMDkuMDYyWk02MTMuNjI1IDE0NS4yNUM2MDcuNSAxNDUuMjUgNjAyLjE0NiAxNDQuMzk2IDU5Ny41NjIgMTQyLjY4OEM1OTMuMDIxIDE0MS4wMjEgNTg5LjM5NiAxMzguNzUgNTg2LjY4OCAxMzUuODc1QzU4NC4wMjEgMTMzIDU4Mi4zOTYgMTI5Ljc3MSA1ODEuODEyIDEyNi4xODhMNTgxLjc1IDEyNS42MjVINTk5LjVMNTk5LjY4OCAxMjYuMDYyQzYwMC40MzggMTI3LjY4OCA2MDIgMTI5LjEyNSA2MDQuMzc1IDEzMC4zNzVDNjA2Ljc1IDEzMS42MjUgNjA5LjgzMyAxMzIuMjUgNjEzLjYyNSAxMzIuMjVDNjE4LjMzMyAxMzIuMjUgNjIxLjkxNyAxMzEuMTI1IDYyNC4zNzUgMTI4Ljg3NUM2MjYuODMzIDEyNi42MjUgNjI4LjA2MiAxMjMuNjI1IDYyOC4wNjIgMTE5Ljg3NVYxMDkuNjI1SDYyNy42ODhDNjI2LjUyMSAxMTEuOTU4IDYyNC45MzggMTEzLjk3OSA2MjIuOTM4IDExNS42ODhDNjIwLjkzOCAxMTcuMzk2IDYxOC41ODMgMTE4LjcyOSA2MTUuODc1IDExOS42ODhDNjEzLjIwOCAxMjAuNjA0IDYxMC4yNSAxMjEuMDYyIDYwNyAxMjEuMDYyQzYwMS40MTcgMTIxLjA2MiA1OTYuNTgzIDExOS43MjkgNTkyLjUgMTE3LjA2MkM1ODguNDU4IDExNC4zOTYgNTg1LjMzMyAxMTAuNTgzIDU4My4xMjUgMTA1LjYyNUM1ODAuOTU4IDEwMC42MjUgNTc5Ljg3NSA5NC42NjY3IDU3OS44NzUgODcuNzVWODcuNjg3NUM1NzkuODc1IDgwLjU2MjUgNTgwLjk3OSA3NC40NTgzIDU4My4xODggNjkuMzc1QzU4NS40MzggNjQuMjkxNyA1ODguNjA0IDYwLjM5NTggNTkyLjY4OCA1Ny42ODc1QzU5Ni43NzEgNTQuOTc5MiA2MDEuNjQ2IDUzLjYyNSA2MDcuMzEyIDUzLjYyNUM2MTAuNDc5IDUzLjYyNSA2MTMuMzc1IDU0LjE0NTggNjE2IDU1LjE4NzVDNjE4LjYyNSA1Ni4yMjkyIDYyMC45MTcgNTcuNzA4MyA2MjIuODc1IDU5LjYyNUM2MjQuODc1IDYxLjU0MTcgNjI2LjQ3OSA2My44MTI1IDYyNy42ODggNjYuNDM3NUg2MjguMDYyVjU1SDY0Ni4zMTJWMTIwLjEyNUM2NDYuMzEyIDEyNS4wODMgNjQ0Ljk3OSAxMjkuNDM4IDY0Mi4zMTIgMTMzLjE4OEM2MzkuNjg4IDEzNi45NzkgNjM1LjkxNyAxMzkuOTM4IDYzMSAxNDIuMDYyQzYyNi4xMjUgMTQ0LjE4OCA2MjAuMzMzIDE0NS4yNSA2MTMuNjI1IDE0NS4yNVpNNjEzLjMxMiAxMDcuNjg4QzYxNi4zMTIgMTA3LjY4OCA2MTguOTE3IDEwNi44OTYgNjIxLjEyNSAxMDUuMzEyQzYyMy4zMzMgMTAzLjcyOSA2MjUuMDQyIDEwMS40NzkgNjI2LjI1IDk4LjU2MjVDNjI3LjUgOTUuNjQ1OCA2MjguMTI1IDkyLjE4NzUgNjI4LjEyNSA4OC4xODc1Vjg4LjEyNUM2MjguMTI1IDg0LjEyNSA2MjcuNSA4MC42ODc1IDYyNi4yNSA3Ny44MTI1QzYyNS4wNDIgNzQuODk1OCA2MjMuMzEyIDcyLjY2NjcgNjIxLjA2MiA3MS4xMjVDNjE4Ljg1NCA2OS41NDE3IDYxNi4yNzEgNjguNzUgNjEzLjMxMiA2OC43NUM2MTAuMzEyIDY4Ljc1IDYwNy42ODggNjkuNTQxNyA2MDUuNDM4IDcxLjEyNUM2MDMuMTg4IDcyLjY2NjcgNjAxLjQ1OCA3NC44NzUgNjAwLjI1IDc3Ljc1QzU5OS4wNDIgODAuNjI1IDU5OC40MzggODQuMDgzMyA1OTguNDM4IDg4LjEyNVY4OC4xODc1QzU5OC40MzggOTIuMTg3NSA1OTkuMDQyIDk1LjY0NTggNjAwLjI1IDk4LjU2MjVDNjAxLjQ1OCAxMDEuNDc5IDYwMy4xODggMTAzLjcyOSA2MDUuNDM4IDEwNS4zMTJDNjA3LjY4OCAxMDYuODk2IDYxMC4zMTIgMTA3LjY4OCA2MTMuMzEyIDEwNy42ODhaIiBmaWxsPSIjMTIxMjBGIi8+ICAgPC9zdmc+') no-repeat center/contain;
-  transition:width .4s var(--ease), height .4s var(--ease)}
-/* Kein Schrumpfen mehr: die Leiste bleibt in einer Groesse. */
-.fmarke{display:flex; align-items:center; gap:10px; margin-bottom:36px}
-.fmarke-ic{width:30px; height:30px; flex:none}
-.fmarke-tx{display:block; width:104px; height:28px; background:var(--nacht-ink);
-  -webkit-mask:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUyIiBoZWlnaHQ9IjEyMiIgdmlld0JveD0iMTk5IDI4IDQ1MiAxMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPiA8cGF0aCBkPSJNMjMzLjU2MiAxNDUuMTI1QzIyOC4yMjkgMTQ1LjEyNSAyMjMuNTYyIDE0NC4zNTQgMjE5LjU2MiAxNDIuODEyQzIxNS42MDQgMTQxLjMxMiAyMTIuMzk2IDEzOS4yNSAyMDkuOTM4IDEzNi42MjVDMjA3LjUyMSAxMzQuMDQyIDIwNS45NTggMTMxLjE0NiAyMDUuMjUgMTI3LjkzOEwyMDUuMTI1IDEyNy4zNzVIMjE2LjA2MkwyMTYuMzEyIDEyNy45MzhDMjE3LjM1NCAxMzAuMjcxIDIxOS4zNTQgMTMyLjEwNCAyMjIuMzEyIDEzMy40MzhDMjI1LjMxMiAxMzQuODEyIDIyOS4wMjEgMTM1LjUgMjMzLjQzOCAxMzUuNUMyMzkuMTQ2IDEzNS41IDI0My41NjIgMTM0LjAyMSAyNDYuNjg4IDEzMS4wNjJDMjQ5LjgxMiAxMjguMTQ2IDI1MS4zNzUgMTI0LjE2NyAyNTEuMzc1IDExOS4xMjVWMTEwLjgxMkgyNTEuMTI1QzI0OS44MzMgMTEzLjIyOSAyNDguMTY3IDExNS4zMTIgMjQ2LjEyNSAxMTcuMDYyQzI0NC4wODMgMTE4LjgxMiAyNDEuNzI5IDEyMC4xODggMjM5LjA2MiAxMjEuMTg4QzIzNi40MzggMTIyLjE0NiAyMzMuNTYyIDEyMi42MjUgMjMwLjQzOCAxMjIuNjI1QzIyNC45NzkgMTIyLjYyNSAyMjAuMTY3IDEyMS4yNSAyMTYgMTE4LjVDMjExLjg3NSAxMTUuNzA4IDIwOC42NDYgMTExLjgxMiAyMDYuMzEyIDEwNi44MTJDMjA0LjAyMSAxMDEuNzcxIDIwMi44NzUgOTUuODc1IDIwMi44NzUgODkuMTI1Vjg5LjA2MjVDMjAyLjg3NSA4Mi4zMTI1IDIwNC4wNDIgNzYuNDU4MyAyMDYuMzc1IDcxLjVDMjA4Ljc1IDY2LjUgMjEyLjAyMSA2Mi42MjUgMjE2LjE4OCA1OS44NzVDMjIwLjM1NCA1Ny4xMjUgMjI1LjE4OCA1NS43NSAyMzAuNjg4IDU1Ljc1QzIzMy43NzEgNTUuNzUgMjM2LjYwNCA1Ni4yNzA4IDIzOS4xODggNTcuMzEyNUMyNDEuNzcxIDU4LjM1NDIgMjQ0LjA2MiA1OS43OTE3IDI0Ni4wNjIgNjEuNjI1QzI0OC4xMDQgNjMuNDU4MyAyNDkuNzkyIDY1LjU4MzMgMjUxLjEyNSA2OEgyNTEuMzc1VjU3SDI2Mi4yNVYxMjAuMTg4QzI2Mi4yNSAxMjUuMjI5IDI2MS4wODMgMTI5LjYwNCAyNTguNzUgMTMzLjMxMkMyNTYuNDE3IDEzNy4wNjIgMjUzLjEwNCAxMzkuOTU4IDI0OC44MTIgMTQyQzI0NC41MjEgMTQ0LjA4MyAyMzkuNDM4IDE0NS4xMjUgMjMzLjU2MiAxNDUuMTI1Wk0yMzIuODEyIDExM0MyMzYuNTIxIDExMyAyMzkuNzUgMTEyLjAyMSAyNDIuNSAxMTAuMDYyQzI0NS4yOTIgMTA4LjA2MiAyNDcuNDU4IDEwNS4yNzEgMjQ5IDEwMS42ODhDMjUwLjU4MyA5OC4xMDQyIDI1MS4zNzUgOTMuOTE2NyAyNTEuMzc1IDg5LjEyNVY4OS4wNjI1QzI1MS4zNzUgODQuMjcwOCAyNTAuNTgzIDgwLjEwNDIgMjQ5IDc2LjU2MjVDMjQ3LjQ1OCA3My4wMjA4IDI0NS4yOTIgNzAuMjcwOCAyNDIuNSA2OC4zMTI1QzIzOS43MDggNjYuMzU0MiAyMzYuNDc5IDY1LjM3NSAyMzIuODEyIDY1LjM3NUMyMjguOTc5IDY1LjM3NSAyMjUuNjQ2IDY2LjM1NDIgMjIyLjgxMiA2OC4zMTI1QzIxOS45NzkgNzAuMjI5MiAyMTcuNzkyIDcyLjk1ODMgMjE2LjI1IDc2LjVDMjE0Ljc1IDgwLjA0MTcgMjE0IDg0LjIyOTIgMjE0IDg5LjA2MjVWODkuMTI1QzIxNCA5NC4wNDE3IDIxNC43NSA5OC4yOTE3IDIxNi4yNSAxMDEuODc1QzIxNy43OTIgMTA1LjQxNyAyMTkuOTc5IDEwOC4xNjcgMjIyLjgxMiAxMTAuMTI1QzIyNS42NDYgMTEyLjA0MiAyMjguOTc5IDExMyAyMzIuODEyIDExM1pNMjgyLjU2MiAxNDMuODc1QzI4MS41MjEgMTQzLjg3NSAyODAuNDU4IDE0My44MTIgMjc5LjM3NSAxNDMuNjg4QzI3OC4zMzMgMTQzLjYwNCAyNzcuNDU4IDE0My41IDI3Ni43NSAxNDMuMzc1VjEzNC41QzI3Ny4yMDggMTM0LjU4MyAyNzcuNzI5IDEzNC42NjcgMjc4LjMxMiAxMzQuNzVDMjc4LjkzOCAxMzQuODMzIDI3OS41ODMgMTM0Ljg3NSAyODAuMjUgMTM0Ljg3NUMyODMuNzA4IDEzNC44NzUgMjg2LjQ1OCAxMzQuMjcxIDI4OC41IDEzMy4wNjJDMjkwLjU4MyAxMzEuODU0IDI5Mi4yNzEgMTI5LjQxNyAyOTMuNTYyIDEyNS43NUwyOTQuODc1IDEyMi4wNjJMMjcwLjc1IDU3SDI4Mi4zNzVMMzAxLjEyNSAxMTMuNjI1TDI5OC44MTIgMTExLjEyNUgzMDIuMDYyTDI5OS43NSAxMTMuNjI1TDMxOC41NjIgNTdIMzMwTDMwNC42MjUgMTI2LjA2MkMzMDMuMDgzIDEzMC4xODggMzAxLjM1NCAxMzMuNTYyIDI5OS40MzggMTM2LjE4OEMyOTcuNTIxIDEzOC44MTIgMjk1LjIwOCAxNDAuNzUgMjkyLjUgMTQyQzI4OS43OTIgMTQzLjI1IDI4Ni40NzkgMTQzLjg3NSAyODIuNTYyIDE0My44NzVaTTMzOC41NjIgMTIyVjU3SDM0OS40MzhWNjYuNUgzNDkuNjg4QzM1MS4xNDYgNjMuMjkxNyAzNTMuNDM4IDYwLjcwODMgMzU2LjU2MiA1OC43NUMzNTkuNjg4IDU2Ljc1IDM2My4zMzMgNTUuNzUgMzY3LjUgNTUuNzVDMzcwLjQ1OCA1NS43NSAzNzMuMTI1IDU2LjI1IDM3NS41IDU3LjI1QzM3Ny45MTcgNTguMjA4MyAzODAgNTkuNjI1IDM4MS43NSA2MS41QzM4My41IDYzLjMzMzMgMzg0LjgzMyA2NS41ODMzIDM4NS43NSA2OC4yNUgzODZDMzg3LjIwOCA2NS42MjUgMzg4LjgxMiA2My4zOTU4IDM5MC44MTIgNjEuNTYyNUMzOTIuODU0IDU5LjY4NzUgMzk1LjE4OCA1OC4yNSAzOTcuODEyIDU3LjI1QzQwMC40NzkgNTYuMjUgNDAzLjMzMyA1NS43NSA0MDYuMzc1IDU1Ljc1QzQxMC42NjcgNTUuNzUgNDE0LjM5NiA1Ni42NDU4IDQxNy41NjIgNTguNDM3NUM0MjAuNzI5IDYwLjE4NzUgNDIzLjE4OCA2Mi42NjY3IDQyNC45MzggNjUuODc1QzQyNi42ODggNjkuMDQxNyA0MjcuNTYyIDcyLjc5MTcgNDI3LjU2MiA3Ny4xMjVWMTIySDQxNi42ODhWNzkuNjI1QzQxNi42ODggNzYuNjI1IDQxNi4xNDYgNzQuMDYyNSA0MTUuMDYyIDcxLjkzNzVDNDE0LjAyMSA2OS44MTI1IDQxMi41IDY4LjE4NzUgNDEwLjUgNjcuMDYyNUM0MDguNSA2NS45Mzc1IDQwNi4wNjIgNjUuMzc1IDQwMy4xODggNjUuMzc1QzQwMC4zMTIgNjUuMzc1IDM5Ny43NzEgNjYuMDQxNyAzOTUuNTYyIDY3LjM3NUMzOTMuMzU0IDY4LjY2NjcgMzkxLjYyNSA3MC40NzkyIDM5MC4zNzUgNzIuODEyNUMzODkuMTI1IDc1LjEwNDIgMzg4LjUgNzcuNzI5MiAzODguNSA4MC42ODc1VjEyMkgzNzcuNjI1Vjc4LjQzNzVDMzc3LjYyNSA3NS44MTI1IDM3Ny4wNjIgNzMuNTIwOCAzNzUuOTM4IDcxLjU2MjVDMzc0Ljg1NCA2OS42MDQyIDM3My4zMTIgNjguMDgzMyAzNzEuMzEyIDY3QzM2OS4zNTQgNjUuOTE2NyAzNjcuMDIxIDY1LjM3NSAzNjQuMzEyIDY1LjM3NUMzNjEuNDM4IDY1LjM3NSAzNTguODc1IDY2LjA4MzMgMzU2LjYyNSA2Ny41QzM1NC40MTcgNjguODc1IDM1Mi42NjcgNzAuNzUgMzUxLjM3NSA3My4xMjVDMzUwLjA4MyA3NS41IDM0OS40MzggNzguMjA4MyAzNDkuNDM4IDgxLjI1VjEyMkgzMzguNTYyWk00NDEuODc1IDEyMlYzMS44MTI1SDQ2MC43NVYxMDYuNDM4SDUwMC4xODhWMTIySDQ0MS44NzVaTTUzOS42ODggMTIzLjM3NUM1MzIuODk2IDEyMy4zNzUgNTI3LjAyMSAxMjEuOTc5IDUyMi4wNjIgMTE5LjE4OEM1MTcuMTA0IDExNi4zOTYgNTEzLjI3MSAxMTIuMzk2IDUxMC41NjIgMTA3LjE4OEM1MDcuODU0IDEwMS45NzkgNTA2LjUgOTUuNzUgNTA2LjUgODguNVY4OC4zNzVDNTA2LjUgODEuMTY2NyA1MDcuODc1IDc0Ljk3OTIgNTEwLjYyNSA2OS44MTI1QzUxMy4zNzUgNjQuNjA0MiA1MTcuMjI5IDYwLjYwNDIgNTIyLjE4OCA1Ny44MTI1QzUyNy4xNDYgNTUuMDIwOCA1MzIuOTU4IDUzLjYyNSA1MzkuNjI1IDUzLjYyNUM1NDYuMzMzIDUzLjYyNSA1NTIuMTY3IDU1LjAyMDggNTU3LjEyNSA1Ny44MTI1QzU2Mi4xMjUgNjAuNTYyNSA1NjYgNjQuNTQxNyA1NjguNzUgNjkuNzVDNTcxLjUgNzQuOTE2NyA1NzIuODc1IDgxLjEyNSA1NzIuODc1IDg4LjM3NVY4OC41QzU3Mi44NzUgOTUuNzkxNyA1NzEuNSAxMDIuMDQyIDU2OC43NSAxMDcuMjVDNTY2LjA0MiAxMTIuNDU4IDU2Mi4yMDggMTE2LjQ1OCA1NTcuMjUgMTE5LjI1QzU1Mi4yOTIgMTIyIDU0Ni40MzggMTIzLjM3NSA1MzkuNjg4IDEyMy4zNzVaTTUzOS43NSAxMDkuMDYyQzU0Mi43MDggMTA5LjA2MiA1NDUuMjcxIDEwOC4yNzEgNTQ3LjQzOCAxMDYuNjg4QzU0OS42NDYgMTA1LjA2MiA1NTEuMzMzIDEwMi43MjkgNTUyLjUgOTkuNjg3NUM1NTMuNzA4IDk2LjYwNDIgNTU0LjMxMiA5Mi44NzUgNTU0LjMxMiA4OC41Vjg4LjM3NUM1NTQuMzEyIDg0LjA0MTcgNTUzLjcwOCA4MC4zNTQyIDU1Mi41IDc3LjMxMjVDNTUxLjI5MiA3NC4yNzA4IDU0OS41ODMgNzEuOTU4MyA1NDcuMzc1IDcwLjM3NUM1NDUuMTY3IDY4Ljc1IDU0Mi41ODMgNjcuOTM3NSA1MzkuNjI1IDY3LjkzNzVDNTM2LjcwOCA2Ny45Mzc1IDUzNC4xNDYgNjguNzUgNTMxLjkzOCA3MC4zNzVDNTI5Ljc3MSA3MS45NTgzIDUyOC4wODMgNzQuMjcwOCA1MjYuODc1IDc3LjMxMjVDNTI1LjY2NyA4MC4zNTQyIDUyNS4wNjIgODQuMDQxNyA1MjUuMDYyIDg4LjM3NVY4OC41QzUyNS4wNjIgOTIuODc1IDUyNS42NDYgOTYuNjA0MiA1MjYuODEyIDk5LjY4NzVDNTI4LjAyMSAxMDIuNzI5IDUyOS43MjkgMTA1LjA2MiA1MzEuOTM4IDEwNi42ODhDNTM0LjE0NiAxMDguMjcxIDUzNi43NSAxMDkuMDYyIDUzOS43NSAxMDkuMDYyWk02MTMuNjI1IDE0NS4yNUM2MDcuNSAxNDUuMjUgNjAyLjE0NiAxNDQuMzk2IDU5Ny41NjIgMTQyLjY4OEM1OTMuMDIxIDE0MS4wMjEgNTg5LjM5NiAxMzguNzUgNTg2LjY4OCAxMzUuODc1QzU4NC4wMjEgMTMzIDU4Mi4zOTYgMTI5Ljc3MSA1ODEuODEyIDEyNi4xODhMNTgxLjc1IDEyNS42MjVINTk5LjVMNTk5LjY4OCAxMjYuMDYyQzYwMC40MzggMTI3LjY4OCA2MDIgMTI5LjEyNSA2MDQuMzc1IDEzMC4zNzVDNjA2Ljc1IDEzMS42MjUgNjA5LjgzMyAxMzIuMjUgNjEzLjYyNSAxMzIuMjVDNjE4LjMzMyAxMzIuMjUgNjIxLjkxNyAxMzEuMTI1IDYyNC4zNzUgMTI4Ljg3NUM2MjYuODMzIDEyNi42MjUgNjI4LjA2MiAxMjMuNjI1IDYyOC4wNjIgMTE5Ljg3NVYxMDkuNjI1SDYyNy42ODhDNjI2LjUyMSAxMTEuOTU4IDYyNC45MzggMTEzLjk3OSA2MjIuOTM4IDExNS42ODhDNjIwLjkzOCAxMTcuMzk2IDYxOC41ODMgMTE4LjcyOSA2MTUuODc1IDExOS42ODhDNjEzLjIwOCAxMjAuNjA0IDYxMC4yNSAxMjEuMDYyIDYwNyAxMjEuMDYyQzYwMS40MTcgMTIxLjA2MiA1OTYuNTgzIDExOS43MjkgNTkyLjUgMTE3LjA2MkM1ODguNDU4IDExNC4zOTYgNTg1LjMzMyAxMTAuNTgzIDU4My4xMjUgMTA1LjYyNUM1ODAuOTU4IDEwMC42MjUgNTc5Ljg3NSA5NC42NjY3IDU3OS44NzUgODcuNzVWODcuNjg3NUM1NzkuODc1IDgwLjU2MjUgNTgwLjk3OSA3NC40NTgzIDU4My4xODggNjkuMzc1QzU4NS40MzggNjQuMjkxNyA1ODguNjA0IDYwLjM5NTggNTkyLjY4OCA1Ny42ODc1QzU5Ni43NzEgNTQuOTc5MiA2MDEuNjQ2IDUzLjYyNSA2MDcuMzEyIDUzLjYyNUM2MTAuNDc5IDUzLjYyNSA2MTMuMzc1IDU0LjE0NTggNjE2IDU1LjE4NzVDNjE4LjYyNSA1Ni4yMjkyIDYyMC45MTcgNTcuNzA4MyA2MjIuODc1IDU5LjYyNUM2MjQuODc1IDYxLjU0MTcgNjI2LjQ3OSA2My44MTI1IDYyNy42ODggNjYuNDM3NUg2MjguMDYyVjU1SDY0Ni4zMTJWMTIwLjEyNUM2NDYuMzEyIDEyNS4wODMgNjQ0Ljk3OSAxMjkuNDM4IDY0Mi4zMTIgMTMzLjE4OEM2MzkuNjg4IDEzNi45NzkgNjM1LjkxNyAxMzkuOTM4IDYzMSAxNDIuMDYyQzYyNi4xMjUgMTQ0LjE4OCA2MjAuMzMzIDE0NS4yNSA2MTMuNjI1IDE0NS4yNVpNNjEzLjMxMiAxMDcuNjg4QzYxNi4zMTIgMTA3LjY4OCA2MTguOTE3IDEwNi44OTYgNjIxLjEyNSAxMDUuMzEyQzYyMy4zMzMgMTAzLjcyOSA2MjUuMDQyIDEwMS40NzkgNjI2LjI1IDk4LjU2MjVDNjI3LjUgOTUuNjQ1OCA2MjguMTI1IDkyLjE4NzUgNjI4LjEyNSA4OC4xODc1Vjg4LjEyNUM2MjguMTI1IDg0LjEyNSA2MjcuNSA4MC42ODc1IDYyNi4yNSA3Ny44MTI1QzYyNS4wNDIgNzQuODk1OCA2MjMuMzEyIDcyLjY2NjcgNjIxLjA2MiA3MS4xMjVDNjE4Ljg1NCA2OS41NDE3IDYxNi4yNzEgNjguNzUgNjEzLjMxMiA2OC43NUM2MTAuMzEyIDY4Ljc1IDYwNy42ODggNjkuNTQxNyA2MDUuNDM4IDcxLjEyNUM2MDMuMTg4IDcyLjY2NjcgNjAxLjQ1OCA3NC44NzUgNjAwLjI1IDc3Ljc1QzU5OS4wNDIgODAuNjI1IDU5OC40MzggODQuMDgzMyA1OTguNDM4IDg4LjEyNVY4OC4xODc1QzU5OC40MzggOTIuMTg3NSA1OTkuMDQyIDk1LjY0NTggNjAwLjI1IDk4LjU2MjVDNjAxLjQ1OCAxMDEuNDc5IDYwMy4xODggMTAzLjcyOSA2MDUuNDM4IDEwNS4zMTJDNjA3LjY4OCAxMDYuODk2IDYxMC4zMTIgMTA3LjY4OCA2MTMuMzEyIDEwNy42ODhaIiBmaWxsPSIjMTIxMjBGIi8+ICAgPC9zdmc+') no-repeat left center/contain;
-  mask:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDUyIiBoZWlnaHQ9IjEyMiIgdmlld0JveD0iMTk5IDI4IDQ1MiAxMjIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPiA8cGF0aCBkPSJNMjMzLjU2MiAxNDUuMTI1QzIyOC4yMjkgMTQ1LjEyNSAyMjMuNTYyIDE0NC4zNTQgMjE5LjU2MiAxNDIuODEyQzIxNS42MDQgMTQxLjMxMiAyMTIuMzk2IDEzOS4yNSAyMDkuOTM4IDEzNi42MjVDMjA3LjUyMSAxMzQuMDQyIDIwNS45NTggMTMxLjE0NiAyMDUuMjUgMTI3LjkzOEwyMDUuMTI1IDEyNy4zNzVIMjE2LjA2MkwyMTYuMzEyIDEyNy45MzhDMjE3LjM1NCAxMzAuMjcxIDIxOS4zNTQgMTMyLjEwNCAyMjIuMzEyIDEzMy40MzhDMjI1LjMxMiAxMzQuODEyIDIyOS4wMjEgMTM1LjUgMjMzLjQzOCAxMzUuNUMyMzkuMTQ2IDEzNS41IDI0My41NjIgMTM0LjAyMSAyNDYuNjg4IDEzMS4wNjJDMjQ5LjgxMiAxMjguMTQ2IDI1MS4zNzUgMTI0LjE2NyAyNTEuMzc1IDExOS4xMjVWMTEwLjgxMkgyNTEuMTI1QzI0OS44MzMgMTEzLjIyOSAyNDguMTY3IDExNS4zMTIgMjQ2LjEyNSAxMTcuMDYyQzI0NC4wODMgMTE4LjgxMiAyNDEuNzI5IDEyMC4xODggMjM5LjA2MiAxMjEuMTg4QzIzNi40MzggMTIyLjE0NiAyMzMuNTYyIDEyMi42MjUgMjMwLjQzOCAxMjIuNjI1QzIyNC45NzkgMTIyLjYyNSAyMjAuMTY3IDEyMS4yNSAyMTYgMTE4LjVDMjExLjg3NSAxMTUuNzA4IDIwOC42NDYgMTExLjgxMiAyMDYuMzEyIDEwNi44MTJDMjA0LjAyMSAxMDEuNzcxIDIwMi44NzUgOTUuODc1IDIwMi44NzUgODkuMTI1Vjg5LjA2MjVDMjAyLjg3NSA4Mi4zMTI1IDIwNC4wNDIgNzYuNDU4MyAyMDYuMzc1IDcxLjVDMjA4Ljc1IDY2LjUgMjEyLjAyMSA2Mi42MjUgMjE2LjE4OCA1OS44NzVDMjIwLjM1NCA1Ny4xMjUgMjI1LjE4OCA1NS43NSAyMzAuNjg4IDU1Ljc1QzIzMy43NzEgNTUuNzUgMjM2LjYwNCA1Ni4yNzA4IDIzOS4xODggNTcuMzEyNUMyNDEuNzcxIDU4LjM1NDIgMjQ0LjA2MiA1OS43OTE3IDI0Ni4wNjIgNjEuNjI1QzI0OC4xMDQgNjMuNDU4MyAyNDkuNzkyIDY1LjU4MzMgMjUxLjEyNSA2OEgyNTEuMzc1VjU3SDI2Mi4yNVYxMjAuMTg4QzI2Mi4yNSAxMjUuMjI5IDI2MS4wODMgMTI5LjYwNCAyNTguNzUgMTMzLjMxMkMyNTYuNDE3IDEzNy4wNjIgMjUzLjEwNCAxMzkuOTU4IDI0OC44MTIgMTQyQzI0NC41MjEgMTQ0LjA4MyAyMzkuNDM4IDE0NS4xMjUgMjMzLjU2MiAxNDUuMTI1Wk0yMzIuODEyIDExM0MyMzYuNTIxIDExMyAyMzkuNzUgMTEyLjAyMSAyNDIuNSAxMTAuMDYyQzI0NS4yOTIgMTA4LjA2MiAyNDcuNDU4IDEwNS4yNzEgMjQ5IDEwMS42ODhDMjUwLjU4MyA5OC4xMDQyIDI1MS4zNzUgOTMuOTE2NyAyNTEuMzc1IDg5LjEyNVY4OS4wNjI1QzI1MS4zNzUgODQuMjcwOCAyNTAuNTgzIDgwLjEwNDIgMjQ5IDc2LjU2MjVDMjQ3LjQ1OCA3My4wMjA4IDI0NS4yOTIgNzAuMjcwOCAyNDIuNSA2OC4zMTI1QzIzOS43MDggNjYuMzU0MiAyMzYuNDc5IDY1LjM3NSAyMzIuODEyIDY1LjM3NUMyMjguOTc5IDY1LjM3NSAyMjUuNjQ2IDY2LjM1NDIgMjIyLjgxMiA2OC4zMTI1QzIxOS45NzkgNzAuMjI5MiAyMTcuNzkyIDcyLjk1ODMgMjE2LjI1IDc2LjVDMjE0Ljc1IDgwLjA0MTcgMjE0IDg0LjIyOTIgMjE0IDg5LjA2MjVWODkuMTI1QzIxNCA5NC4wNDE3IDIxNC43NSA5OC4yOTE3IDIxNi4yNSAxMDEuODc1QzIxNy43OTIgMTA1LjQxNyAyMTkuOTc5IDEwOC4xNjcgMjIyLjgxMiAxMTAuMTI1QzIyNS42NDYgMTEyLjA0MiAyMjguOTc5IDExMyAyMzIuODEyIDExM1pNMjgyLjU2MiAxNDMuODc1QzI4MS41MjEgMTQzLjg3NSAyODAuNDU4IDE0My44MTIgMjc5LjM3NSAxNDMuNjg4QzI3OC4zMzMgMTQzLjYwNCAyNzcuNDU4IDE0My41IDI3Ni43NSAxNDMuMzc1VjEzNC41QzI3Ny4yMDggMTM0LjU4MyAyNzcuNzI5IDEzNC42NjcgMjc4LjMxMiAxMzQuNzVDMjc4LjkzOCAxMzQuODMzIDI3OS41ODMgMTM0Ljg3NSAyODAuMjUgMTM0Ljg3NUMyODMuNzA4IDEzNC44NzUgMjg2LjQ1OCAxMzQuMjcxIDI4OC41IDEzMy4wNjJDMjkwLjU4MyAxMzEuODU0IDI5Mi4yNzEgMTI5LjQxNyAyOTMuNTYyIDEyNS43NUwyOTQuODc1IDEyMi4wNjJMMjcwLjc1IDU3SDI4Mi4zNzVMMzAxLjEyNSAxMTMuNjI1TDI5OC44MTIgMTExLjEyNUgzMDIuMDYyTDI5OS43NSAxMTMuNjI1TDMxOC41NjIgNTdIMzMwTDMwNC42MjUgMTI2LjA2MkMzMDMuMDgzIDEzMC4xODggMzAxLjM1NCAxMzMuNTYyIDI5OS40MzggMTM2LjE4OEMyOTcuNTIxIDEzOC44MTIgMjk1LjIwOCAxNDAuNzUgMjkyLjUgMTQyQzI4OS43OTIgMTQzLjI1IDI4Ni40NzkgMTQzLjg3NSAyODIuNTYyIDE0My44NzVaTTMzOC41NjIgMTIyVjU3SDM0OS40MzhWNjYuNUgzNDkuNjg4QzM1MS4xNDYgNjMuMjkxNyAzNTMuNDM4IDYwLjcwODMgMzU2LjU2MiA1OC43NUMzNTkuNjg4IDU2Ljc1IDM2My4zMzMgNTUuNzUgMzY3LjUgNTUuNzVDMzcwLjQ1OCA1NS43NSAzNzMuMTI1IDU2LjI1IDM3NS41IDU3LjI1QzM3Ny45MTcgNTguMjA4MyAzODAgNTkuNjI1IDM4MS43NSA2MS41QzM4My41IDYzLjMzMzMgMzg0LjgzMyA2NS41ODMzIDM4NS43NSA2OC4yNUgzODZDMzg3LjIwOCA2NS42MjUgMzg4LjgxMiA2My4zOTU4IDM5MC44MTIgNjEuNTYyNUMzOTIuODU0IDU5LjY4NzUgMzk1LjE4OCA1OC4yNSAzOTcuODEyIDU3LjI1QzQwMC40NzkgNTYuMjUgNDAzLjMzMyA1NS43NSA0MDYuMzc1IDU1Ljc1QzQxMC42NjcgNTUuNzUgNDE0LjM5NiA1Ni42NDU4IDQxNy41NjIgNTguNDM3NUM0MjAuNzI5IDYwLjE4NzUgNDIzLjE4OCA2Mi42NjY3IDQyNC45MzggNjUuODc1QzQyNi42ODggNjkuMDQxNyA0MjcuNTYyIDcyLjc5MTcgNDI3LjU2MiA3Ny4xMjVWMTIySDQxNi42ODhWNzkuNjI1QzQxNi42ODggNzYuNjI1IDQxNi4xNDYgNzQuMDYyNSA0MTUuMDYyIDcxLjkzNzVDNDE0LjAyMSA2OS44MTI1IDQxMi41IDY4LjE4NzUgNDEwLjUgNjcuMDYyNUM0MDguNSA2NS45Mzc1IDQwNi4wNjIgNjUuMzc1IDQwMy4xODggNjUuMzc1QzQwMC4zMTIgNjUuMzc1IDM5Ny43NzEgNjYuMDQxNyAzOTUuNTYyIDY3LjM3NUMzOTMuMzU0IDY4LjY2NjcgMzkxLjYyNSA3MC40NzkyIDM5MC4zNzUgNzIuODEyNUMzODkuMTI1IDc1LjEwNDIgMzg4LjUgNzcuNzI5MiAzODguNSA4MC42ODc1VjEyMkgzNzcuNjI1Vjc4LjQzNzVDMzc3LjYyNSA3NS44MTI1IDM3Ny4wNjIgNzMuNTIwOCAzNzUuOTM4IDcxLjU2MjVDMzc0Ljg1NCA2OS42MDQyIDM3My4zMTIgNjguMDgzMyAzNzEuMzEyIDY3QzM2OS4zNTQgNjUuOTE2NyAzNjcuMDIxIDY1LjM3NSAzNjQuMzEyIDY1LjM3NUMzNjEuNDM4IDY1LjM3NSAzNTguODc1IDY2LjA4MzMgMzU2LjYyNSA2Ny41QzM1NC40MTcgNjguODc1IDM1Mi42NjcgNzAuNzUgMzUxLjM3NSA3My4xMjVDMzUwLjA4MyA3NS41IDM0OS40MzggNzguMjA4MyAzNDkuNDM4IDgxLjI1VjEyMkgzMzguNTYyWk00NDEuODc1IDEyMlYzMS44MTI1SDQ2MC43NVYxMDYuNDM4SDUwMC4xODhWMTIySDQ0MS44NzVaTTUzOS42ODggMTIzLjM3NUM1MzIuODk2IDEyMy4zNzUgNTI3LjAyMSAxMjEuOTc5IDUyMi4wNjIgMTE5LjE4OEM1MTcuMTA0IDExNi4zOTYgNTEzLjI3MSAxMTIuMzk2IDUxMC41NjIgMTA3LjE4OEM1MDcuODU0IDEwMS45NzkgNTA2LjUgOTUuNzUgNTA2LjUgODguNVY4OC4zNzVDNTA2LjUgODEuMTY2NyA1MDcuODc1IDc0Ljk3OTIgNTEwLjYyNSA2OS44MTI1QzUxMy4zNzUgNjQuNjA0MiA1MTcuMjI5IDYwLjYwNDIgNTIyLjE4OCA1Ny44MTI1QzUyNy4xNDYgNTUuMDIwOCA1MzIuOTU4IDUzLjYyNSA1MzkuNjI1IDUzLjYyNUM1NDYuMzMzIDUzLjYyNSA1NTIuMTY3IDU1LjAyMDggNTU3LjEyNSA1Ny44MTI1QzU2Mi4xMjUgNjAuNTYyNSA1NjYgNjQuNTQxNyA1NjguNzUgNjkuNzVDNTcxLjUgNzQuOTE2NyA1NzIuODc1IDgxLjEyNSA1NzIuODc1IDg4LjM3NVY4OC41QzU3Mi44NzUgOTUuNzkxNyA1NzEuNSAxMDIuMDQyIDU2OC43NSAxMDcuMjVDNTY2LjA0MiAxMTIuNDU4IDU2Mi4yMDggMTE2LjQ1OCA1NTcuMjUgMTE5LjI1QzU1Mi4yOTIgMTIyIDU0Ni40MzggMTIzLjM3NSA1MzkuNjg4IDEyMy4zNzVaTTUzOS43NSAxMDkuMDYyQzU0Mi43MDggMTA5LjA2MiA1NDUuMjcxIDEwOC4yNzEgNTQ3LjQzOCAxMDYuNjg4QzU0OS42NDYgMTA1LjA2MiA1NTEuMzMzIDEwMi43MjkgNTUyLjUgOTkuNjg3NUM1NTMuNzA4IDk2LjYwNDIgNTU0LjMxMiA5Mi44NzUgNTU0LjMxMiA4OC41Vjg4LjM3NUM1NTQuMzEyIDg0LjA0MTcgNTUzLjcwOCA4MC4zNTQyIDU1Mi41IDc3LjMxMjVDNTUxLjI5MiA3NC4yNzA4IDU0OS41ODMgNzEuOTU4MyA1NDcuMzc1IDcwLjM3NUM1NDUuMTY3IDY4Ljc1IDU0Mi41ODMgNjcuOTM3NSA1MzkuNjI1IDY3LjkzNzVDNTM2LjcwOCA2Ny45Mzc1IDUzNC4xNDYgNjguNzUgNTMxLjkzOCA3MC4zNzVDNTI5Ljc3MSA3MS45NTgzIDUyOC4wODMgNzQuMjcwOCA1MjYuODc1IDc3LjMxMjVDNTI1LjY2NyA4MC4zNTQyIDUyNS4wNjIgODQuMDQxNyA1MjUuMDYyIDg4LjM3NVY4OC41QzUyNS4wNjIgOTIuODc1IDUyNS42NDYgOTYuNjA0MiA1MjYuODEyIDk5LjY4NzVDNTI4LjAyMSAxMDIuNzI5IDUyOS43MjkgMTA1LjA2MiA1MzEuOTM4IDEwNi42ODhDNTM0LjE0NiAxMDguMjcxIDUzNi43NSAxMDkuMDYyIDUzOS43NSAxMDkuMDYyWk02MTMuNjI1IDE0NS4yNUM2MDcuNSAxNDUuMjUgNjAyLjE0NiAxNDQuMzk2IDU5Ny41NjIgMTQyLjY4OEM1OTMuMDIxIDE0MS4wMjEgNTg5LjM5NiAxMzguNzUgNTg2LjY4OCAxMzUuODc1QzU4NC4wMjEgMTMzIDU4Mi4zOTYgMTI5Ljc3MSA1ODEuODEyIDEyNi4xODhMNTgxLjc1IDEyNS42MjVINTk5LjVMNTk5LjY4OCAxMjYuMDYyQzYwMC40MzggMTI3LjY4OCA2MDIgMTI5LjEyNSA2MDQuMzc1IDEzMC4zNzVDNjA2Ljc1IDEzMS42MjUgNjA5LjgzMyAxMzIuMjUgNjEzLjYyNSAxMzIuMjVDNjE4LjMzMyAxMzIuMjUgNjIxLjkxNyAxMzEuMTI1IDYyNC4zNzUgMTI4Ljg3NUM2MjYuODMzIDEyNi42MjUgNjI4LjA2MiAxMjMuNjI1IDYyOC4wNjIgMTE5Ljg3NVYxMDkuNjI1SDYyNy42ODhDNjI2LjUyMSAxMTEuOTU4IDYyNC45MzggMTEzLjk3OSA2MjIuOTM4IDExNS42ODhDNjIwLjkzOCAxMTcuMzk2IDYxOC41ODMgMTE4LjcyOSA2MTUuODc1IDExOS42ODhDNjEzLjIwOCAxMjAuNjA0IDYxMC4yNSAxMjEuMDYyIDYwNyAxMjEuMDYyQzYwMS40MTcgMTIxLjA2MiA1OTYuNTgzIDExOS43MjkgNTkyLjUgMTE3LjA2MkM1ODguNDU4IDExNC4zOTYgNTg1LjMzMyAxMTAuNTgzIDU4My4xMjUgMTA1LjYyNUM1ODAuOTU4IDEwMC42MjUgNTc5Ljg3NSA5NC42NjY3IDU3OS44NzUgODcuNzVWODcuNjg3NUM1NzkuODc1IDgwLjU2MjUgNTgwLjk3OSA3NC40NTgzIDU4My4xODggNjkuMzc1QzU4NS40MzggNjQuMjkxNyA1ODguNjA0IDYwLjM5NTggNTkyLjY4OCA1Ny42ODc1QzU5Ni43NzEgNTQuOTc5MiA2MDEuNjQ2IDUzLjYyNSA2MDcuMzEyIDUzLjYyNUM2MTAuNDc5IDUzLjYyNSA2MTMuMzc1IDU0LjE0NTggNjE2IDU1LjE4NzVDNjE4LjYyNSA1Ni4yMjkyIDYyMC45MTcgNTcuNzA4MyA2MjIuODc1IDU5LjYyNUM2MjQuODc1IDYxLjU0MTcgNjI2LjQ3OSA2My44MTI1IDYyNy42ODggNjYuNDM3NUg2MjguMDYyVjU1SDY0Ni4zMTJWMTIwLjEyNUM2NDYuMzEyIDEyNS4wODMgNjQ0Ljk3OSAxMjkuNDM4IDY0Mi4zMTIgMTMzLjE4OEM2MzkuNjg4IDEzNi45NzkgNjM1LjkxNyAxMzkuOTM4IDYzMSAxNDIuMDYyQzYyNi4xMjUgMTQ0LjE4OCA2MjAuMzMzIDE0NS4yNSA2MTMuNjI1IDE0NS4yNVpNNjEzLjMxMiAxMDcuNjg4QzYxNi4zMTIgMTA3LjY4OCA2MTguOTE3IDEwNi44OTYgNjIxLjEyNSAxMDUuMzEyQzYyMy4zMzMgMTAzLjcyOSA2MjUuMDQyIDEwMS40NzkgNjI2LjI1IDk4LjU2MjVDNjI3LjUgOTUuNjQ1OCA2MjguMTI1IDkyLjE4NzUgNjI4LjEyNSA4OC4xODc1Vjg4LjEyNUM2MjguMTI1IDg0LjEyNSA2MjcuNSA4MC42ODc1IDYyNi4yNSA3Ny44MTI1QzYyNS4wNDIgNzQuODk1OCA2MjMuMzEyIDcyLjY2NjcgNjIxLjA2MiA3MS4xMjVDNjE4Ljg1NCA2OS41NDE3IDYxNi4yNzEgNjguNzUgNjEzLjMxMiA2OC43NUM2MTAuMzEyIDY4Ljc1IDYwNy42ODggNjkuNTQxNyA2MDUuNDM4IDcxLjEyNUM2MDMuMTg4IDcyLjY2NjcgNjAxLjQ1OCA3NC44NzUgNjAwLjI1IDc3Ljc1QzU5OS4wNDIgODAuNjI1IDU5OC40MzggODQuMDgzMyA1OTguNDM4IDg4LjEyNVY4OC4xODc1QzU5OC40MzggOTIuMTg3NSA1OTkuMDQyIDk1LjY0NTggNjAwLjI1IDk4LjU2MjVDNjAxLjQ1OCAxMDEuNDc5IDYwMy4xODggMTAzLjcyOSA2MDUuNDM4IDEwNS4zMTJDNjA3LjY4OCAxMDYuODk2IDYxMC4zMTIgMTA3LjY4OCA2MTMuMzEyIDEwNy42ODhaIiBmaWxsPSIjMTIxMjBGIi8+ICAgPC9zdmc+') no-repeat left center/contain}
-.haupt{grid-column:2; display:none; gap:28px; justify-self:center}
-.haupt a{font-size:13px; letter-spacing:.07em; text-transform:uppercase; position:relative; padding:4px 0}
-.haupt a::after{content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
-  background:currentColor; transform:scaleX(0); transform-origin:left; transition:transform .3s var(--ease)}
-.haupt a:hover::after{transform:scaleX(1)}
-/* Der Abstand zwischen Ladeknopf und Burger ist derselbe wie zum Rand.
-   Bei 8px ist eine weitere Abstufung nach unten nicht mehr sinnvoll, und
-   beide Elemente sind rund, gehoeren also ohnehin sichtbar zusammen. */
-.rechts{grid-column:3; display:flex; align-items:center; justify-content:flex-end; gap:8px; flex:none}
-/* Kevin, 11.8.2026: "Der Downloadbutton soll in der Mobilenansicht nicht
-   verschwinden." Er stand vorher auf display:none und kam erst ab 900px.
-   Damit war der einzige Weg zum App Store auf dem Handy im Menue versteckt,
-   und die Website hat genau eine Aufgabe.
-
-   Gefuellt statt Umriss, wie der gruene Knopf bei Coachway: auf der dunklen
-   Pille ist ein Umriss zu leise fuer die Hauptaktion. Weiss auf Clay sind
-   3,76:1 — dieselbe Entscheidung wie in der App (Ticket 91, verworfen), aus
-   demselben Grund: 15px halbfett faellt unter die 3:1-Regel fuer grossen Text. */
-/* Kevin, 11.8.2026: "aus dem button das orange raus nur wenn man hovert wie
-   vorher ansonsten weiss." Weiss auf der dunklen Leiste ist ruhiger und
-   trotzdem die auffaelligste Flaeche dort. Das Orange wird zur Belohnung fuer
-   den, der hinfaehrt, statt zum Dauerruf.
-
-   Hoehe 40 = 5 x 8, damit sie ins Raster passt. Bei 72er Leiste mit 8 Polster
-   bleiben 56 Innenraum, der Knopf sitzt darin mittig mit 8 Luft. */
-.navcta{display:inline-flex; align-items:center; height:var(--nav-el); padding:0 20px;
-  background:var(--papier); color:var(--tinte); border:0; border-radius:999px;
-  font-size:13px; font-weight:500; letter-spacing:.06em; text-transform:uppercase;
-  white-space:nowrap;
-  transition:background .3s var(--ease), color .3s var(--ease)}
-.navcta:hover{background:var(--clay); color:#fff}
-.navcta span{transition:none}
-
-/* Burger nach RECHTS, neben den Ladeknopf. Links steht jetzt die Marke.
-   Heller Kreis wie im Vorbild: auf der dunklen Pille ist ein blosses Symbol
-   zu leise, und 44x44 bleibt die Trefferflaeche. */
-.burger{position:relative; width:var(--nav-el);height:var(--nav-el);display:grid;place-items:center;border:0;
-  background:var(--papier); color:var(--tinte); border-radius:50%;
-  cursor:pointer; flex:none;
-  transition:background .3s var(--ease)}
-/* 40 sitzt im Achtelraster, 44 ist die Trefferflaeche. Der unsichtbare Ring
-   loest den Widerspruch, ohne dass man ihn sieht. */
-.burger::after{content:""; position:absolute; left:50%; top:50%; width:44px; height:44px;
-  transform:translate(-50%,-50%)}
-.burger:hover{background:#fff}
-.bi{position:relative;width:22px;height:13px}
-.bi span{position:absolute;left:0;width:100%;height:1.4px;background:currentColor;
-  transition:transform .4s var(--ease), top .2s var(--ease) .2s}
-.bi span:nth-child(1){top:0} .bi span:nth-child(2){top:11.6px}
-.nav.offen .bi span{transition:top .2s var(--ease), transform .4s var(--ease) .2s}
-.nav.offen .bi span:nth-child(1){top:5.8px;transform:rotate(45deg)}
-.nav.offen .bi span:nth-child(2){top:5.8px;transform:rotate(-45deg)}
-
-/* 11.8.2026: das Menue war hell (--papier), der Rest der Seite dunkel. Beim
-   Oeffnen kippte damit der ganze Bildschirm, und die Leiste stand als grauer
-   Balken dazwischen: rgba(14,14,12,.72) ueber Papier ergibt #4D4D4B, und der
-   Ladeknopf fiel von 16,78:1 auf 7,36:1.
-
-   Jetzt dunkel wie alles andere. Die Leiste bleibt dabei genau so, wie sie
-   ueber dem Hero aussieht, und sie braucht keinen eigenen Zustand mehr. */
-.mob{position:fixed;inset:0;z-index:44;background:var(--nacht);color:var(--nacht-ink);
-  padding:calc(var(--band-h) + var(--nav-h) + var(--nav-oben) + 24px) var(--rand) 48px;
-  opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility .3s}
-.mob.auf{opacity:1;visibility:visible}
-.mob a{display:flex;align-items:center;min-height:58px;font-size:24px;font-weight:500;
-  letter-spacing:-.02em;border-bottom:1px solid rgba(250,248,245,.14)}
-
-/* ══ 1. KOPFBEREICH ═════════════════════════════════════════════════════ */
-/* 10.8.2026: hier lag ein Verlauf von #1B1A18 nach #46433D, wurde also nach
-   unten heller. Direkt darunter beginnt der Sperrbildschirm bei #0E0E0C, ein
-   Helligkeitssprung um Faktor 13 — eine sichtbare Kante mitten im dunklen
-   Bereich, an einer Stelle ohne Abschnittswechsel. Dazu kam #FF8A50 auf
-   #46433D auf nur 4,23:1 und fiel damit unter die Grenze fuer Fliesstext.
-   Eine Farbe, dieselbe wie Sperrbildschirm und Fusszeile: der obere Teil
-   laeuft als ein Block durch, der Wechsel passiert einmal hin, einmal zurueck. */
-/* 10.8.2026, Kevin: zwei dunkle Bloecke hintereinander waren zu viel. Jetzt
-   ein Auftakt, der ins Papier auslaeuft, danach ist die Seite hell.
-
-   Die Stopps folgen einer smoothstep-Kurve und sind in L* verteilt, nicht in
-   sRGB. Das ist der Unterschied zwischen einer sichtbaren Kante und einem
-   Uebergang, den man nicht bemerkt: der Verlauf setzt schon bei 56 % an, tut
-   dort aber fast nichts und wird erst spaeter steil. Bei 67 %, wo der
-   Store-Knopf sitzt, ist die Flaeche noch #2B2B29 und traegt weisse Schrift
-   mit 14,26:1. Linear waere sie dort schon mittelgrau. */
-/* 11.8.2026, Kevin nach dem Vergleich mit coachway.com: "wir sollten den
-   verlauf loeschen der passt nicht auf die seite."
-
-   Vorher lief hier ein elfstufiger Verlauf von --nacht nach --papier ueber die
-   volle Bildschirmhoehe. Er war sorgfaeltig gebaut (smoothstep in CIE L*, damit
-   der Store-Knopf bei 67 % noch auf #2B2B29 steht), aber er loeste ein Problem,
-   das die Seite nicht hat: der Uebergang MUSS nicht weich sein.
-
-   Jetzt eine flache Flaeche mit harter Kante zum hellen Abschnitt. Das ist
-   ruhiger und ehrlicher: zwei Bereiche, zwei Farben, eine Grenze.
-
-   Die Hoehe bleibt bei 100svh. Damit steht aller Text im Hero garantiert auf
-   --nacht, und die Kontraste sind nicht mehr von der Scrollposition abhaengig.
-   Der schwaechste Wert war vorher 14,26:1 am Store-Knopf, jetzt sind es
-   ueberall 18,1:1 (--nacht-ink auf --nacht). */
-/* Kevin, 11.8.2026: "den hero bereich auch als karte." Sobald die Navigation
-   eine Pille ist, muss der Block darunter dieselbe Sprache sprechen, sonst
-   sieht es aus wie zwei Entwuerfe uebereinander. Genau das war am selben Tag
-   noch der Grund GEGEN die Karte, damals war die Leiste aber randlos.
-
-   Die Hoehe zieht die Luft oben und unten ab, sonst reicht die Karte ueber
-   den Bildschirm hinaus und man scrollt am ersten Bild vorbei. */
-/* KOPFSCHEIN, 11.8.2026 nach Kevins Coachway-Bild.
-
-   Was dort passiert: kein backdrop-filter, sondern eine gemalte Flaeche. Ein
-   sehr weicher radialer Verlauf, hellster Punkt bei rund 55 Prozent Breite
-   und 25 Prozent Hoehe, nach aussen dunkler werdend. Gemessen an den
-   Bildpunkten: hell etwa L* 31, Ecken L* 19, Delta 12.
-
-   Bei uns dasselbe in Clay statt Gruen. Deckung 24 Prozent trifft dasselbe
-   Delta von 12 auf --nacht.
-
-   Der eigentliche Gewinn ist ein anderer: die Navigationsleiste traegt einen
-   backdrop-filter, und auf reinem Schwarz zeigt der NICHTS. Man kann nicht
-   verwischen, was keine Struktur hat. Erst dieser Schein gibt der Unschaerfe
-   etwas zu tun, und die Leiste sieht endlich nach Glas aus statt nach einer
-   dunklen Flaeche mit Rand. */
-.hero{position:relative; isolation:isolate; overflow:hidden;
-  min-height:calc(100svh - 2 * var(--nav-luft)); display:grid; align-content:center; gap:32px;
-  padding:calc(var(--band-h) + var(--nav-h) + var(--nav-oben) + 40px) var(--rand) 56px;
-  margin:var(--nav-luft);
-  color:var(--nacht-ink);
-  background:
-    radial-gradient(88% 62% at 56% 18%, rgba(232,80,2,.24) 0%, rgba(232,80,2,.10) 42%, rgba(232,80,2,0) 72%),
-    radial-gradient(64% 44% at 18% 6%,  rgba(255,138,80,.10) 0%, rgba(255,138,80,0) 66%),
-    var(--nacht);
-  border-radius:var(--r-karte);
-  box-shadow:var(--schatten-karte)}
-
-/* UNTERES LICHT.
-
-   Hier lag bis zum 11.8.2026 ein Riffelglas aus 18 bis 51 Lamellen, jede mit
-   eigenem backdrop-filter, nach dem Figma-Rezept von @viscend.agency. Kevin
-   hat es nach zwei Runden wieder herausgenommen.
-
-   Uebrig bleibt der Farbverlauf, der im Rezept das "anything behind the
-   glass" war. Er allein traegt die Stelle, an der das Telefonbild steht, und
-   das war rueckblickend immer der Teil, der gewirkt hat. Die Lamellen haben
-   ihn eher zerschnitten.
-
-   Alter Stand: git tag vor-glas, oder Commit 922dc24 fuer die reaktive
-   Fassung.
-
-   Alter Stand: git tag vor-glas, oder Commit 922dc24 fuer die reaktive
-   Fassung mit Lamellen. */
-.glas{position:absolute; inset:auto 0 0; height:58%; z-index:-1;
-  pointer-events:none; overflow:hidden;
-  border-bottom-left-radius:var(--r-karte); border-bottom-right-radius:var(--r-karte);
-  -webkit-mask-image:linear-gradient(to top, #000 0%, #000 62%, transparent 100%);
-  mask-image:linear-gradient(to top, #000 0%, #000 62%, transparent 100%)}
-
-/* Der Farbverlauf dahinter. Zwei Lichtquellen von unten, wie im Vorbild,
-   nur in Clay: Blau war bis zum 10.8. die Palette und ist mit Ticket 93
-   ausdruecklich hinausgeflogen. */
-.glas-farbe{position:absolute; inset:-10%;
-  background:
-    radial-gradient(58% 62% at 24% 108%, rgba(232,80,2,.85) 0%, rgba(232,80,2,0) 64%),
-    radial-gradient(46% 54% at 62% 116%, rgba(255,138,80,.62) 0%, rgba(255,138,80,0) 60%),
-    radial-gradient(38% 44% at 86% 112%, rgba(232,80,2,.42) 0%, rgba(232,80,2,0) 62%);
-  filter:blur(34px)}
-
-/* Der Text braucht einen eigenen Block. Lagen h1, Absatz und Knopf direkt im
-   Raster und bekamen alle dieselbe grid-area, stapelten sie sich uebereinander
-   (Kevin, 9.8.2026, Desktop-Ansicht). */
-.herotext{display:grid; gap:24px; align-content:center; justify-items:start}
-.hero h1{font-size:clamp(34px,9.5vw,58px); font-weight:600; letter-spacing:-.035em; line-height:1.04}
-.hero p{font-size:16px; line-height:1.6; opacity:.74; max-width:36ch}
-.badge{display:inline-flex; align-items:center; gap:8px; min-height:52px; padding:0 24px;
-  background:#fff; color:var(--tinte); border-radius:26px; width:fit-content;
-  font-size:16px; font-weight:500;
-  transition:transform .2s var(--ease), background .3s var(--ease), color .3s var(--ease)}
-/* Der einzige farbige Punkt der Seite. Weiss auf #CE4400 sind 4,72:1, das
-   traegt. Auf #E85002 waeren es nur 3,76:1 — das ist Ticket 91 im Backlog
-   und hier derselbe Fehler. */
-.badge:hover{background:var(--clay-tief); color:#fff}
-.badge:active{transform:scale(.97)}
-.badge svg{width:19px;height:22px;fill:currentColor}
-.heroschuss{justify-self:center; width:min(230px,58vw); margin-top:8px}
-
-/* ══ PLATZHALTER ════════════════════════════════════════════════════════
-   Jeder Kasten sagt, was hineingehoert. So faellt beim Durchsehen auf, wenn
-   einer vergessen wurde — anders als bei einem grauen Rechteck.          */
-.ph{position:relative; background:repeating-linear-gradient(45deg,
-    rgba(128,128,128,.10) 0 10px, rgba(128,128,128,.16) 10px 20px);
-  border:1px dashed rgba(128,128,128,.5); display:grid; place-items:center;
-  font-family:var(--mono); font-size:11px; line-height:1.6; text-align:center;
-  padding:16px; color:var(--leise)}
-.ph.dunkel{color:rgba(255,255,255,.7); border-color:rgba(255,255,255,.34)}
-/* Das echte Bild. Fehlt die Datei, springt onerror ein und der gestrichelte
-   Platzhalter darunter wird sichtbar — so bricht nichts, solange die
-   Screenshots noch nicht abgelegt sind (10.8.2026). */
-.schuss{width:100%; height:auto; border-radius:34px; display:block}
-.phone{aspect-ratio:9/19.5; border-radius:34px; overflow:hidden;
-  max-height:min(620px,72svh); margin-inline:auto}
-
-/* ══ 2. SPERRBILDSCHIRM ═════════════════════════════════════════════════ */
-/* Die Nummer bleibt Monospace, die Beschreibung wird Fraunces. Der Wechsel
-   zwischen technischer Ziffer und weicher Serife IST der Effekt — beides in
-   derselben Schrift waere nur kleiner Text.
-   16px statt 11,5: eine Serife bei 11 Pixeln wird matschig. Das ist genau die
-   Groesse, in der Serifen versagen, also muss sie groesser werden. */
-/* 11.8.2026, Kevin: "02 und 03 sind nicht auf der gleichen Breite."
-
-   Er hat recht, und es waren zwei Randbreiten statt einer:
-     01 in .lock   .lock hat keinen Seitenrand, .num traegt ihn  ->  1x
-     02 in .frei   .frei traegt ihn, .num ist per Inline-Style auf 0  ->  1x
-     03 in .faq    .faq traegt ihn UND .num auch  ->  2x
-
-   Auf einem 1440er Fenster sind das 160px statt 80px, also 80px zu weit
-   eingerueckt. Die Regel lautet ab jetzt: den Seitenrand traegt der Abschnitt,
-   niemals ein Kind. Damit gibt es keine Stelle mehr, an der sich zwei addieren.
-   Geprueft in tools/webcheck.py. */
-.num{display:flex; align-items:baseline; gap:16px; padding:64px 0 0;
-  font-family:var(--serif); font-size:16px; font-style:italic; color:var(--leise)}
-.num b{font-family:var(--mono); font-style:normal; font-weight:400;
-  font-size:11px; letter-spacing:.06em; color:var(--clay-num)}
-.num::after{content:""; height:1px; flex:1; background:rgba(18,18,15,.16);
-  transform:translateY(-5px)}
-.dunkel-num{color:rgba(255,255,255,.62)}
-.dunkel-num b{color:var(--clay-hell)}
-.dunkel-num::after{background:rgba(255,255,255,.2)}
-
-/* Hell, seit der Kopfbereich ins Papier auslaeuft. Das dunkle Handybild ist
-   dann das einzige dunkle Element auf der Flaeche und traegt die Naechtlichkeit
-   selbst, so wie ein Produktfoto. */
-.lock{background:var(--papier); color:var(--tinte); padding:0 var(--rand) 88px}
-.lock .inhalt{display:grid; gap:24px; padding:32px 0 0}
-.lock h2{font-size:clamp(26px,7vw,42px); font-weight:600; letter-spacing:-.03em; line-height:1.12}
-.lock p{font-size:16px; line-height:1.62; color:var(--leise); max-width:44ch}
-.lockschuss{width:min(270px,68vw); justify-self:center}
-
-/* ══ 3. WARUM KOSTENLOS ═════════════════════════════════════════════════ */
-/* 11.8.2026: war 104 unten. Der Abstand zwischen zwei Abschnitten ergibt sich
-   aus unten plus dem oberen der Nummernzeile (64). Mit 104 waren das 168,
-   ueberall sonst 152. Jetzt 88, damit alle drei Uebergaenge gleich sind. */
-.frei{padding:32px var(--rand) 88px; display:grid; gap:24px}
-.frei h2{font-size:clamp(26px,7vw,42px); font-weight:600; letter-spacing:-.03em; line-height:1.12}
-.punkte{display:grid; gap:0; margin-top:4px}
-.punkte div{display:flex; align-items:baseline; gap:16px; padding:16px 0;
-  border-top:1px solid rgba(18,18,15,.13); font-size:16px; line-height:1.5}
-.punkte div:last-child{border-bottom:1px solid rgba(18,18,15,.13)}
-.punkte b{font-family:var(--mono); font-size:11px; font-weight:400; color:var(--leise);
-  flex:none; width:22px}
-/* Der zweite und letzte Fraunces-Einsatz: der eine Satz, der keine Funktion
-   erklaert, sondern eine Haltung. Genau wie in der App, wo sie nur in der
-   Anrede steht. Mehr als zwei Stellen und sie ist keine Ausnahme mehr. */
-.frei p{font-family:var(--serif); font-size:20px; line-height:1.5;
-  color:var(--leise); max-width:40ch; letter-spacing:-.005em}
-.badge.dunkel{background:var(--tinte); color:#fff; margin-top:8px}
-.badge.dunkel:hover{background:var(--clay-tief); color:#fff}
-
-/* ══ 4. FRAGEN UND ANTWORTEN ═══════════════════════════════════════════
-   Akkordeon wie bei Weber: Nummer, Frage, Plus. Alles zu beim Laden — wer
-   scrollt, sieht eine kurze Liste statt einer Textwand. Und jede Frage ist
-   eine, die im App Store tatsaechlich gestellt wird. */
-/* Der Abschnitt begann direkt mit der Liste. Ohne Ueberschrift lief er
-   uebergangslos aus dem vorigen heraus (Kevin, 10.8.2026: "sieht bambam aus
-   ohne visuelle Unterbrechung"). Jetzt: Nummer, Aussage, dann die Fragen —
-   derselbe Dreischritt wie in den Abschnitten davor. */
-.faq{padding:0 var(--rand) 96px}
-.faq h2{font-size:clamp(26px,7vw,42px); font-weight:600; letter-spacing:-.03em;
-  line-height:1.12; margin:16px 0 32px}
-.fitem{border-top:1px solid rgba(18,18,15,.14)}
-.fitem:last-of-type{border-bottom:1px solid rgba(18,18,15,.14)}
-.fq{width:100%; background:none; border:0; cursor:pointer; font:inherit; color:inherit;
-  display:flex; align-items:center; gap:16px; min-height:60px; padding:8px 0; text-align:left}
-.fq b{font-family:var(--mono); font-size:11px; font-weight:400; letter-spacing:.06em;
-  color:var(--leise); flex:none; width:22px}
-.fq span{font-size:16px; letter-spacing:-.01em; flex:1}
-.fq i{font-style:normal; font-size:24px; font-weight:300; line-height:1; flex:none;
-  transition:transform .3s var(--ease)}
-.fq[aria-expanded="true"] i{transform:rotate(45deg)}
-.fa{max-height:0; overflow:hidden; transition:max-height .4s var(--ease)}
-.fa p{font-size:16px; line-height:1.65; color:var(--leise); max-width:60ch;
-  padding:0 0 20px 40px}
-.fa p + p{padding-top:16px}
-
-/* ══ FUSSZEILE ══════════════════════════════════════════════════════════ */
-/* Footer ebenso: dieselbe Rundung, dieselbe Luft. Damit rahmen zwei dunkle
-   Karten den hellen Inhalt in der Mitte. */
-footer{background:var(--nacht); color:var(--nacht-ink); padding:56px var(--rand) 28px;
-  margin:var(--nav-luft); border-radius:var(--r-karte)}
-.fmarke{margin-bottom:40px}
-.fspalten{display:grid; gap:32px}
-.fsp h4{font-size:13px; font-weight:500; letter-spacing:.04em; padding-bottom:8px;
-  border-bottom:1px solid rgba(255,255,255,.32); margin-bottom:12px; display:inline-block}
-.fsp a{display:block; font-size:13px; line-height:2.15; color:rgba(255,255,255,.72)}
-.fsp a:hover{color:#fff}
-.funten{display:flex; flex-wrap:wrap; gap:16px 20px; justify-content:space-between;
-  margin-top:44px; padding-top:24px; border-top:1px solid rgba(255,255,255,.16);
-  font-size:13px; color:rgba(255,255,255,.5)}
-.funten nav{display:flex; gap:16px}
-
-@media (min-width:900px){
-  :root{--rand-fix:32px;
-         --rand:max(var(--rand-fix), calc((100% - var(--max)) / 2))}
-  .haupt{display:flex} .burger{display:none}
-  .hero{grid-template-columns:1.05fr .95fr; align-items:center; gap:56px; align-content:center}
-  .heroschuss{justify-self:center; width:min(268px,26vw); margin:0}
-  .lock .inhalt{grid-template-columns:1fr 1fr; align-items:center; gap:52px}
-  .lockschuss{justify-self:start; width:min(300px,30vw)}
-  /* Alle vier Positionen ausdruecklich setzen. Ohne die Reihenangabe wollten
-     Nummer und Ueberschrift beide in Reihe 1 und lagen uebereinander. */
-  .frei{grid-template-columns:1fr 1fr; gap:24px 60px; align-items:start}
-  .frei > .num{grid-column:1 / -1; grid-row:1; padding:0}
-  .frei h2{grid-column:1; grid-row:2}
-  .frei p{grid-column:1; grid-row:3}
-  .frei .badge{grid-column:1; grid-row:4}
-  .punkte{grid-column:2; grid-row:2 / span 3; margin:0; align-self:start}
-  .fspalten{grid-template-columns:repeat(3,auto); justify-content:end; gap:0}
-  .fsp{padding:0 32px; border-left:1px solid rgba(255,255,255,.16); text-align:right}
-  .fsp:first-child{border-left:0}
-  .fsp:last-child{padding-right:0}
-  footer{padding:64px var(--rand) 32px}
-  .fkopf{display:flex; justify-content:space-between; align-items:flex-start}
-  .fmarke{margin:0}
+@media (prefers-color-scheme: dark){
+  :root{
+    --grund:#000000;
+    --band:#1C1C1E;
+    --tinte:#FFFFFF;
+    --leise:#A1A1A6;
+    --akzent:#0A84FF;
+    --kante:#48484A;
+    --karte:#1C1C1E;
+    --leiste:rgba(0,0,0,.82);
+  }
+  .band .karte{background:#2C2C2E}
 }
-@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation:none!important}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;
+  background:var(--grund);
+  color:var(--tinte);
+  font-family:"SF Pro Text", system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size:17px;
+  line-height:25px;
+  -webkit-font-smoothing:antialiased;
+  text-wrap:pretty;
+}
+a{color:var(--akzent)}
+a:hover{color:var(--akzent)}
+p a{text-decoration:underline}
+p{margin:27px 0 0}
+h1{font-size:clamp(34px,8vw,48px);font-weight:700;letter-spacing:-.003em;line-height:1.08;margin:16px 0 0}
+h2{font-size:clamp(27px,6vw,32px);font-weight:700;letter-spacing:-.003em;line-height:1.15;margin:12px 0 0}
+h3{font-size:22px;font-weight:700;line-height:1.2;margin:0}
+.kennzeile{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--leise);margin:0}
+.container{max-width:1100px;margin-inline:auto;padding-inline:22px}
+.text{max-width:740px;margin-inline:auto}
+.einordnung{color:var(--leise)}
+section{padding:72px 0}
+section.band{background:var(--band)}
+.kopfblock{text-align:center}
+.kopfblock h2{margin-top:12px}
+.knopf{
+  display:inline-block;background:var(--akzent);color:#fff;text-decoration:none;
+  font-size:17px;font-weight:500;line-height:1;padding:14px 24px;border-radius:980px;
+}
+.knopf:hover{filter:brightness(.92);color:#fff}
+.knopf.leer{background:transparent;color:var(--akzent);border:1px solid var(--akzent);padding:13px 23px}
+.knopf.leer:hover{filter:none;background:var(--band)}
+.karte{background:var(--karte);border:1px solid var(--kante);border-radius:16px}
+
+/* Kopfleiste */
+header.leiste{
+  position:sticky;top:0;z-index:10;background:var(--leiste);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--kante);
+}
+.nav{display:flex;align-items:center;gap:20px;min-height:52px}
+.marke{font-size:19px;font-weight:700;color:var(--tinte);text-decoration:none;letter-spacing:-.01em}
+.nav-links{display:none;gap:24px;margin-inline:auto}
+.nav-links a{color:var(--tinte);text-decoration:none;font-size:15px}
+.nav-links a:hover{color:var(--akzent)}
+.nav-cta{margin-left:auto;font-size:15px;padding:8px 16px}
+.nav-cta .lang{display:none}
+details.menue{position:relative}
+details.menue summary{
+  list-style:none;cursor:pointer;font-size:15px;color:var(--tinte);
+  border:1px solid var(--leise);border-radius:980px;padding:7px 14px;
+}
+details.menue summary::-webkit-details-marker{display:none}
+details.menue[open] summary{background:var(--band)}
+.menue-feld{
+  position:absolute;right:0;top:calc(100% + 10px);min-width:220px;padding:8px;
+  display:flex;flex-direction:column;z-index:20;
+}
+.menue-feld a{color:var(--tinte);text-decoration:none;padding:10px 12px;border-radius:10px;font-size:17px}
+.menue-feld a:hover{background:var(--band);color:var(--akzent)}
+@media (min-width:860px){
+  .nav-links{display:flex}
+  .nav-cta{margin-left:0}
+  .nav-cta .lang{display:inline}
+  .nav-cta .kurz{display:none}
+  details.menue{display:none}
+}
+
+/* Hero */
+.hero{text-align:center;padding:88px 0 72px}
+.hero p{margin-inline:auto;max-width:640px}
+.hero .knopf{margin-top:34px}
+.kacheln{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;max-width:640px;margin:51px auto 0}
+.kachel{padding:20px 12px;text-align:center}
+.kachel .zahl{font-size:clamp(30px,7vw,40px);font-weight:700;letter-spacing:-.01em;line-height:1.1}
+.kachel .kennzeile{margin-top:6px}
+
+/* Auf einen Blick */
+.blick{max-width:740px;margin:44px auto 0;padding:8px 24px}
+.blick div{display:grid;grid-template-columns:minmax(104px,150px) 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--kante)}
+.blick div:last-child{border-bottom:0}
+.blick dt{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--leise);padding-top:3px}
+.blick dd{margin:0}
+
+/* Funktionen */
+.funktion{display:grid;gap:28px;align-items:center;margin-top:64px}
+.funktion img{
+  width:min(300px,78vw);height:auto;display:block;margin-inline:auto;
+  border:1px solid var(--kante);border-radius:24px;
+}
+.funktion .wort h3{font-size:clamp(22px,5vw,27px)}
+.funktion .wort p{margin-top:14px;color:var(--leise)}
+@media (min-width:820px){
+  .funktion{grid-template-columns:1fr 1fr;gap:56px}
+  .funktion.tausch .bild{order:2}
+  .funktion .wort{max-width:440px}
+  .funktion.tausch .wort{justify-self:end}
+}
+
+/* Privat */
+.punkte{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:44px}
+.punkt{padding:24px}
+.punkt h3{font-size:19px}
+.punkt p{margin-top:8px;color:var(--leise)}
+
+/* Preis */
+.null{font-size:clamp(72px,18vw,112px);font-weight:700;letter-spacing:-.02em;line-height:1;margin:28px 0 0;text-align:center}
+.spalten{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;max-width:860px;margin:44px auto 0}
+.spalte{padding:28px}
+.spalte ul{list-style:none;margin:16px 0 0;padding:0}
+.spalte li{padding:7px 0 7px 28px;position:relative}
+.spalte li::before{position:absolute;left:0;font-weight:600}
+.spalte.drin li::before{content:"✓";color:var(--akzent)}
+.spalte.fehlt li::before{content:"—";color:var(--leise)}
+
+/* Vergleich-Anriss */
+.anriss{max-width:740px;margin:44px auto 0;padding:8px 24px}
+.anriss div{display:grid;grid-template-columns:1fr auto;gap:16px;padding:14px 0;border-bottom:1px solid var(--kante);align-items:baseline}
+.anriss div:last-of-type{border-bottom:0}
+.anriss .frage{font-weight:600}
+.anriss .antwort{text-align:right}
+.anriss .antwort small{display:block;color:var(--leise);font-size:14px;line-height:20px}
+.mittig{text-align:center;margin-top:34px}
+
+/* FAQ */
+.faq{max-width:740px;margin:44px auto 0;padding:0 24px}
+.faq details{border-bottom:1px solid var(--kante)}
+.faq details:last-child{border-bottom:0}
+.faq summary{
+  list-style:none;cursor:pointer;font-weight:600;padding:18px 36px 18px 0;position:relative;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:"+";position:absolute;right:2px;top:50%;transform:translateY(-50%);
+  font-size:24px;font-weight:400;color:var(--leise);
+}
+.faq details[open] summary::after{content:"–"}
+.faq .antwort{padding:0 0 20px;color:var(--leise)}
+.faq .antwort p{margin:0}
+
+/* Abschluss */
+.abschluss{text-align:center}
+.abschluss .knopf{margin-top:34px}
+.abschluss .einordnung{margin-top:20px}
+
+/* Fusszeile */
+footer{border-top:1px solid var(--kante);padding:52px 0 40px;font-size:15px;line-height:22px}
+.fuss{display:grid;gap:36px}
+.fuss .marke{display:inline-block}
+.fuss .satz{color:var(--leise);margin-top:10px;max-width:280px}
+.fuss h4{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--leise);margin:0 0 12px}
+.fuss ul{list-style:none;margin:0;padding:0}
+.fuss li{margin-bottom:8px}
+.fuss a{color:var(--tinte);text-decoration:none}
+.fuss a:hover{color:var(--akzent);text-decoration:underline}
+.fuss-spalten{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:28px}
+.jahr{color:var(--leise);margin-top:44px;padding-top:20px;border-top:1px solid var(--kante)}
+
+/* Einblenden beim Scrollen — nur mit JS, sonst ist alles sofort sichtbar */
+html.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+html.js .reveal.da{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){
+  html.js .reveal{opacity:1;transform:none;transition:none}
+}
 </style>
-
-<!-- Strukturierte Daten. Zwei Zwecke:
-     SoftwareApplication sagt Suchmaschinen, was gymLog ist, was es kostet
-     und wo man es bekommt.
-     FAQPage macht die sechs Antworten unten maschinenlesbar. Sie stehen
-     ohnehin im Quelltext, das Akkordeon versteckt sie nur ueber max-height.
-     Genau dieses Format zitieren KI-Suchmaschinen. -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "gymLog",
-  "alternateName": "gymLog Tracker",
-  "applicationCategory": "HealthApplication",
-  "applicationSubCategory": "Fitness",
-  "operatingSystem": "iOS 15.0 or later",
-  "url": "https://gymlogtracker.com/",
-  "installUrl": "https://apps.apple.com/de/app/gymlog-tracker/id6786720640",
-  "downloadUrl": "https://apps.apple.com/de/app/gymlog-tracker/id6786720640",
-  "inLanguage": [
-    "de",
-    "en"
-  ],
-  "description": "Trainings-Tracker fürs iPhone. Alles bleibt lokal auf deinem Gerät. Keine Anmeldung, keine Werbung, kein Abo. Dauerhaft kostenlos.",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "EUR",
-    "availability": "https://schema.org/InStock"
-  },
-  "author": {
-    "@type": "Person",
-    "name": "Kevin Schropp",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Veilchenweg 10",
-      "postalCode": "84186",
-      "addressLocality": "Vilsheim",
-      "addressCountry": "DE"
-    },
-    "email": "info@gymlogtracker.com"
-  },
-  "featureList": [
-    "Kein Konto und keine Anmeldung",
-    "Keine Cloud, alle Daten bleiben auf dem Gerät",
-    "Kein Abo und keine Käufe in der App",
-    "Keine Werbung und kein Tracking",
-    "Training läuft auf dem Sperrbildschirm mit",
-    "Trainingspläne als Text teilen",
-    "Backup als Datei, jederzeit exportierbar"
-  ],
-  "isAccessibleForFree": true,
-  "privacyPolicy": "https://gymlogtracker.com/datenschutz/"
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Ist die App wirklich dauerhaft kostenlos?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Ja. Kein Abo, keine Käufe in der App, keine Funktion hinter einer Bezahlschranke. Es gibt auch keine kostenpflichtige Version, auf die später umgestellt wird."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Wo liegen meine Daten?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Auf deinem iPhone, sonst nirgends. Es gibt keinen Server, an den etwas gesendet wird, und kein Konto, das etwas speichern könnte. Das ist der Grund, warum es keine Anmeldung gibt: es gäbe nichts anzumelden."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Was passiert bei einem neuen iPhone?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Du exportierst deine Daten als Datei und liest sie auf dem neuen Gerät wieder ein. Das geht im Profil, dauert ein paar Sekunden und braucht keine Cloud."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Kann ich einen Plan an jemanden weitergeben?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Ja, als normalen Text. Du teilst ihn über jede App, die Text verschicken kann, und der andere fügt ihn mit einem Tippen ein. Deine persönlichen Notizen bleiben dabei außen vor."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Gibt es gymLog für Android?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Nein. Nicht weil es technisch unmöglich wäre, sondern weil ich die App allein baue, neben einem Vollzeitjob. Zwei Plattformen heißen zweimal testen, zweimal pflegen, zweimal Fehler suchen. Ich mache lieber eine Sache richtig als zwei halb."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Warum gibt es keine fertigen Trainingspläne?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Weil gymLog für Leute gebaut ist, die schon wissen, was sie tun. Ein Plan, der zu dir passt, kommt von dir oder von jemandem, der dich kennt — nicht aus einer Liste in einer App."
-      }
-    }
-  ]
-}
-</script>
 </head>
 <body>
-<span id="oben"></span>
 
-<div class="kopf" id="kopf">
-
-  <nav class="nav" id="nav">
-    <a href="#oben" class="marke" aria-label="gymLog, zum Seitenanfang"><img class="marke-ic" src="img/icon.svg" width="26" height="26" alt=""><span class="marke-tx"></span></a>
-    <div class="haupt">
-      <a href="#sperrbildschirm">Sperrbildschirm</a>
-      <a href="#kostenlos">Warum kostenlos</a>
-    </div>
-    <div class="rechts">
-      <a class="navcta" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640"><span>Laden</span></a>
-      <button class="burger" id="burger" aria-label="Menü öffnen" aria-expanded="false">
-        <span class="bi"><span></span><span></span></span>
-      </button>
-    </div>
-  </nav>
-</div>
-
-<div class="mob" id="mob">
-  <a href="#sperrbildschirm">Sperrbildschirm</a>
-  <a href="#kostenlos">Warum kostenlos</a>
-  <a href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Im App Store laden</a>
-</div>
-
-<!-- ══ 1 ══════════════════════════════════════════════════════════════ -->
-<header class="hero">
-  <div class="glas" aria-hidden="true"><div class="glas-farbe"></div></div>
-  <div class="herotext">
-  <h1>Sätze festhalten<br>braucht kein Konto.</h1>
-  <p>Ein Trainings-Tracker für Leute, die ihren Plan schon haben. Alles bleibt auf deinem iPhone. Keine Anmeldung, keine Werbung, keine monatliche Rechnung.</p>
-  <a class="badge" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">
-    <svg viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-    Im App Store laden
-  </a>
-  </div>
-  <div class="heroschuss">
-    <img class="schuss" src="img/app-plan.jpg" width="1000" height="2174" alt="gymLog Planbildschirm mit Wochenkalender" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-      <div class="ph dunkel phone" style="display:none">SCREENSHOT 1<br>Dashboard mit Wochenkalender<br>1290 × 2796</div>
+<header class="leiste">
+  <div class="container nav">
+    <a class="marke" href="/">gymLog</a>
+    <nav class="nav-links" aria-label="Bereiche">
+      <a href="#funktionen">Funktionen</a>
+      <a href="#privat">Privat</a>
+      <a href="#preis">Preis</a>
+      <a href="vergleich.html">Vergleich</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="knopf nav-cta" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640"><span class="lang">Im App Store laden</span><span class="kurz">Laden</span></a>
+    <details class="menue">
+      <summary>Menü</summary>
+      <nav class="menue-feld karte" aria-label="Bereiche">
+        <a href="#funktionen">Funktionen</a>
+        <a href="#privat">Privat</a>
+        <a href="#preis">Preis</a>
+        <a href="vergleich.html">Vergleich</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </details>
   </div>
 </header>
 
-<!-- ══ 2 ══════════════════════════════════════════════════════════════ -->
-<section class="lock" id="sperrbildschirm">
-  <div class="num"><b>01</b><span>Während du trainierst</span></div>
-  <div class="inhalt">
-    <div class="lockschuss">
-      <img class="schuss" src="img/app-sperrbildschirm.jpg" width="1000" height="2174" loading="lazy" alt="Laufendes Training auf dem Sperrbildschirm" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-      <div class="ph phone" style="display:none">SCREENSHOT 2<br>Laufendes Training auf dem<br>Sperrbildschirm mit Abhak-Knopf<br>1290 × 2796</div>
+<main>
+
+<section class="hero" data-screen-label="Hero">
+  <div class="container reveal">
+    <p class="kennzeile">Für immer kostenlos</p>
+    <h1>Mitschreiben,<br>nicht einstellen.</h1>
+    <p>gymLog ist ein Trainingstagebuch für Leute, die ihren Plan schon haben. Kein Konto, keine Cloud, kein Abo. Alles bleibt auf deinem iPhone.</p>
+    <a class="knopf" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Im App Store laden</a>
+    <div class="kacheln">
+      <div class="kachel karte"><div class="zahl">170</div><p class="kennzeile">Übungen</p></div>
+      <div class="kachel karte"><div class="zahl">2</div><p class="kennzeile">Sprachen</p></div>
+      <div class="kachel karte"><div class="zahl">0&nbsp;€</div><p class="kennzeile">Preis</p></div>
     </div>
-    <div style="display:grid;gap:20px">
-      <h2>Das Training läuft auf dem Sperrbildschirm mit.</h2>
-      <p>Aktuelle Übung, deine Werte vom letzten Mal, Fortschritt. Den Satz hakst du direkt dort ab, ohne die App zu öffnen. Das ganze Training über.</p>
-      <p>Bei Zeitübungen läuft ein Countdown rückwärts und es piept am Ende. Planke, Laufband, Intervalle. Kein Blick aufs Display nötig.</p>
+  </div>
+</section>
+
+<section class="band" id="blick" data-screen-label="Auf einen Blick">
+  <div class="container reveal">
+    <div class="kopfblock">
+      <p class="kennzeile">Auf einen Blick</p>
+      <h2>Die Eckdaten.</h2>
+      <p class="einordnung text">Wer nur zehn Sekunden hat, liest nur das hier.</p>
+    </div>
+    <dl class="blick karte">
+      <div><dt>Plattform</dt><dd>iPhone, ab iOS&nbsp;15</dd></div>
+      <div><dt>Preis</dt><dd>Kostenlos, keine In-App-Käufe</dd></div>
+      <div><dt>Konto</dt><dd>Keines nötig</dd></div>
+      <div><dt>Verbindung</dt><dd>Nie erforderlich</dd></div>
+      <div><dt>Speicher</dt><dd>Lokal auf dem Gerät</dd></div>
+      <div><dt>Sprachen</dt><dd>Deutsch und Englisch</dd></div>
+      <div><dt>Deine Daten</dt><dd>JSON-Sicherung und CSV-Export</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="funktionen" data-screen-label="Funktionen">
+  <div class="container">
+    <div class="kopfblock reveal">
+      <p class="kennzeile">Funktionen</p>
+      <h2>Eintragen, abhaken, weiter.</h2>
+      <p class="einordnung text">Vier Dinge, die gymLog kann. Mehr nicht — und das mit Absicht.</p>
+    </div>
+
+    <article class="funktion reveal">
+      <div class="bild"><img src="img/13f6136a.webp" width="900" height="1948" alt="Laufendes Training in gymLog: Übung Wide Lat Pulldown mit drei Sätzen, Gewicht und Wiederholungen vorausgefüllt, ein Satz abgehakt" loading="lazy"></div>
+      <div class="wort">
+        <h3>Eintragen, zwischen zwei Sätzen.</h3>
+        <p>Gewicht, Wiederholungen, Haken. Die Werte vom letzten Mal stehen schon da. Nur die Übung, an der du gerade bist, ist offen — der Rest bleibt zu.</p>
+      </div>
+    </article>
+
+    <article class="funktion tausch reveal">
+      <div class="bild"><img src="img/0b81bdd2.webp" width="900" height="1948" alt="iPhone-Sperrbildschirm mit laufendem gymLog-Training: Übung, Gewicht mal Wiederholungen, Fortschrittsbalken und Abhak-Knopf" loading="lazy"></div>
+      <div class="wort">
+        <h3>Auch ohne die App.</h3>
+        <p>Das laufende Training steht auf dem Sperrbildschirm, mit Zeit und Fortschritt. Sätze lassen sich direkt von dort abhaken, ohne die App zu öffnen.</p>
+      </div>
+    </article>
+
+    <article class="funktion reveal">
+      <div class="bild"><img src="img/eefb564d.webp" width="900" height="1948" alt="Gewichtsübersicht in gymLog mit Filter nach Studio: All gyms, Iron Works und Hotel Gym, darunter Übungen mit 7- und 30-Tage-Durchschnitt" loading="lazy"></div>
+      <div class="wort">
+        <h3>Gleiches Training, echter Vergleich.</h3>
+        <p>Gewichte lassen sich pro Studio trennen. Dieselbe Maschine zieht woanders anders — gymLog vergleicht dich mit dir selbst, am selben Gerät, im selben Studio.</p>
+      </div>
+    </article>
+
+    <article class="funktion tausch reveal">
+      <div class="bild"><img src="img/1d2a7106.webp" width="900" height="1948" alt="Körperbereich in gymLog: Gewicht und Körperfett als Kurven über ein Jahr, dazu Ziel, Tempo pro Woche und Kalorienempfehlung" loading="lazy"></div>
+      <div class="wort">
+        <h3>Fortschritt, nicht Bauchgefühl.</h3>
+        <p>Gewicht, Körperfett, Ziel und Tempo, als Kurve über Monate. Dazu eine Kalorienempfehlung, gerechnet aus deinen eigenen Daten.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="band" id="privat" data-screen-label="Privat">
+  <div class="container reveal">
+    <div class="kopfblock">
+      <p class="kennzeile">Privat</p>
+      <h2>Es verlässt dein Gerät nicht.</h2>
+      <p class="einordnung text">Nicht als Einstellung. Als Bauweise.</p>
+    </div>
+    <div class="punkte">
+      <div class="punkt karte">
+        <h3>Kein Konto</h3>
+        <p>Es gibt keine Anmeldung. Nichts zu registrieren, nichts zu vergessen.</p>
+      </div>
+      <div class="punkt karte">
+        <h3>Kein Server</h3>
+        <p>Deine Trainings liegen auf deinem iPhone, sonst nirgends.</p>
+      </div>
+      <div class="punkt karte">
+        <h3>Keine Tracker</h3>
+        <p>Keine Analytics, keine Werbe-IDs, keine Weitergabe an Dritte.</p>
+      </div>
+    </div>
+    <p class="text" style="text-align:center">Apple Health? Auf Wunsch schreibt gymLog Trainings, Gewicht und Körperfett dorthin — und liest nichts. Details in der <a href="/datenschutz/">Datenschutzerklärung</a>.</p>
+  </div>
+</section>
+
+<section id="preis" data-screen-label="Preis">
+  <div class="container reveal">
+    <div class="kopfblock">
+      <p class="kennzeile">Preis</p>
+      <h2 class="null" aria-label="Null Euro">0&nbsp;€</h2>
+      <p class="einordnung text">Dauerhaft. Es wartet keine Pro-Version dahinter.</p>
+    </div>
+    <div class="spalten">
+      <div class="spalte karte drin">
+        <p class="kennzeile">Enthalten</p>
+        <ul>
+          <li>Alle Funktionen</li>
+          <li>Unbegrenzt viele Pläne</li>
+          <li>Vollständige Historie</li>
+          <li>170 Übungen</li>
+          <li>Studios</li>
+          <li>Sperrbildschirm</li>
+          <li>Apple Health</li>
+          <li>CSV und JSON</li>
+          <li>Deutsch und Englisch</li>
+        </ul>
+      </div>
+      <div class="spalte karte fehlt">
+        <p class="kennzeile">Nicht dabei</p>
+        <ul>
+          <li>Kein Abo</li>
+          <li>Kein In-App-Kauf</li>
+          <li>Keine Werbung</li>
+          <li>Kein Pflichtkonto</li>
+          <li>Keine Tracker</li>
+          <li>Kein Newsletter</li>
+          <li>Kein Weiterverkauf von Daten</li>
+          <li>Keine Pro-Version</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ══ 3 ══════════════════════════════════════════════════════════════ -->
-<section class="frei" id="kostenlos">
-  <div class="num" style="padding-top:0;grid-column:1/-1"><b>02</b><span>Warum kostenlos</span></div>
-  <h2>Deinen Fortschritt festzuhalten braucht kein Geschäftsmodell.</h2>
-  <div class="punkte">
-    <div><b>01</b>Kein Konto, keine Anmeldung</div>
-    <div><b>02</b>Keine Cloud, alles bleibt auf dem Gerät</div>
-    <div><b>03</b>Kein Abo, keine Paywall nach dem dritten Plan</div>
-    <div><b>04</b>Keine Werbung, kein Tracking</div>
-    <div><b>05</b>Backup als Datei, jederzeit exportierbar</div>
-  </div>
-  <p>Kein Freemium, keine versteckten Kosten. Wenn es dir was bringt, empfiehl es weiter. Das reicht.</p>
-  <a class="badge dunkel" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">
-    <svg viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-    Im App Store laden
-  </a>
-</section>
-
-<!-- ══ 4 ══════════════════════════════════════════════════════════ -->
-<section class="faq" id="faq">
-  <div class="num"><b>03</b><span>Fragen und Antworten</span></div>
-  <h2>Was Leute vorher wissen wollen.</h2>
-
-  <div class="fitem">
-    <button class="fq" aria-expanded="false"><b>01</b><span>Ist die App wirklich dauerhaft kostenlos?</span><i>+</i></button>
-    <div class="fa"><p>Ja. Kein Abo, keine Käufe in der App, keine Funktion hinter einer Bezahlschranke. Es gibt auch keine kostenpflichtige Version, auf die später umgestellt wird.</p></div>
-  </div>
-
-  <div class="fitem">
-    <button class="fq" aria-expanded="false"><b>02</b><span>Wo liegen meine Daten?</span><i>+</i></button>
-    <div class="fa"><p>Auf deinem iPhone, sonst nirgends. Es gibt keinen Server, an den etwas gesendet wird, und kein Konto, das etwas speichern könnte. Das ist der Grund, warum es keine Anmeldung gibt: es gäbe nichts anzumelden.</p></div>
-  </div>
-
-  <div class="fitem">
-    <button class="fq" aria-expanded="false"><b>03</b><span>Was passiert bei einem neuen iPhone?</span><i>+</i></button>
-    <div class="fa"><p>Du exportierst deine Daten als Datei und liest sie auf dem neuen Gerät wieder ein. Das geht im Profil, dauert ein paar Sekunden und braucht keine Cloud.</p>
-    <p>Die App erinnert dich von selbst daran, wenn die letzte Sicherung länger her ist.</p></div>
-  </div>
-
-  <div class="fitem">
-    <button class="fq" aria-expanded="false"><b>04</b><span>Kann ich einen Plan an jemanden weitergeben?</span><i>+</i></button>
-    <div class="fa"><p>Ja, als normalen Text. Du teilst ihn über jede App, die Text verschicken kann, und der andere fügt ihn mit einem Tippen ein. Deine persönlichen Notizen bleiben dabei außen vor.</p></div>
-  </div>
-
-  <div class="fitem">
-    <button class="fq" aria-expanded="false"><b>05</b><span>Gibt es gymLog für Android?</span><i>+</i></button>
-    <div class="fa"><p>Nein. Nicht weil es technisch unmöglich wäre, sondern weil ich die App allein baue, neben einem Vollzeitjob. Zwei Plattformen heißen zweimal testen, zweimal pflegen, zweimal Fehler suchen. Ich mache lieber eine Sache richtig als zwei halb.</p></div>
-  </div>
-
-  <div class="fitem">
-    <button class="fq" aria-expanded="false"><b>06</b><span>Warum gibt es keine fertigen Trainingspläne?</span><i>+</i></button>
-    <div class="fa"><p>Weil gymLog für Leute gebaut ist, die schon wissen, was sie tun. Ein Plan, der zu dir passt, kommt von dir oder von jemandem, der dich kennt — nicht aus einer Liste in einer App.</p></div>
+<section class="band" id="vergleich" data-screen-label="Vergleich-Anriss">
+  <div class="container reveal">
+    <div class="kopfblock">
+      <p class="kennzeile">Vergleich</p>
+      <h2>Neben Hevy, Strong, JEFIT und Fitbod.</h2>
+      <p class="einordnung text">Ehrlich verglichen — auch da, wo gymLog verliert.</p>
+    </div>
+    <div class="anriss karte">
+      <div>
+        <span class="frage">Preis</span>
+        <span class="antwort">0&nbsp;€, dauerhaft<small>andere: Abo oder Kauf</small></span>
+      </div>
+      <div>
+        <span class="frage">Ohne Konto nutzbar</span>
+        <span class="antwort">Ja<small>andere: meist nein</small></span>
+      </div>
+      <div>
+        <span class="frage">Synchronisierung zwischen Geräten</span>
+        <span class="antwort">Nein<small>andere: ja — hier verliert gymLog</small></span>
+      </div>
+    </div>
+    <p class="mittig"><a class="knopf leer" href="vergleich.html">Vollständigen Vergleich ansehen</a></p>
   </div>
 </section>
 
-<!-- ══ FUSSZEILE ══════════════════════════════════════════════════════ -->
+<section id="faq" data-screen-label="FAQ">
+  <div class="container reveal">
+    <div class="kopfblock">
+      <p class="kennzeile">FAQ</p>
+      <h2>Kurze Fragen, kurze Antworten.</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Ist gymLog wirklich kostenlos?</summary>
+        <div class="antwort"><p>Ja. Alle Funktionen, ohne In-App-Käufe, ohne Abo. Es gibt keine Pro-Version, die später Geld will.</p></div>
+      </details>
+      <details>
+        <summary>Brauche ich ein Konto?</summary>
+        <div class="antwort"><p>Nein. gymLog hat keine Anmeldung. App laden, Plan anlegen, trainieren.</p></div>
+      </details>
+      <details>
+        <summary>Funktioniert es ohne Netz?</summary>
+        <div class="antwort"><p>Ja, immer. gymLog braucht nie eine Verbindung — auch nicht im Keller-Studio ohne Empfang.</p></div>
+      </details>
+      <details>
+        <summary>Wo liegen meine Daten?</summary>
+        <div class="antwort"><p>Auf deinem iPhone, sonst nirgends. Es gibt keinen Server und keine Cloud.</p></div>
+      </details>
+      <details>
+        <summary>Kann ich sie auf ein neues iPhone übertragen?</summary>
+        <div class="antwort"><p>Ja, über die JSON-Sicherung: auf dem alten Gerät exportieren, auf dem neuen einlesen. Das ist der einzige Weg — eine automatische Synchronisierung gibt es nicht.</p></div>
+      </details>
+      <details>
+        <summary>Gibt es eine Android-Version?</summary>
+        <div class="antwort"><p>Nein. gymLog ist eine iOS-App, und eine Android-Version ist nicht geplant.</p></div>
+      </details>
+      <details>
+        <summary>Kann ich eigene Übungen anlegen?</summary>
+        <div class="antwort"><p>Ja. 170 Übungen sind schon dabei, nach acht Körperregionen gegliedert — und in deinen Plänen kannst du Übungen frei benennen.</p></div>
+      </details>
+      <details>
+        <summary>Funktioniert es mit Apple Health?</summary>
+        <div class="antwort"><p>Ja, schreibend: Trainings, Gewicht und Körperfett landen auf Wunsch in Health. gymLog liest nichts aus Health aus.</p></div>
+      </details>
+      <details>
+        <summary>Sagt mir gymLog, was ich trainieren soll?</summary>
+        <div class="antwort"><p>Nein. gymLog ist ein Tagebuch, kein Trainer. Es ist für Leute gebaut, die ihren Plan schon haben.</p></div>
+      </details>
+      <details>
+        <summary>Warum gibt es keine Synchronisierung?</summary>
+        <div class="antwort"><p>Weil es keinen Server gibt. Das ist der Preis dafür, dass deine Daten dein Gerät nie verlassen. Beim Gerätewechsel nimmst du die Sicherungsdatei mit.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="band abschluss" data-screen-label="Abschluss">
+  <div class="container reveal">
+    <p class="kennzeile">Kostenlos, ohne Konto</p>
+    <h2>Bereit für die nächste Einheit?</h2>
+    <p><a class="knopf" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Im App Store laden</a></p>
+    <p class="einordnung">Laden, Plan eintragen, trainieren. Mehr ist es nicht.</p>
+  </div>
+</section>
+
+</main>
+
 <footer>
-  <div class="fkopf">
-    <div class="fmarke" role="img" aria-label="gymLog"><img class="fmarke-ic" src="img/icon.svg" width="30" height="30" alt=""><span class="fmarke-tx"></span></div>
-    <div class="fspalten">
-      <div class="fsp">
-        <h4>App</h4>
-        <a href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Im App Store</a>
-        <a href="#sperrbildschirm">Sperrbildschirm</a>
-        <a href="#kostenlos">Warum kostenlos</a>
-      </div>
-      <div class="fsp">
-        <h4>Hilfe</h4>
-        <a href="mailto:info@gymlogtracker.com">Kontakt</a>
-        <a href="#faq">Fragen und Antworten</a>
-        <a href="#faq">Daten sichern</a>
-      </div>
-      <div class="fsp">
-        <h4>Rechtliches</h4>
-        <a href="/impressum/">Impressum</a>
-        <a href="/datenschutz/">Datenschutz</a>
-      </div>
-
+  <div class="container fuss">
+    <div>
+      <a class="marke" href="/">gymLog</a>
+      <p class="satz">Ein Trainingstagebuch für iOS. Kein Konto, keine Cloud, kein Abo.</p>
     </div>
-  </div>
-  <div class="funten">
-    <span>© 2026 gymLog</span>
-    <nav>
-      <a href="/impressum/">Impressum</a>
-      <a href="/datenschutz/">Datenschutz</a>
-    </nav>
+    <div class="fuss-spalten">
+      <div>
+        <h4>Produkt</h4>
+        <ul>
+          <li><a href="#funktionen">Funktionen</a></li>
+          <li><a href="#preis">Preis</a></li>
+          <li><a href="vergleich.html">Vergleich</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Im App Store laden</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="/impressum/">Impressum</a></li>
+          <li><a href="/datenschutz/">Datenschutz</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Kontakt</h4>
+        <ul>
+          <li><a href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="jahr">© 2026 gymLog</p>
   </div>
 </footer>
 
 <script>
-(function(){
-  var nav=document.getElementById("nav"), kopf=document.getElementById("kopf"),
-      burger=document.getElementById("burger"), mob=document.getElementById("mob"), offen=false, warten=false;
-  function pruefen(){
-    if(!offen){
-      var f=window.scrollY>20;
-      nav.classList.toggle("fest",f); kopf.classList.toggle("fest",f);
-    }
-    warten=false;
-  }
-  window.addEventListener("scroll",function(){ if(!warten){warten=true;requestAnimationFrame(pruefen);} },{passive:true});
-  pruefen();
-  function um(){
-    offen=!offen;
-    nav.classList.toggle("offen",offen); mob.classList.toggle("auf",offen);
-    burger.setAttribute("aria-expanded",offen?"true":"false");
-    burger.setAttribute("aria-label",offen?"Menü schließen":"Menü öffnen");
-    document.body.style.overflow=offen?"hidden":"";
-    if(!offen) pruefen();
-  }
-  burger.addEventListener("click",um);
-  // Akkordeon: max-height auf den echten Inhalt, damit die Bewegung gleich
-  // schnell laeuft, egal wie lang die Antwort ist.
-  document.querySelectorAll(".fq").forEach(function(b){
-    var fach=b.nextElementSibling;
-    b.addEventListener("click",function(){
-      var auf=b.getAttribute("aria-expanded")==="true";
-      b.setAttribute("aria-expanded",auf?"false":"true");
-      fach.style.maxHeight=auf?"0px":fach.scrollHeight+"px";
-    });
+/* Einziges Skript der Seite: ruhiges Einblenden beim Scrollen.
+   Ohne JS ist alles sofort sichtbar, nichts hängt davon ab. */
+document.documentElement.classList.add('js');
+var alle = document.querySelectorAll('.reveal');
+var io = new IntersectionObserver(function(eintraege){
+  eintraege.forEach(function(e){
+    if(e.isIntersecting){ e.target.classList.add('da'); io.unobserve(e.target); }
   });
-  mob.addEventListener("click",function(e){ if(e.target.closest("a")) um(); });
-  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&offen) um(); });
-})();
-
-
+},{rootMargin:'0px 0px -8% 0px'});
+alle.forEach(function(el){
+  /* Was schon im Fenster steht, wird sofort gezeigt — nichts haengt am Observer. */
+  if(el.getBoundingClientRect().top < window.innerHeight){ el.classList.add('da'); }
+  else{ io.observe(el); }
+});
+/* Sicherheitsnetz: feuert der Observer nicht, ist nach 800 ms trotzdem alles da. */
+setTimeout(function(){ alle.forEach(function(el){ el.classList.add('da'); }); }, 800);
+var menue = document.querySelector('details.menue');
+if(menue){ menue.querySelectorAll('a').forEach(function(a){
+  a.addEventListener('click', function(){ menue.removeAttribute('open'); });
+}); }
 </script>
-</body>
-</html>
+
+
+
+</body></html>
