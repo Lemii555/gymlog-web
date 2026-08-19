@@ -181,7 +181,64 @@ html.js .fuss-schalter{display:flex}
    und 21:1 dunkel. Apple faerbt dort blau, das uebernehme ich nicht. */
 .sprachwahl button.an,.moduswahl button.an{background:var(--tinte);color:var(--grund)}
 @media (max-width:520px){ .fuss-schalter{justify-content:flex-start} }
+
+/* ── Ticket 197, 19.8.2026: Einwilligung fuer die Besucherzaehlung ────────
+   Kevin: "sicher ist sicher mach ein banner rein".
+
+   DAS BANNER IST NICHT DIE HAUPTSACHE. Ein Banner, das erscheint waehrend das
+   Zaehlskript schon laedt, ist Zierde. Deshalb steht das Skript seit heute
+   NICHT mehr im HTML -- es wird erst nachgeladen, wenn jemand zugestimmt hat.
+   tools/webcheck.cjs macht daraus eine Regel und wird rot, wenn es je wieder
+   fest eingebunden wird.
+
+   ABLEHNEN MUSS GENAUSO LEICHT SEIN WIE ZUSTIMMEN. Beide Knoepfe haben
+   dieselbe Groesse, dieselbe Schrift, dieselbe Form -- nur die Flaeche
+   unterscheidet sie. Kein grosser bunter "Alle akzeptieren" neben einem
+   grauen Link. Das ist keine Geschmacksfrage: eine Einwilligung, die man
+   leichter gibt als verweigert, ist keine freie Einwilligung.
+
+   Unten statt Vollbild: die Seite bleibt lesbar und bedienbar. Wer nicht
+   entscheiden will, muss nicht. Ohne Entscheidung wird nicht gezaehlt. */
+.zust{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;
+  padding:16px;background:var(--grund);border-top:1px solid var(--kante)}
+.zust.an{display:block}
+.zust-kern{max-width:760px;margin:0 auto;display:flex;flex-wrap:wrap;
+  align-items:center;gap:16px}
+.zust-txt{flex:1 1 320px;min-width:0;font-size:13px;line-height:1.5;color:var(--leise)}
+.zust-txt a{color:var(--akzent)}
+.zust-akt{display:flex;gap:8px;flex:0 0 auto}
+.zust-akt button{font:inherit;font-size:13px;font-weight:500;line-height:1;
+  min-height:44px;padding:0 20px;border-radius:980px;cursor:pointer;
+  border:1px solid var(--kante);background:transparent;color:var(--tinte);white-space:nowrap}
+.zust-akt button.ja{background:var(--tinte);color:var(--grund);border-color:var(--tinte)}
+@media (max-width:520px){ .zust-akt{flex:1 1 100%} .zust-akt button{flex:1} }
+
+/* Ticket 197: der Widerrufsschalter in der Fusszeile. Sieht aus wie die
+   Verweise daneben -- er gehoert in dieselbe Liste und soll sich nicht als
+   Knopf aufspielen. HIG Buttons: "Borders ... aren't necessary because the
+   section provides a visible container".
+   Der Name ist bewusst "zaehl-schalt" und nicht "fuss-schalt": es gibt schon
+   ".fuss-schalter" fuer Sprache und Darstellung, und zwei Klassen, die sich um
+   einen Buchstaben unterscheiden, verwechselt man beim Suchen. */
+.zaehl-schalt{font:inherit;background:none;border:0;padding:0;cursor:pointer;
+  color:var(--tinte);text-align:left;min-height:24px}
+.zaehl-schalt:hover{color:var(--akzent);text-decoration:underline}
 </style>
+  <!-- Ticket 197: Einwilligung fuer die Besucherzaehlung. Beide Sprachen
+       stehen im Markup, .spr/.an schaltet wie ueberall auf der Seite. -->
+  <div class="zust" id="zust" role="dialog" aria-live="polite" aria-label="Besucherzählung">
+    <div class="zust-kern">
+      <div class="zust-txt">
+        <span class="spr an" lang="de">Darf ich anonym zählen, wie oft diese Seite aufgerufen wird? Der Dienst setzt keine Cookies und legt nichts auf deinem Gerät ab. Mehr dazu im <a href="/datenschutz/#website">Datenschutz</a>.</span>
+        <span class="spr" lang="en">May I count anonymously how often this page is opened? The service sets no cookies and stores nothing on your device. More in the <a href="/datenschutz/#website-en">privacy notice</a>.</span>
+      </div>
+      <div class="zust-akt">
+        <button type="button" id="zust-nein"><span class="spr an" lang="de">Ablehnen</span><span class="spr" lang="en">Decline</span></button>
+        <button type="button" id="zust-ja" class="ja"><span class="spr an" lang="de">Einverstanden</span><span class="spr" lang="en">Accept</span></button>
+      </div>
+    </div>
+  </div>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -202,23 +259,11 @@ html.js .fuss-schalter{display:flex}
 <header class="leiste">
   <div class="container nav">
     <a class="marke" href="/"><svg class="marke-symbol" viewBox="0 0 1024 1024" aria-hidden="true"><rect width="1024" height="1024" rx="230" fill="var(--marke-grund)"/><g fill="var(--marke-strich)"><circle cx="189.439" cy="512" r="35.84"/><circle cx="834.561" cy="512" r="35.84"/><rect x="337.921" y="417.279" width="20.48" height="189.442"/><circle cx="348.161" cy="417.279" r="38.4"/><circle cx="348.161" cy="606.721" r="38.4"/><rect x="665.6" y="417.279" width="20.48" height="189.442"/><circle cx="675.84" cy="417.279" r="38.4"/><circle cx="675.84" cy="606.721" r="38.4"/><rect x="501.76" y="320" width="20.48" height="384"/><circle cx="512" cy="320" r="38.4"/><circle cx="512" cy="704" r="38.4"/><circle cx="512" cy="512" r="40.96"/></g></svg><span>gymLog</span></a>
-    <nav class="nav-links" aria-label="Bereiche">
-      <a href="/#funktionen">Funktionen</a>
-      <a href="/#privat">Privat</a>
-      <a href="/#preis">Preis</a>
-      <a href="/vergleich.html">Vergleich</a>
-      <a href="/#faq">FAQ</a>
-    </nav>
+    <nav class="nav-links" aria-label="Bereiche"><span class="spr an" lang="de"><a href="/#funktionen">Funktionen</a><a href="/#privat">Privat</a><a href="/#preis">Preis</a><a href="/vergleich.html">Vergleich</a><a href="/#faq">FAQ</a></span><span class="spr" lang="en"><a href="/#funktionen">Features</a><a href="/#privat">Privacy</a><a href="/#preis">Price</a><a href="/vergleich.html">Comparison</a><a href="/#faq">FAQ</a></span></nav>
     <a class="knopf nav-cta" href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640"><span class="lang">Im App Store laden</span><span class="kurz">Laden</span></a>
     <details class="menue">
       <summary>Menü</summary>
-      <nav class="menue-feld" aria-label="Bereiche">
-        <a href="/#funktionen">Funktionen</a>
-        <a href="/#privat">Privat</a>
-        <a href="/#preis">Preis</a>
-        <a href="/vergleich.html">Vergleich</a>
-        <a href="/#faq">FAQ</a>
-      </nav>
+      <nav class="menue-feld karte" aria-label="Bereiche"><span class="spr an" lang="de"><a href="/#funktionen">Funktionen</a><a href="/#privat">Privat</a><a href="/#preis">Preis</a><a href="/vergleich.html">Vergleich</a><a href="/#faq">FAQ</a></span><span class="spr" lang="en"><a href="/#funktionen">Features</a><a href="/#privat">Privacy</a><a href="/#preis">Price</a><a href="/vergleich.html">Comparison</a><a href="/#faq">FAQ</a></span></nav>
     </details>
   </div>
 </header>
@@ -273,10 +318,19 @@ html.js .fuss-schalter{display:flex}
         <h2><em>06</em>Löschung</h2>
         <p>Du kannst deine Daten jederzeit in der App löschen oder die App deinstallieren. Mit dem Löschen der App werden alle lokal gespeicherten Daten entfernt. Daten, die du zuvor nach Apple Health geschrieben hast, bleiben dort und werden dort gelöscht.</p>
 
-        <h2><em>07</em>Deine Rechte</h2>
-        <p>Da keine personenbezogenen Daten an uns übertragen oder von uns gespeichert werden, liegen uns keine Daten über dich vor. Bei Fragen kannst du dich an die oben genannte Adresse wenden.</p>
+        <h2 id="website"><em>07</em>Diese Website</h2>
+        <p>Die Abschnitte 02 bis 06 beschreiben die <b>App</b>. Dieser Abschnitt beschreibt <b>diese Website</b> — das sind zwei verschiedene Dinge.</p>
+        <p><b>Hosting.</b> Die Seite liegt bei GitHub Pages (GitHub, Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA). Beim Aufruf überträgt dein Browser technisch notwendig deine IP-Adresse an GitHub. Darauf habe ich keinen Einfluss; ohne diese Übertragung kann keine Seite ausgeliefert werden. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO, mein berechtigtes Interesse an einer erreichbaren Website.</p>
+        <p><b>Besucherzählung.</b> Diese Seite nutzt <b>Cloudflare Web Analytics</b> (Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA). Der Dienst setzt <b>keine Cookies</b> und legt <b>nichts auf deinem Gerät ab</b>. Erhoben werden nach Angaben von Cloudflare ausschließlich: Land, aufgerufene Seite, verweisende Seite, Gerätetyp, Browser, Betriebssystem und Ladezeiten. Cloudflare gibt an, dabei keine personenbezogenen Daten zu erheben und Besucher nicht über verschiedene Websites hinweg wiederzuerkennen.</p>
+        <p><b>Nur mit deiner Einwilligung.</b> Das Zählskript wird <b>erst geladen, wenn du zugestimmt hast</b> — nicht vorher und nicht im Hintergrund. Ohne Zustimmung passiert nichts, und die Seite funktioniert unverändert. Rechtsgrundlage ist Art. 6 Abs. 1 lit. a DSGVO (Einwilligung) in Verbindung mit § 25 Abs. 1 TDDDG.</p>
+        <p>Stimmst du zu, wird beim Laden des Skripts von <code>static.cloudflareinsights.com</code> technisch bedingt deine IP-Adresse an Cloudflare übertragen. Cloudflare wertet sie nur zur Zuordnung des Landes aus und speichert sie nach eigenen Angaben nicht zur Wiedererkennung.</p>
+        <p><b>Widerruf jederzeit.</b> Deine Wahl steht ganz unten in der Fußzeile jeder Seite („Zählung: an" oder „Zählung: aus"). Ein Klick dreht sie um; der Widerruf gilt sofort und für die Zukunft. Gespeichert wird die Wahl nur in deinem Browser, nicht bei mir und nicht bei Cloudflare.</p>
+        <p><b>Kein Profil, keine Werbung.</b> Ich sehe nur Summen — wie viele Aufrufe eine Seite hatte, aus welchen Ländern, mit welchen Browsern. Ich kann daraus keine einzelne Person erkennen und nutze die Zahlen weder für Werbung noch gebe ich sie weiter.</p>
+        <p><b>Ohne JavaScript.</b> Ist JavaScript abgeschaltet, erscheint weder die Frage noch die Zählung. Die Seite bleibt lesbar.</p>
+        <h2><em>08</em>Deine Rechte</h2>
+        <p>Ich speichere selbst keine Daten über dich. Die App überträgt nichts (Abschnitte 02 bis 06). Für diese Website werden nur die in Abschnitt 07 beschriebenen Summen erhoben; sie lassen sich keiner Person zuordnen. Bei Fragen kannst du dich an die oben genannte Adresse wenden.</p>
 
-        <h2><em>08</em>Impressum</h2>
+        <h2><em>09</em>Impressum</h2>
         <p>Die Anbieterkennzeichnung steht im <a href="/impressum/">Impressum</a>.</p>
       </div>
 
@@ -310,10 +364,19 @@ html.js .fuss-schalter{display:flex}
         <h2><em>06</em>Deletion</h2>
         <p>You can delete your data in the app at any time, or uninstall the app. Removing the app deletes all locally stored data. Data you previously wrote to Apple Health stays there and is deleted there.</p>
 
-        <h2><em>07</em>Your rights</h2>
-        <p>Since no personal data is transmitted to us or stored by us, we hold no data about you. If you have questions, please use the address above.</p>
+        <h2 id="website-en"><em>07</em>This website</h2>
+        <p>Sections 02 to 06 describe the <b>app</b>. This section describes <b>this website</b> — those are two different things.</p>
+        <p><b>Hosting.</b> This site is hosted on GitHub Pages (GitHub, Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA). When you open a page, your browser necessarily transmits your IP address to GitHub. I have no influence over this; without it no page can be delivered. The legal basis is Art. 6(1)(f) GDPR, my legitimate interest in a reachable website.</p>
+        <p><b>Visitor counting.</b> This site uses <b>Cloudflare Web Analytics</b> (Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA). The service sets <b>no cookies</b> and <b>stores nothing on your device</b>. According to Cloudflare it collects only: country, page visited, referring page, device type, browser, operating system and load times. Cloudflare states that it does not collect personal data and does not track individual visitors across websites.</p>
+        <p><b>Only with your consent.</b> The counting script is <b>loaded only after you have agreed</b> — not before and not in the background. Without consent nothing happens, and the site works unchanged. The legal basis is Art. 6(1)(a) GDPR (consent) together with § 25(1) TDDDG.</p>
+        <p>If you agree, loading the script from <code>static.cloudflareinsights.com</code> necessarily transmits your IP address to Cloudflare. Cloudflare uses it only to determine the country and states that it does not store it for recognition.</p>
+        <p><b>Withdraw at any time.</b> Your choice is at the very bottom of every page ("Counting: on" or "Counting: off"). One click flips it; the withdrawal takes effect immediately and for the future. The choice is stored only in your browser, not with me and not with Cloudflare.</p>
+        <p><b>No profile, no advertising.</b> I only see totals — how many times a page was opened, from which countries, with which browsers. I cannot identify an individual from this, and I neither use the numbers for advertising nor pass them on.</p>
+        <p><b>Without JavaScript.</b> With JavaScript disabled, neither the question nor the counting appears. The page remains readable.</p>
+        <h2><em>08</em>Your rights</h2>
+        <p>I do not store any data about you myself. The app transmits nothing (sections 02 to 06). For this website, only the totals described in section 07 are collected; they cannot be linked to a person. If you have questions, please use the address given above.</p>
 
-        <h2><em>08</em>Legal notice</h2>
+        <h2><em>09</em>Legal notice</h2>
         <p>The provider identification is in the <a href="/impressum/">legal notice</a>.</p>
       </div>
     </div>
@@ -324,9 +387,9 @@ html.js .fuss-schalter{display:flex}
   <div class="container fuss">
     <div>
       <a class="marke" href="/"><svg class="marke-symbol" viewBox="0 0 1024 1024" aria-hidden="true"><rect width="1024" height="1024" rx="230" fill="var(--marke-grund)"/><g fill="var(--marke-strich)"><circle cx="189.439" cy="512" r="35.84"/><circle cx="834.561" cy="512" r="35.84"/><rect x="337.921" y="417.279" width="20.48" height="189.442"/><circle cx="348.161" cy="417.279" r="38.4"/><circle cx="348.161" cy="606.721" r="38.4"/><rect x="665.6" y="417.279" width="20.48" height="189.442"/><circle cx="675.84" cy="417.279" r="38.4"/><circle cx="675.84" cy="606.721" r="38.4"/><rect x="501.76" y="320" width="20.48" height="384"/><circle cx="512" cy="320" r="38.4"/><circle cx="512" cy="704" r="38.4"/><circle cx="512" cy="512" r="40.96"/></g></svg><span>gymLog</span></a>
-      <p class="satz">Ein Trainingstagebuch für iOS. Kein Konto, keine Cloud, kein Abo.</p>
+      <p class="satz spr an" lang="de">Ein Trainingstagebuch für iOS. Kein Konto, keine Cloud, kein Abo.</p><p class="satz spr" lang="en">A workout log for iOS. No account, no cloud, no subscription.</p>
     </div>
-    <div class="fuss-spalten">
+    <div class="spr an" lang="de"><div class="fuss-spalten">
       <div>
         <h4>Produkt</h4>
         <ul>
@@ -342,6 +405,11 @@ html.js .fuss-schalter{display:flex}
         <ul>
           <li><a href="/impressum/">Impressum</a></li>
           <li><a href="/datenschutz/">Datenschutz</a></li>
+          <!-- Ticket 197: der Widerruf. Ein Banner ohne Rueckweg waere eine
+               einmalige Frage, keine Einwilligung. Der Knopf zeigt IMMER den
+               aktuellen Stand, nicht das Gegenteil davon. -->
+          <li><button type="button" class="zaehl-schalt" data-zaehlschalter data-zaehlstand
+              data-zaehl-ja="Zählung: an — abschalten" data-zaehl-nein="Zählung: aus — einschalten"></button></li>
         </ul>
       </div>
       <div>
@@ -350,6 +418,35 @@ html.js .fuss-schalter{display:flex}
           <li><a href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></li>
         </ul>
       </div>
+    </div>
+    </div>
+<div class="spr" lang="en"><div class="fuss-spalten">
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/#funktionen">Features</a></li>
+          <li><a href="/#preis">Price</a></li>
+          <li><a href="/vergleich.html">Comparison</a></li>
+          <li><a href="/#faq">FAQ</a></li>
+          <li><a href="https://apps.apple.com/de/app/gymlog-tracker/id6786720640">Download on the App&nbsp;Store</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="/impressum/">Legal notice</a></li>
+          <li><a href="/datenschutz/">Privacy</a></li>
+          <li><button type="button" class="zaehl-schalt" data-zaehlschalter data-zaehlstand
+              data-zaehl-ja="Counting: on — turn off" data-zaehl-nein="Counting: off — turn on"></button></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:info@gymlogtracker.com">info@gymlogtracker.com</a></li>
+        </ul>
+      </div>
+    </div>
     </div>
     <div class="fuss-schalter">
       <div class="sprachwahl" role="group" aria-label="Sprache"><button class="an" data-l="de">Deutsch</button><button data-l="en">English</button></div>
@@ -400,6 +497,63 @@ document.querySelectorAll('.moduswahl button').forEach(function(b){
   if (!l) l = /^de\b/i.test(navigator.language || 'de') ? 'de' : 'en';
   sprache(l);
   if (m) modus(m);
+})();
+
+/* ── Ticket 197, 19.8.2026: Einwilligung fuer die Besucherzaehlung ────────
+   Kevin: "sicher ist sicher mach ein banner rein".
+
+   DIE REIHENFOLGE IST DER GANZE PUNKT. Ohne gespeichertes Ja wird das
+   Zaehlskript nicht geladen -- nicht spaeter abgeschaltet, sondern gar nicht
+   erst geholt. Ein Banner ueber einem bereits laufenden Zaehler waere eine
+   Behauptung, keine Einwilligung.
+
+   Gespeichert wird in localStorage, nicht in einem Cookie: es ist eine
+   Einstellung dieses Browsers und muss nirgendwohin uebertragen werden.
+   Erlaubt ist das auch ohne Einwilligung -- es IST die Einwilligung, und
+   ohne sie muesste man bei jedem Aufruf neu fragen.
+
+   Wer die Wahl aendern will, findet in der Fusszeile "Zählung: ..." mit dem
+   aktuellen Stand. Ein Widerruf, den man nicht findet, ist keiner. */
+(function(){
+  var SCHL = 'gymlog-zaehlung';
+  var TOKEN = 'd9f649157dfd42c89e0e62522d7a2c72';
+  var banner = document.getElementById('zust');
+  function lies(){ try { return localStorage.getItem(SCHL); } catch(e){ return null; } }
+  function schreib(v){ try { localStorage.setItem(SCHL, v); } catch(e){} }
+  function laden(){
+    if (document.getElementById('cf-beacon')) return;
+    var s = document.createElement('script');
+    s.id = 'cf-beacon'; s.defer = true;
+    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    s.setAttribute('data-cf-beacon', '{"token": "' + TOKEN + '"}');
+    document.body.appendChild(s);
+  }
+  function stand(){
+    var v = lies();
+    document.querySelectorAll('[data-zaehlstand]').forEach(function(e){
+      e.textContent = e.dataset['zaehl' + (v === 'ja' ? 'Ja' : 'Nein')] || '';
+    });
+  }
+  function setz(v){
+    schreib(v);
+    if (banner) banner.classList.remove('an');
+    if (v === 'ja') laden();
+    stand();
+  }
+  var jetzt = lies();
+  if (jetzt === 'ja') laden();
+  else if (jetzt !== 'nein' && banner) banner.classList.add('an');
+  stand();
+  var ja = document.getElementById('zust-ja'), nein = document.getElementById('zust-nein');
+  if (ja) ja.addEventListener('click', function(){ setz('ja'); });
+  if (nein) nein.addEventListener('click', function(){ setz('nein'); });
+  /* Widerruf und Nachtraegliches: der Schalter in der Fusszeile dreht die
+     Wahl um. Er zeigt immer den AKTUELLEN Stand, nicht das Gegenteil --
+     "Zählung: aus" mit einem Knopf "einschalten" ist zwei Angaben, und
+     Kevin hat schon einmal recht gehabt, dass eine reicht. */
+  document.querySelectorAll('[data-zaehlschalter]').forEach(function(b){
+    b.addEventListener('click', function(){ setz(lies() === 'ja' ? 'nein' : 'ja'); });
+  });
 })();
 </script>
 </body></html>

@@ -266,6 +266,48 @@ html.js .fuss-schalter{display:flex}
 .danke h3{font-size:22px;font-weight:700;letter-spacing:-.01em;margin:6px 0 0}
 .danke .text{max-width:540px;margin:14px auto 0;color:var(--leise)}
 .danke .knopf{margin-top:26px}
+
+/* ── Ticket 197, 19.8.2026: Einwilligung fuer die Besucherzaehlung ────────
+   Kevin: "sicher ist sicher mach ein banner rein".
+
+   DAS BANNER IST NICHT DIE HAUPTSACHE. Ein Banner, das erscheint waehrend das
+   Zaehlskript schon laedt, ist Zierde. Deshalb steht das Skript seit heute
+   NICHT mehr im HTML -- es wird erst nachgeladen, wenn jemand zugestimmt hat.
+   tools/webcheck.cjs macht daraus eine Regel und wird rot, wenn es je wieder
+   fest eingebunden wird.
+
+   ABLEHNEN MUSS GENAUSO LEICHT SEIN WIE ZUSTIMMEN. Beide Knoepfe haben
+   dieselbe Groesse, dieselbe Schrift, dieselbe Form -- nur die Flaeche
+   unterscheidet sie. Kein grosser bunter "Alle akzeptieren" neben einem
+   grauen Link. Das ist keine Geschmacksfrage: eine Einwilligung, die man
+   leichter gibt als verweigert, ist keine freie Einwilligung.
+
+   Unten statt Vollbild: die Seite bleibt lesbar und bedienbar. Wer nicht
+   entscheiden will, muss nicht. Ohne Entscheidung wird nicht gezaehlt. */
+.zust{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;
+  padding:16px;background:var(--grund);border-top:1px solid var(--kante)}
+.zust.an{display:block}
+.zust-kern{max-width:760px;margin:0 auto;display:flex;flex-wrap:wrap;
+  align-items:center;gap:16px}
+.zust-txt{flex:1 1 320px;min-width:0;font-size:13px;line-height:1.5;color:var(--leise)}
+.zust-txt a{color:var(--akzent)}
+.zust-akt{display:flex;gap:8px;flex:0 0 auto}
+.zust-akt button{font:inherit;font-size:13px;font-weight:500;line-height:1;
+  min-height:44px;padding:0 20px;border-radius:980px;cursor:pointer;
+  border:1px solid var(--kante);background:transparent;color:var(--tinte);white-space:nowrap}
+.zust-akt button.ja{background:var(--tinte);color:var(--grund);border-color:var(--tinte)}
+@media (max-width:520px){ .zust-akt{flex:1 1 100%} .zust-akt button{flex:1} }
+
+/* Ticket 197: der Widerrufsschalter in der Fusszeile. Sieht aus wie die
+   Verweise daneben -- er gehoert in dieselbe Liste und soll sich nicht als
+   Knopf aufspielen. HIG Buttons: "Borders ... aren't necessary because the
+   section provides a visible container".
+   Der Name ist bewusst "zaehl-schalt" und nicht "fuss-schalt": es gibt schon
+   ".fuss-schalter" fuer Sprache und Darstellung, und zwei Klassen, die sich um
+   einen Buchstaben unterscheiden, verwechselt man beim Suchen. */
+.zaehl-schalt{font:inherit;background:none;border:0;padding:0;cursor:pointer;
+  color:var(--tinte);text-align:left;min-height:24px}
+.zaehl-schalt:hover{color:var(--akzent);text-decoration:underline}
 </style>
 <link rel="alternate" hreflang="de" href="https://gymlogtracker.com/">
 <link rel="alternate" hreflang="en" href="https://gymlogtracker.com/">
@@ -749,6 +791,11 @@ html.js .fuss-schalter{display:flex}
         <ul>
           <li><a href="/impressum/">Impressum</a></li>
           <li><a href="/datenschutz/">Datenschutz</a></li>
+          <!-- Ticket 197: der Widerruf. Ein Banner ohne Rueckweg waere eine
+               einmalige Frage, keine Einwilligung. Der Knopf zeigt IMMER den
+               aktuellen Stand, nicht das Gegenteil davon. -->
+          <li><button type="button" class="zaehl-schalt" data-zaehlschalter data-zaehlstand
+              data-zaehl-ja="Zählung: an — abschalten" data-zaehl-nein="Zählung: aus — einschalten"></button></li>
         </ul>
       </div>
       <div>
@@ -774,6 +821,8 @@ html.js .fuss-schalter{display:flex}
         <ul>
           <li><a href="/impressum/">Legal notice</a></li>
           <li><a href="/datenschutz/">Privacy</a></li>
+          <li><button type="button" class="zaehl-schalt" data-zaehlschalter data-zaehlstand
+              data-zaehl-ja="Counting: on — turn off" data-zaehl-nein="Counting: off — turn on"></button></li>
         </ul>
       </div>
       <div>
@@ -791,6 +840,21 @@ html.js .fuss-schalter{display:flex}
     <p class="jahr">© 2026 gymLog</p>
   </div>
 </footer>
+
+  <!-- Ticket 197: Einwilligung fuer die Besucherzaehlung. Beide Sprachen
+       stehen im Markup, .spr/.an schaltet wie ueberall auf der Seite. -->
+  <div class="zust" id="zust" role="dialog" aria-live="polite" aria-label="Besucherzählung">
+    <div class="zust-kern">
+      <div class="zust-txt">
+        <span class="spr an" lang="de">Darf ich anonym zählen, wie oft diese Seite aufgerufen wird? Der Dienst setzt keine Cookies und legt nichts auf deinem Gerät ab. Mehr dazu im <a href="/datenschutz/#website">Datenschutz</a>.</span>
+        <span class="spr" lang="en">May I count anonymously how often this page is opened? The service sets no cookies and stores nothing on your device. More in the <a href="/datenschutz/#website-en">privacy notice</a>.</span>
+      </div>
+      <div class="zust-akt">
+        <button type="button" id="zust-nein"><span class="spr an" lang="de">Ablehnen</span><span class="spr" lang="en">Decline</span></button>
+        <button type="button" id="zust-ja" class="ja"><span class="spr an" lang="de">Einverstanden</span><span class="spr" lang="en">Accept</span></button>
+      </div>
+    </div>
+  </div>
 
 <script>
 /* Einziges Skript der Seite: ruhiges Einblenden beim Scrollen.
@@ -858,6 +922,63 @@ document.querySelectorAll('.moduswahl button').forEach(function(b){
   if (!l) l = /^de\b/i.test(navigator.language || 'de') ? 'de' : 'en';
   sprache(l);
   if (m) modus(m);
+})();
+
+/* ── Ticket 197, 19.8.2026: Einwilligung fuer die Besucherzaehlung ────────
+   Kevin: "sicher ist sicher mach ein banner rein".
+
+   DIE REIHENFOLGE IST DER GANZE PUNKT. Ohne gespeichertes Ja wird das
+   Zaehlskript nicht geladen -- nicht spaeter abgeschaltet, sondern gar nicht
+   erst geholt. Ein Banner ueber einem bereits laufenden Zaehler waere eine
+   Behauptung, keine Einwilligung.
+
+   Gespeichert wird in localStorage, nicht in einem Cookie: es ist eine
+   Einstellung dieses Browsers und muss nirgendwohin uebertragen werden.
+   Erlaubt ist das auch ohne Einwilligung -- es IST die Einwilligung, und
+   ohne sie muesste man bei jedem Aufruf neu fragen.
+
+   Wer die Wahl aendern will, findet in der Fusszeile "Zählung: ..." mit dem
+   aktuellen Stand. Ein Widerruf, den man nicht findet, ist keiner. */
+(function(){
+  var SCHL = 'gymlog-zaehlung';
+  var TOKEN = 'd9f649157dfd42c89e0e62522d7a2c72';
+  var banner = document.getElementById('zust');
+  function lies(){ try { return localStorage.getItem(SCHL); } catch(e){ return null; } }
+  function schreib(v){ try { localStorage.setItem(SCHL, v); } catch(e){} }
+  function laden(){
+    if (document.getElementById('cf-beacon')) return;
+    var s = document.createElement('script');
+    s.id = 'cf-beacon'; s.defer = true;
+    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    s.setAttribute('data-cf-beacon', '{"token": "' + TOKEN + '"}');
+    document.body.appendChild(s);
+  }
+  function stand(){
+    var v = lies();
+    document.querySelectorAll('[data-zaehlstand]').forEach(function(e){
+      e.textContent = e.dataset['zaehl' + (v === 'ja' ? 'Ja' : 'Nein')] || '';
+    });
+  }
+  function setz(v){
+    schreib(v);
+    if (banner) banner.classList.remove('an');
+    if (v === 'ja') laden();
+    stand();
+  }
+  var jetzt = lies();
+  if (jetzt === 'ja') laden();
+  else if (jetzt !== 'nein' && banner) banner.classList.add('an');
+  stand();
+  var ja = document.getElementById('zust-ja'), nein = document.getElementById('zust-nein');
+  if (ja) ja.addEventListener('click', function(){ setz('ja'); });
+  if (nein) nein.addEventListener('click', function(){ setz('nein'); });
+  /* Widerruf und Nachtraegliches: der Schalter in der Fusszeile dreht die
+     Wahl um. Er zeigt immer den AKTUELLEN Stand, nicht das Gegenteil --
+     "Zählung: aus" mit einem Knopf "einschalten" ist zwei Angaben, und
+     Kevin hat schon einmal recht gehabt, dass eine reicht. */
+  document.querySelectorAll('[data-zaehlschalter]').forEach(function(b){
+    b.addEventListener('click', function(){ setz(lies() === 'ja' ? 'nein' : 'ja'); });
+  });
 })();
 </script>
 </body></html>
