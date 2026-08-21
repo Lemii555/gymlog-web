@@ -62,7 +62,17 @@ body{
   margin:0;
   background:var(--grund);
   color:var(--tinte);
-  font-family:"SF Pro Text", system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* 20.8.2026: der Name "SF Pro Text" ist hier RAUS. Er brachte nichts und
+     stand rechtlich im Weg:
+     - system-ui und -apple-system loesen auf Apple-Geraeten OHNEHIN auf SF
+       auf. Der explizite Name war doppelt.
+     - Apples Lizenz fuer die Design Resources sagt: "you may not use the
+       Apple Design Resources to create, develop, display or otherwise
+       distribute any documentation, artwork, WEBSITE CONTENT". Die Schrift
+       hat zwar eine eigene Lizenz (Punkt 1.B), aber die Richtung ist klar.
+     Ausgeliefert wurde die Schrift ohnehin nie -- es gibt kein @font-face
+     und keine Datei. Weniger Angriffsflaeche fuer null Unterschied. */
+  font-family:system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size:17px;
   line-height:25px;
   -webkit-font-smoothing:antialiased;
